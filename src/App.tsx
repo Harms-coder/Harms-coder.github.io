@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
+import { DemoSeedPage } from "./features/demo/DemoSeedPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
 import { HistoryPage } from "./features/history/HistoryPage";
 import { OverviewPage } from "./features/overview/OverviewPage";
@@ -59,6 +60,7 @@ function App() {
           }
         />
         <Route path="/plan" element={<PlanPage />} />
+        <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
       <BottomNav />
     </div>
