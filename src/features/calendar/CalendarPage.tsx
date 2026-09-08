@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
 import {
   deletePlannedWorkout,
@@ -17,7 +18,15 @@ import {
   toISODate,
   todayISODate,
 } from "../../lib/date";
-import type { Exercise, PlannedWorkout, Routine, SetEntry, WorkoutSession } from "../../types";
+import { formatPace } from "../../lib/format";
+import type {
+  CardioEntry,
+  Exercise,
+  PlannedWorkout,
+  Routine,
+  SetEntry,
+  WorkoutSession,
+} from "../../types";
 import { DayPlanner } from "./DayPlanner";
 
 export function CalendarPage() {
@@ -29,6 +38,7 @@ export function CalendarPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
+  const [cardioEntries, setCardioEntries] = useState<CardioEntry[]>([]);
   const [plans, setPlans] = useState<PlannedWorkout[]>([]);
   const [selectedSets, setSelectedSets] = useState<SetEntry[]>([]);
   const [monthLoaded, setMonthLoaded] = useState(false);
@@ -59,12 +69,14 @@ export function CalendarPage() {
   async function loadMonthData() {
     const start = toISODate(grid[0]);
     const end = toISODate(grid[grid.length - 1]);
-    const [rangeSessions, rangePlans] = await Promise.all([
+    const [rangeSessions, rangePlans, rangeCardio] = await Promise.all([
       listSessionsInRange(start, end),
       listPlannedWorkoutsInRange(start, end),
+      listCardioEntriesInRange(start, end),
     ]);
     setSessions(rangeSessions);
     setPlans(rangePlans);
+    setCardioEntries(rangeCardio);
     setMonthLoaded(true);
   }
 
@@ -94,8 +106,10 @@ export function CalendarPage() {
 
   const exerciseById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
   const sessionDates = useMemo(() => new Set(sessions.map((s) => s.date)), [sessions]);
+  const cardioDates = useMemo(() => new Set(cardioEntries.map((c) => c.date)), [cardioEntries]);
   const planDates = useMemo(() => new Set(plans.map((p) => p.date)), [plans]);
   const selectedPlan = plans.find((p) => p.date === selectedDate);
+  const selectedCardioEntries = cardioEntries.filter((c) => c.date === selectedDate);
 
   const setsByExercise = useMemo(() => {
     const map = new Map<string, SetEntry[]>();
@@ -150,6 +164,7 @@ export function CalendarPage() {
           const isSelected = iso === selectedDate;
           const isToday = iso === todayISODate();
           const hasSession = sessionDates.has(iso);
+          const hasCardio = cardioDates.has(iso);
           const hasPlan = planDates.has(iso);
 
           return (
@@ -169,6 +184,9 @@ export function CalendarPage() {
               <span className="flex h-1.5 gap-0.5">
                 {hasSession && (
                   <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-green)" />
+                )}
+                {hasCardio && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-orange)" />
                 )}
                 {hasPlan && (
                   <span
@@ -198,6 +216,23 @@ export function CalendarPage() {
                 </span>
                 <span className="text-[13px] text-(--color-text-muted)">
                   {exSets.map((set) => `${set.weight}×${set.reps}`).join(", ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {selectedCardioEntries.length > 0 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+            <span className="text-[13px] font-medium text-(--color-text-muted)">Cardio</span>
+            {selectedCardioEntries.map((entry) => (
+              <div key={entry.id} className="flex flex-col gap-0.5">
+                <span className="text-[14px] font-medium text-(--color-text)">
+                  {entry.activity}
+                </span>
+                <span className="text-[13px] text-(--color-text-muted)">
+                  {entry.distanceKm} km · {entry.durationMin} min ·{" "}
+                  {formatPace(entry.distanceKm, entry.durationMin)}
                 </span>
               </div>
             ))}

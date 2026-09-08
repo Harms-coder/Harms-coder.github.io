@@ -54,6 +54,10 @@ export function formatShortDate(iso: string): string {
   return `${date.getDate()}/${date.getMonth() + 1}`;
 }
 
+export function formatMediumDate(date: Date): string {
+  return `${date.getDate()}. ${DA_MONTHS[date.getMonth()].slice(0, 3)} ${date.getFullYear()}`;
+}
+
 export function formatLongDate(date: Date): string {
   const weekdays = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
   return `${weekdays[date.getDay()]} d. ${date.getDate()}. ${DA_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
