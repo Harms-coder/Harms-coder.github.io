@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../components/Button";
-import { listExercises } from "../../db/exercises";
+import { listExercises, maybeUpdatePr } from "../../db/exercises";
 import { endSession, getActiveSession, startSession } from "../../db/sessions";
 import { addSet, deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
@@ -97,6 +97,15 @@ export function TrainingPage() {
       order: existingForExercise.length,
     });
     setSets((current) => [...current, newSet]);
+
+    if (values.setType === "normal" || values.setType === "1rm") {
+      const updatedExercise = await maybeUpdatePr(exerciseId, values.weight, values.reps);
+      if (updatedExercise) {
+        setExercises((current) =>
+          current.map((exercise) => (exercise.id === exerciseId ? updatedExercise : exercise)),
+        );
+      }
+    }
   }
 
   async function handleDeleteSet(setId: string) {

@@ -47,7 +47,13 @@ export function ExerciseSessionCard({
 
       {sets.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          {sets.map((set, index) => (
+          {sets.map((set, index) => {
+            const isPr =
+              exercise.prWeight === set.weight &&
+              exercise.prReps === set.reps &&
+              set.setType !== "warmup" &&
+              set.setType !== "dropset";
+            return (
             <div
               key={set.id}
               className="flex items-center justify-between text-[14px] text-(--color-text)"
@@ -57,6 +63,11 @@ export function ExerciseSessionCard({
                 {SET_TYPE_BADGE[set.setType] && (
                   <span className="ml-2 text-[12px] text-(--color-text-muted)">
                     {SET_TYPE_BADGE[set.setType]}
+                  </span>
+                )}
+                {isPr && (
+                  <span className="ml-2 text-[12px] font-medium text-(--color-accent-green)">
+                    🏆 PR
                   </span>
                 )}
               </span>
@@ -69,7 +80,8 @@ export function ExerciseSessionCard({
                 ✕
               </button>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

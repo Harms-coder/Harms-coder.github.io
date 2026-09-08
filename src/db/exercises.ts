@@ -46,3 +46,33 @@ export async function deleteExercise(id: string): Promise<void> {
   const db = await getDb();
   await db.delete("exercises", id);
 }
+
+/**
+ * Opdaterer øvelsens PR hvis det angivne vægt/reps-par slår den nuværende
+ * rekord. Højere vægt vinder altid; ved samme vægt vinder flere reps.
+ */
+export async function maybeUpdatePr(
+  exerciseId: string,
+  weight: number,
+  reps: number,
+): Promise<Exercise | undefined> {
+  const db = await getDb();
+  const existing = await db.get("exercises", exerciseId);
+  if (!existing) return undefined;
+
+  const beatsPr =
+    existing.prWeight === undefined ||
+    weight > existing.prWeight ||
+    (weight === existing.prWeight && (existing.prReps === undefined || reps > existing.prReps));
+
+  if (!beatsPr) return existing;
+
+  const updated: Exercise = {
+    ...existing,
+    prWeight: weight,
+    prReps: reps,
+    prDate: new Date().toISOString(),
+  };
+  await db.put("exercises", updated);
+  return updated;
+}
