@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { SetEntry, SetType } from "../types";
 import { getDb } from "./database";
 
@@ -32,7 +33,7 @@ export async function addSet(input: {
 }): Promise<SetEntry> {
   const db = await getDb();
   const set: SetEntry = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     createdAt: new Date().toISOString(),
     ...input,
   };

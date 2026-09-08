@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { CardioEntry } from "../types";
 import { getDb } from "./database";
 
@@ -25,7 +26,7 @@ export async function createCardioEntry(input: {
 }): Promise<CardioEntry> {
   const db = await getDb();
   const entry: CardioEntry = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     date: input.date,
     activity: input.activity.trim(),
     distanceKm: input.distanceKm,

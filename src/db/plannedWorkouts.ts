@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { PlannedWorkout } from "../types";
 import { getDb } from "./database";
 
@@ -25,7 +26,7 @@ export async function setPlannedWorkout(
   const db = await getDb();
   const existing = await getPlannedWorkoutForDate(date);
   const plan: PlannedWorkout = {
-    id: existing?.id ?? crypto.randomUUID(),
+    id: existing?.id ?? generateId(),
     date,
     routineId: input.routineId,
     exerciseIds: input.exerciseIds,

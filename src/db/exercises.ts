@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { Exercise } from "../types";
 import { getDb } from "./database";
 
@@ -17,7 +18,7 @@ export async function createExercise(input: {
 }): Promise<Exercise> {
   const db = await getDb();
   const exercise: Exercise = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: input.name.trim(),
     category: input.category?.trim() || undefined,
     createdAt: new Date().toISOString(),

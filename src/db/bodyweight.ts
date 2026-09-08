@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { BodyweightEntry } from "../types";
 import { getDb } from "./database";
 
@@ -13,7 +14,7 @@ export async function createBodyweightEntry(input: {
 }): Promise<BodyweightEntry> {
   const db = await getDb();
   const entry: BodyweightEntry = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     date: input.date,
     weight: input.weight,
   };

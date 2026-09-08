@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { WorkoutSession } from "../types";
 import { getDb } from "./database";
 
@@ -26,7 +27,7 @@ export async function startSession(): Promise<WorkoutSession> {
   const db = await getDb();
   const now = new Date();
   const session: WorkoutSession = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     date: now.toISOString().slice(0, 10),
     startedAt: now.toISOString(),
   };

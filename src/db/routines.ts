@@ -1,3 +1,4 @@
+import { generateId } from "../lib/id";
 import type { Routine } from "../types";
 import { getDb } from "./database";
 
@@ -13,7 +14,7 @@ export async function createRoutine(input: {
 }): Promise<Routine> {
   const db = await getDb();
   const routine: Routine = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: input.name.trim(),
     exerciseIds: input.exerciseIds,
     createdAt: new Date().toISOString(),
