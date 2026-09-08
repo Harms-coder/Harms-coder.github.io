@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { listExercises } from "../../db/exercises";
 import { listSetsForExercise } from "../../db/sets";
+import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatShortDate } from "../../lib/date";
 import type { Exercise, SetEntry } from "../../types";
 
@@ -40,15 +41,6 @@ function buildDailyStats(sets: SetEntry[]): DailyStat[] {
       volume: daySets.reduce((sum, s) => sum + s.weight * s.reps, 0),
     }));
 }
-
-const tooltipStyle = {
-  background: "var(--color-surface-2)",
-  border: "1px solid var(--color-border)",
-  borderRadius: 12,
-  fontSize: 13,
-};
-
-const axisTick = { fill: "var(--color-text-muted)", fontSize: 11 };
 
 export function ProgressionPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -140,9 +132,9 @@ export function ProgressionPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} />
-                  <YAxis tick={axisTick} axisLine={false} tickLine={false} width={40} />
-                  <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                  <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
+                  <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
+                  <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
                   <Line
                     type="monotone"
                     dataKey="maxWeight"
@@ -163,9 +155,9 @@ export function ProgressionPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} />
-                  <YAxis tick={axisTick} axisLine={false} tickLine={false} width={40} />
-                  <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                  <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
+                  <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
+                  <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
                   <Bar dataKey="volume" fill="var(--color-accent-green)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>

@@ -1,7 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Route, Routes } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
-import { BodyweightPage } from "./features/bodyweight/BodyweightPage";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
@@ -10,11 +9,28 @@ import { OverviewPage } from "./features/overview/OverviewPage";
 import { PlanPage } from "./features/plan/PlanPage";
 import { TrainingPage } from "./features/training/TrainingPage";
 
+// Recharts er tung (~375 kB), så siderne der bruger den lazy-loades
+// for at holde hoved-bundlen let.
 const ProgressionPage = lazy(() =>
   import("./features/progression/ProgressionPage").then((m) => ({
     default: m.ProgressionPage,
   })),
 );
+const BodyweightPage = lazy(() =>
+  import("./features/bodyweight/BodyweightPage").then((m) => ({
+    default: m.BodyweightPage,
+  })),
+);
+
+function LazyPage({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={<p className="px-4 pt-6 text-sm text-(--color-text-muted)">Indlæser…</p>}
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 function App() {
   return (
@@ -26,17 +42,22 @@ function App() {
         <Route
           path="/progression"
           element={
-            <Suspense
-              fallback={<p className="px-4 pt-6 text-sm text-(--color-text-muted)">Indlæser…</p>}
-            >
+            <LazyPage>
               <ProgressionPage />
-            </Suspense>
+            </LazyPage>
           }
         />
         <Route path="/oevelser" element={<ExercisesPage />} />
         <Route path="/kalender" element={<CalendarPage />} />
         <Route path="/historik" element={<HistoryPage />} />
-        <Route path="/kropsvaegt" element={<BodyweightPage />} />
+        <Route
+          path="/kropsvaegt"
+          element={
+            <LazyPage>
+              <BodyweightPage />
+            </LazyPage>
+          }
+        />
         <Route path="/plan" element={<PlanPage />} />
       </Routes>
       <BottomNav />
