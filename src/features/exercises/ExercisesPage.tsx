@@ -1,5 +1,7 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "../../components/Button";
+import { CategoryPicker } from "../../components/CategoryPicker";
+import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
 import { TextField } from "../../components/TextField";
 import {
   createExercise,
@@ -7,6 +9,7 @@ import {
   listExercises,
   updateExercise,
 } from "../../db/exercises";
+import { filterExercises } from "../../lib/exerciseFilter";
 import type { Exercise } from "../../types";
 import { ExerciseCard } from "./ExerciseCard";
 
@@ -15,11 +18,9 @@ export function ExercisesPage() {
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-
-  useEffect(() => {
-    void refresh();
-  }, []);
+  const [newCategory, setNewCategory] = useState<string | undefined>(undefined);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<string | null>(null);
 
   async function refresh() {
     const all = await listExercises();
@@ -27,12 +28,16 @@ export function ExercisesPage() {
     setLoading(false);
   }
 
+  useEffect(() => {
+    void refresh();
+  }, []);
+
   async function handleAdd(event: FormEvent) {
     event.preventDefault();
     if (!newName.trim()) return;
-    await createExercise({ name: newName, category: newCategory || undefined });
+    await createExercise({ name: newName, category: newCategory });
     setNewName("");
-    setNewCategory("");
+    setNewCategory(undefined);
     setIsAdding(false);
     await refresh();
   }
@@ -49,6 +54,11 @@ export function ExercisesPage() {
     await deleteExercise(id);
     await refresh();
   }
+
+  const filtered = useMemo(
+    () => filterExercises(exercises, category, query),
+    [exercises, category, query],
+  );
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
@@ -74,12 +84,10 @@ export function ExercisesPage() {
             onChange={(e) => setNewName(e.target.value)}
             autoFocus
           />
-          <TextField
-            label="Kategori (valgfri)"
-            placeholder="fx Bryst"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
+          <span className="text-[13px] font-medium text-(--color-text-muted)">
+            Kategori (valgfri)
+          </span>
+          <CategoryPicker value={newCategory} onChange={setNewCategory} />
           <Button type="submit">Gem øvelse</Button>
         </form>
       )}
@@ -92,8 +100,17 @@ export function ExercisesPage() {
         </p>
       )}
 
+      {exercises.length > 0 && (
+        <ExerciseFilterBar
+          query={query}
+          onQueryChange={setQuery}
+          category={category}
+          onCategoryChange={setCategory}
+        />
+      )}
+
       <div className="flex flex-col gap-3">
-        {exercises.map((exercise) => (
+        {filtered.map((exercise) => (
           <ExerciseCard
             key={exercise.id}
             exercise={exercise}

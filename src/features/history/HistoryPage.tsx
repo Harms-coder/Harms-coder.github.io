@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IconChevronDown } from "../../components/icons";
 import { listExercises } from "../../db/exercises";
 import { listSessions } from "../../db/sessions";
 import { listSetsForSession } from "../../db/sets";
@@ -73,7 +74,9 @@ export function HistoryPage() {
                     {!session.endedAt ? " · i gang" : ""}
                   </span>
                 </div>
-                <span className="text-(--color-text-muted)">{expanded ? "︿" : "﹀"}</span>
+                <IconChevronDown
+                  className={`h-5 w-5 text-(--color-text-muted) transition-transform ${expanded ? "rotate-180" : ""}`}
+                />
               </button>
 
               {expanded && (

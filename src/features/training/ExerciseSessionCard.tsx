@@ -1,3 +1,4 @@
+import { IconChevronDown, IconTrophy, IconX } from "../../components/icons";
 import type { Exercise, SetEntry, SetType } from "../../types";
 import { SetInputForm } from "./SetInputForm";
 
@@ -42,7 +43,9 @@ export function ExerciseSessionCard({
             {sets.length === 0 ? "Ingen sæt endnu" : `${sets.length} sæt`}
           </span>
         </div>
-        <span className="text-(--color-text-muted)">{expanded ? "︿" : "﹀"}</span>
+        <IconChevronDown
+          className={`h-5 w-5 text-(--color-text-muted) transition-transform ${expanded ? "rotate-180" : ""}`}
+        />
       </button>
 
       {sets.length > 0 && (
@@ -54,32 +57,33 @@ export function ExerciseSessionCard({
               set.setType !== "warmup" &&
               set.setType !== "dropset";
             return (
-            <div
-              key={set.id}
-              className="flex items-center justify-between text-[14px] text-(--color-text)"
-            >
-              <span>
-                Sæt {index + 1}: {set.weight} kg × {set.reps}
-                {SET_TYPE_BADGE[set.setType] && (
-                  <span className="ml-2 text-[12px] text-(--color-text-muted)">
-                    {SET_TYPE_BADGE[set.setType]}
-                  </span>
-                )}
-                {isPr && (
-                  <span className="ml-2 text-[12px] font-medium text-(--color-accent-green)">
-                    🏆 PR
-                  </span>
-                )}
-              </span>
-              <button
-                type="button"
-                onClick={() => onDeleteSet(set.id)}
-                aria-label="Slet sæt"
-                className="text-(--color-text-muted) active:opacity-60"
+              <div
+                key={set.id}
+                className="flex items-center justify-between text-[14px] text-(--color-text)"
               >
-                ✕
-              </button>
-            </div>
+                <span className="flex items-center gap-2">
+                  Sæt {index + 1}: {set.weight} kg × {set.reps}
+                  {SET_TYPE_BADGE[set.setType] && (
+                    <span className="text-[12px] text-(--color-text-muted)">
+                      {SET_TYPE_BADGE[set.setType]}
+                    </span>
+                  )}
+                  {isPr && (
+                    <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-accent-green)">
+                      <IconTrophy className="h-3.5 w-3.5" />
+                      PR
+                    </span>
+                  )}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onDeleteSet(set.id)}
+                  aria-label="Slet sæt"
+                  className="text-(--color-text-muted) active:opacity-60"
+                >
+                  <IconX className="h-4 w-4" />
+                </button>
+              </div>
             );
           })}
         </div>

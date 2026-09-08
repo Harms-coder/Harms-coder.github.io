@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
 import { TextField } from "../../components/TextField";
+import { IconPencil, IconTrash } from "../../components/icons";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import { formatPace } from "../../lib/format";
 import type { CardioEntry } from "../../types";
@@ -50,11 +52,8 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <TextField
-          label="Aktivitet"
-          value={activity}
-          onChange={(e) => setActivity(e.target.value)}
-        />
+        <span className="text-[13px] font-medium text-(--color-text-muted)">Aktivitet</span>
+        <ActivityPicker value={activity} onChange={setActivity} />
         <div className="grid grid-cols-2 gap-3">
           <TextField
             label="Distance (km)"
@@ -99,7 +98,7 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
           aria-label="Redigér"
           className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
         >
-          ✎
+          <IconPencil className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -107,7 +106,7 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
           aria-label="Slet"
           className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
         >
-          🗑
+          <IconTrash className="h-4 w-4" />
         </button>
       </div>
     </div>

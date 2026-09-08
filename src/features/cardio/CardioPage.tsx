@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
 import { TextField } from "../../components/TextField";
 import {
@@ -85,12 +86,8 @@ export function CardioPage() {
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
-          <TextField
-            label="Aktivitet"
-            value={activity}
-            onChange={(e) => setActivity(e.target.value)}
-            autoFocus
-          />
+          <span className="text-[13px] font-medium text-(--color-text-muted)">Aktivitet</span>
+          <ActivityPicker value={activity} onChange={setActivity} />
           <div className="grid grid-cols-2 gap-3">
             <TextField
               label="Distance (km)"

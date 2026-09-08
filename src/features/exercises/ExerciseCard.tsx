@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { CategoryPicker } from "../../components/CategoryPicker";
 import { TextField } from "../../components/TextField";
+import { IconPencil, IconTrash } from "../../components/icons";
 import type { Exercise } from "../../types";
 
 type ExerciseUpdate = Partial<
@@ -16,7 +18,7 @@ interface ExerciseCardProps {
 export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(exercise.name);
-  const [category, setCategory] = useState(exercise.category ?? "");
+  const [category, setCategory] = useState<string | undefined>(exercise.category);
   const [prWeight, setPrWeight] = useState(exercise.prWeight?.toString() ?? "");
   const [prReps, setPrReps] = useState(exercise.prReps?.toString() ?? "");
 
@@ -26,7 +28,7 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
     const hasPr = prWeight.trim() !== "" || prReps.trim() !== "";
     await onUpdate({
       name: trimmedName,
-      category: category.trim() || undefined,
+      category,
       prWeight: prWeight.trim() ? Number(prWeight) : undefined,
       prReps: prReps.trim() ? Number(prReps) : undefined,
       prDate: hasPr ? new Date().toISOString() : undefined,
@@ -44,11 +46,10 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
     return (
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
         <TextField label="Navn" value={name} onChange={(e) => setName(e.target.value)} />
-        <TextField
-          label="Kategori (valgfri)"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
+        <span className="text-[13px] font-medium text-(--color-text-muted)">
+          Kategori (valgfri)
+        </span>
+        <CategoryPicker value={category} onChange={setCategory} />
         <div className="grid grid-cols-2 gap-3">
           <TextField
             label="PR – vægt (kg)"
@@ -101,7 +102,7 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
           aria-label="Redigér"
           className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
         >
-          ✎
+          <IconPencil className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -109,7 +110,7 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
           aria-label="Slet"
           className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
         >
-          🗑
+          <IconTrash className="h-4 w-4" />
         </button>
       </div>
     </div>

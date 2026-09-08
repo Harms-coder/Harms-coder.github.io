@@ -2,6 +2,8 @@ import { generateId } from "../lib/id";
 import type { CardioEntry } from "../types";
 import { getDb } from "./database";
 
+export const CARDIO_ACTIVITIES = ["Løb", "Gang", "Cykling", "Svømning", "Roning", "Andet"] as const;
+
 export async function listCardioEntries(): Promise<CardioEntry[]> {
   const db = await getDb();
   const all = await db.getAllFromIndex("cardioEntries", "by-date");

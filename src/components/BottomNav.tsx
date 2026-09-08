@@ -1,21 +1,33 @@
+import type { ComponentType } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  IconActivity,
+  IconCalendar,
+  IconClipboard,
+  IconClock,
+  IconDumbbell,
+  IconHome,
+  IconList,
+  IconScale,
+  IconTrendUp,
+} from "./icons";
 
 interface NavItem {
   to: string;
   label: string;
-  icon: string;
+  Icon: ComponentType<{ className?: string }>;
 }
 
 const navItems: NavItem[] = [
-  { to: "/", label: "Oversigt", icon: "◎" },
-  { to: "/traening", label: "Træning", icon: "🏋" },
-  { to: "/cardio", label: "Cardio", icon: "🏃" },
-  { to: "/progression", label: "Progression", icon: "📈" },
-  { to: "/oevelser", label: "Øvelser", icon: "📋" },
-  { to: "/kalender", label: "Kalender", icon: "📅" },
-  { to: "/historik", label: "Historik", icon: "🕓" },
-  { to: "/kropsvaegt", label: "Kropsvægt", icon: "⚖" },
-  { to: "/plan", label: "Min Plan", icon: "📝" },
+  { to: "/", label: "Oversigt", Icon: IconHome },
+  { to: "/traening", label: "Træning", Icon: IconDumbbell },
+  { to: "/cardio", label: "Cardio", Icon: IconActivity },
+  { to: "/progression", label: "Progression", Icon: IconTrendUp },
+  { to: "/oevelser", label: "Øvelser", Icon: IconList },
+  { to: "/kalender", label: "Kalender", Icon: IconCalendar },
+  { to: "/historik", label: "Historik", Icon: IconClock },
+  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale },
+  { to: "/plan", label: "Min Plan", Icon: IconClipboard },
 ];
 
 export function BottomNav() {
@@ -38,7 +50,7 @@ export function BottomNav() {
               }`
             }
           >
-            <span className="text-lg leading-none">{item.icon}</span>
+            <item.Icon className="h-5 w-5" />
             <span className="whitespace-nowrap">{item.label}</span>
           </NavLink>
         ))}

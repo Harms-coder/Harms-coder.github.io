@@ -17,9 +17,9 @@
 }
 
 html,
-body,
-#root {
+body {
   height: 100%;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -28,6 +28,20 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+/*
+ * #root er den eneste scroll-container. Det holder bundnavigationen
+ * (position: fixed, pinned til selve viewporten) fra at "hoppe" eller
+ * forsvinde ved rubber-band-scroll/adressebjælke-animation på mobil.
+ */
+#root {
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 * {
