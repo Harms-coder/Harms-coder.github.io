@@ -49,6 +49,11 @@ export function getMonthGrid(year: number, month: number): Date[] {
   return days;
 }
 
+export function formatShortDate(iso: string): string {
+  const date = parseISODate(iso);
+  return `${date.getDate()}/${date.getMonth() + 1}`;
+}
+
 export function formatLongDate(date: Date): string {
   const weekdays = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
   return `${weekdays[date.getDay()]} d. ${date.getDate()}. ${DA_MONTHS[date.getMonth()]} ${date.getFullYear()}`;

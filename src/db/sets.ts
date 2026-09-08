@@ -7,6 +7,12 @@ export async function listSetsForSession(sessionId: string): Promise<SetEntry[]>
   return all.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
+export async function listSetsForExercise(exerciseId: string): Promise<SetEntry[]> {
+  const db = await getDb();
+  const all = await db.getAllFromIndex("sets", "by-exercise", exerciseId);
+  return all.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
 export async function getLastSetForExercise(
   exerciseId: string,
 ): Promise<SetEntry | undefined> {
