@@ -3,7 +3,8 @@ import type {
   BodyweightEntry,
   CardioEntry,
   Exercise,
-  PlannedExercise,
+  PlannedWorkout,
+  Routine,
   SetEntry,
   WorkoutSession,
 } from "../types";
@@ -34,38 +35,50 @@ interface TraeningsappDB extends DBSchema {
     value: BodyweightEntry;
     indexes: { "by-date": string };
   };
-  plannedExercises: {
+  routines: {
     key: string;
-    value: PlannedExercise;
+    value: Routine;
+  };
+  plannedWorkouts: {
+    key: string;
+    value: PlannedWorkout;
+    indexes: { "by-date": string };
   };
 }
 
 const DB_NAME = "traeningsapp";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 
 export function getDb() {
   if (!dbPromise) {
     dbPromise = openDB<TraeningsappDB>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        const exercises = db.createObjectStore("exercises", { keyPath: "id" });
-        exercises.createIndex("by-name", "name");
+      upgrade(db, oldVersion) {
+        if (oldVersion < 1) {
+          const exercises = db.createObjectStore("exercises", { keyPath: "id" });
+          exercises.createIndex("by-name", "name");
 
-        const sessions = db.createObjectStore("workoutSessions", { keyPath: "id" });
-        sessions.createIndex("by-date", "date");
+          const sessions = db.createObjectStore("workoutSessions", { keyPath: "id" });
+          sessions.createIndex("by-date", "date");
 
-        const sets = db.createObjectStore("sets", { keyPath: "id" });
-        sets.createIndex("by-session", "sessionId");
-        sets.createIndex("by-exercise", "exerciseId");
+          const sets = db.createObjectStore("sets", { keyPath: "id" });
+          sets.createIndex("by-session", "sessionId");
+          sets.createIndex("by-exercise", "exerciseId");
 
-        const cardio = db.createObjectStore("cardioEntries", { keyPath: "id" });
-        cardio.createIndex("by-date", "date");
+          const cardio = db.createObjectStore("cardioEntries", { keyPath: "id" });
+          cardio.createIndex("by-date", "date");
 
-        const bodyweight = db.createObjectStore("bodyweightEntries", { keyPath: "id" });
-        bodyweight.createIndex("by-date", "date");
+          const bodyweight = db.createObjectStore("bodyweightEntries", { keyPath: "id" });
+          bodyweight.createIndex("by-date", "date");
+        }
 
-        db.createObjectStore("plannedExercises", { keyPath: "id" });
+        if (oldVersion < 2) {
+          db.createObjectStore("routines", { keyPath: "id" });
+
+          const plannedWorkouts = db.createObjectStore("plannedWorkouts", { keyPath: "id" });
+          plannedWorkouts.createIndex("by-date", "date");
+        }
       },
     });
   }

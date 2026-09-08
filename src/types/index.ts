@@ -45,10 +45,16 @@ export interface BodyweightEntry {
   weight: number;
 }
 
-export interface PlannedExercise {
+export interface Routine {
   id: string;
-  exerciseId: string;
-  targetSets?: number;
-  targetReps?: number;
-  note?: string;
+  name: string;
+  exerciseIds: string[];
+  createdAt: string;
+}
+
+export interface PlannedWorkout {
+  id: string;
+  date: string;
+  routineId?: string;
+  exerciseIds: string[];
 }

@@ -13,6 +13,15 @@ export async function listSessions(): Promise<WorkoutSession[]> {
   return all.reverse();
 }
 
+export async function listSessionsInRange(
+  startDate: string,
+  endDate: string,
+): Promise<WorkoutSession[]> {
+  const db = await getDb();
+  const all = await db.getAllFromIndex("workoutSessions", "by-date");
+  return all.filter((session) => session.date >= startDate && session.date <= endDate);
+}
+
 export async function startSession(): Promise<WorkoutSession> {
   const db = await getDb();
   const now = new Date();
