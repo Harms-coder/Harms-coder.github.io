@@ -25,6 +25,7 @@ import { RANGE_KEYS, RANGE_LABELS, getPreviousRangeBounds, getRangeStart, type R
 import { computeGoalProgress } from "../../lib/goalProgress";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
+import { getWeightComparison } from "../../lib/weightComparisons";
 import type {
   BodyweightEntry,
   CardioEntry,
@@ -162,6 +163,10 @@ export function OverviewPage() {
   const cardioCountDelta = percentChange(cardioEntries.length, prevCardioEntries.length);
   const cardioKmDelta = percentChange(totalCardioKm, prevTotalCardioKm);
   const kgLiftedDelta = percentChange(totalKgLifted, prevTotalKgLifted);
+  const weightComparison = useMemo(
+    () => getWeightComparison(totalKgLifted),
+    [totalKgLifted],
+  );
 
   const weightInRange = useMemo(
     () =>
@@ -292,6 +297,7 @@ export function OverviewPage() {
           label={`Kg løftet · ${RANGE_LABELS[range].toLowerCase()}`}
           value={`${Math.round(totalKgLifted).toLocaleString("da-DK")} kg`}
           delta={kgLiftedDelta}
+          note={weightComparison}
           className="col-span-2"
         />
       </div>

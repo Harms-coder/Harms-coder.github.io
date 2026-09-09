@@ -8,10 +8,12 @@ interface StatTileProps {
   icon?: IconComponent;
   /** Procentvis ændring vs. forrige periode. Udelades hvis der ikke er noget at sammenligne med. */
   delta?: number;
+  /** Valgfri ekstra linje under tallet, fx en sjov sammenligning. */
+  note?: string;
   className?: string;
 }
 
-export function StatTile({ label, value, to, icon: Icon, delta, className = "" }: StatTileProps) {
+export function StatTile({ label, value, to, icon: Icon, delta, note, className = "" }: StatTileProps) {
   const isPositive = (delta ?? 0) >= 0;
   const content = (
     <>
@@ -33,6 +35,11 @@ export function StatTile({ label, value, to, icon: Icon, delta, className = "" }
           <IconChevronDown className={`h-3 w-3 ${isPositive ? "rotate-180" : ""}`} />
           {isPositive ? "+" : ""}
           {delta}%
+        </span>
+      )}
+      {note && (
+        <span className="text-right text-[15px] font-medium text-(--color-accent-glow)">
+          {note}
         </span>
       )}
     </>
