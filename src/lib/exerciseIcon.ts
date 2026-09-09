@@ -92,3 +92,18 @@ export function getExerciseIcon(exercise: Pick<Exercise, "name" | "category">): 
   }
   return IconExercisePlaceholder;
 }
+
+/**
+ * URL-sikkert filnavn ud fra øvelsens navn, fx "Flad bænkpres med vægtstang" -> "flad-baenkpres-med-vaegtstang".
+ * Bruges til at slå et evt. øvelsesbillede op i public/images/exercises/ — se ExerciseIcon.tsx.
+ */
+export function slugifyExerciseName(name: string): string {
+  return name
+    .toLowerCase()
+    .replaceAll("æ", "ae")
+    .replaceAll("ø", "oe")
+    .replaceAll("å", "aa")
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
