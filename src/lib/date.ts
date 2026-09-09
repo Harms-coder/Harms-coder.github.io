@@ -26,6 +26,17 @@ export function todayISODate(): string {
   return toISODate(new Date());
 }
 
+/** Den løbende uge (mandag-søndag), som ugentlige mål (træninger/km pr. uge) måles imod. */
+export function getCurrentWeekRange(): { start: string; end: string } {
+  const now = new Date();
+  const mondayOffset = (now.getDay() + 6) % 7;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - mondayOffset);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return { start: toISODate(monday), end: toISODate(sunday) };
+}
+
 export function parseISODate(iso: string): Date {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day);

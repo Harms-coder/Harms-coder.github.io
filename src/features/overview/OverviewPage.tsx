@@ -1,23 +1,39 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { GoalProgress } from "../../components/GoalProgress";
+import { HeroHeader } from "../../components/HeroHeader";
 import { IconClock, IconDumbbell, IconMapPin, IconRun } from "../../components/icons";
+import { ProgressBadge } from "../../components/ProgressBadge";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
 import { StatTile } from "../../components/StatTile";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { listBodyweightEntries } from "../../db/bodyweight";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
-import { listSessionsInRange } from "../../db/sessions";
+import { listGoals } from "../../db/goals";
+import { listSessions, listSessionsInRange } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
 import {
   DA_WEEKDAYS_SHORT,
   formatShortDate,
+  getCurrentWeekRange,
   parseISODate,
   toISODate,
   todayISODate,
 } from "../../lib/date";
+import { computeGoalProgress } from "../../lib/goalProgress";
+import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
-import type { BodyweightEntry, CardioEntry, Exercise, SetEntry, WorkoutSession } from "../../types";
+import type {
+  BodyweightEntry,
+  CardioEntry,
+  Exercise,
+  Goal,
+  SetEntry,
+  WorkoutSession,
+} from "../../types";
+import { TodayCard } from "./TodayCard";
 
 const TOP_GAINS_SHOWN = 5;
 
@@ -70,6 +86,10 @@ export function OverviewPage() {
   const [prevSessions, setPrevSessions] = useState<WorkoutSession[]>([]);
   const [prevCardioEntries, setPrevCardioEntries] = useState<CardioEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [weekSessions, setWeekSessions] = useState<WorkoutSession[]>([]);
+  const [weekCardio, setWeekCardio] = useState<CardioEntry[]>([]);
+  const [allSessions, setAllSessions] = useState<WorkoutSession[]>([]);
 
   async function load() {
     const start = getRangeStart(range);
@@ -96,16 +116,56 @@ export function OverviewPage() {
   }, [range]);
 
   useEffect(() => {
-    void Promise.all([listExercises(), listAllSets()]).then(([exerciseList, setList]) => {
-      setExercises(exerciseList);
-      setAllSets(setList);
-    });
+    void Promise.all([listExercises(), listAllSets(), listGoals(), listSessions()]).then(
+      ([exerciseList, setList, goalList, sessionList]) => {
+        setExercises(exerciseList);
+        setAllSets(setList);
+        setGoals(goalList);
+        setAllSessions(sessionList);
+      },
+    );
+    const { start, end } = getCurrentWeekRange();
+    void Promise.all([listSessionsInRange(start, end), listCardioEntriesInRange(start, end)]).then(
+      ([weekSessionList, weekCardioList]) => {
+        setWeekSessions(weekSessionList.filter((s) => s.endedAt));
+        setWeekCardio(weekCardioList);
+      },
+    );
   }, []);
 
+  const exerciseById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
+  const setsByExercise = useMemo(() => groupSetsByExercise(allSets), [allSets]);
+
+  const goalProgressList = useMemo(
+    () =>
+      goals.map((goal) =>
+        computeGoalProgress(goal, {
+          sessionsThisWeek: weekSessions,
+          cardioThisWeek: weekCardio,
+          latestBodyweight: bodyweightEntries[0],
+          exerciseById,
+        }),
+      ),
+    [goals, weekSessions, weekCardio, bodyweightEntries, exerciseById],
+  );
+  const weeklyGoalProgress = goalProgressList.filter(
+    (g) => g.goal.type === "sessionsPerWeek" || g.goal.type === "distanceKmPerWeek",
+  );
+
+  const badges = useMemo(
+    () =>
+      computeBadges({
+        exercises,
+        setsByExercise,
+        sessions: allSessions,
+        goalProgress: goalProgressList,
+      }),
+    [exercises, setsByExercise, allSessions, goalProgressList],
+  );
+
   const strengthGains = useMemo(() => {
-    const setsByExercise = groupSetsByExercise(allSets);
     return buildStrengthGains(exercises, setsByExercise).sort((a, b) => b.percent - a.percent);
-  }, [exercises, allSets]);
+  }, [exercises, setsByExercise]);
   const topGains = strengthGains.slice(0, TOP_GAINS_SHOWN);
   const avgGainPercent =
     strengthGains.length > 0
@@ -164,32 +224,70 @@ export function OverviewPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold text-(--color-text)">Oversigt</h1>
-        <p className="text-[13px] text-(--color-text-secondary)">Din indsats tæller. Bliv ved.</p>
+      <HeroHeader
+        title="Oversigt"
+        subtitle="Din indsats tæller. Bliv ved."
+        image="/images/dashboard-mountains.jpg"
+        imagePosition="center 60%"
+      />
+
+      <TodayCard />
+
+      {badges.length > 0 && (
+        <div className="no-scrollbar flex gap-2 overflow-x-auto">
+          {badges.map((badge) => (
+            <ProgressBadge key={`${badge.kind}-${badge.label}`} badge={badge} />
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-(--color-text-muted)">Ugens målstatus</span>
+          <Link to="/mal" className="text-[13px] font-medium text-(--color-accent)">
+            Alle mål →
+          </Link>
+        </div>
+        {weeklyGoalProgress.length === 0 ? (
+          <p className="text-[13px] text-(--color-text-muted)">
+            Sæt et ugentligt mål for træning eller løb for at følge status her.
+          </p>
+        ) : (
+          weeklyGoalProgress.map((progress) => (
+            <GoalProgress
+              key={progress.goal.id}
+              label={progress.label}
+              statusText={progress.statusText}
+              percent={progress.percent}
+            />
+          ))
+        )}
       </div>
 
-      <div className="flex gap-1 rounded-full border border-(--color-border) bg-(--color-bg-tertiary) p-1">
-        {(Object.keys(RANGE_LABELS) as RangeKey[]).map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setRange(key)}
-            className={`min-h-9 flex-1 whitespace-nowrap rounded-full px-1 text-[12px] font-medium ${
-              range === key
-                ? "accent-fill text-(--color-text)"
-                : "bg-transparent text-(--color-text-muted)"
-            }`}
-          >
-            {RANGE_LABELS[key]}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        options={(Object.keys(RANGE_LABELS) as RangeKey[]).map((key) => ({
+          value: key,
+          label: RANGE_LABELS[key],
+        }))}
+        value={range}
+        onChange={setRange}
+      />
 
-      <div className="hero-glow flex flex-col gap-1 rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
-        <span className="text-[13px] font-medium text-(--color-accent-bright)">Motivation</span>
-        <p className="text-[15px] font-medium text-(--color-text)">
-          Små skridt skaber store resultater.
+      <div className="relative flex min-h-36 flex-col justify-end gap-1 overflow-hidden rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
+        <img
+          src="/images/dashboard-mountains.jpg"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: "center 70%" }}
+        />
+        <div className="hero-scrim absolute inset-0" />
+        <span className="relative text-[13px] font-medium text-(--color-accent-bright)">
+          Motivation
+        </span>
+        <p className="relative text-[20px] font-semibold leading-snug text-(--color-text)">
+          Små skridt
+          <br />
+          skaber store resultater.
         </p>
       </div>
 

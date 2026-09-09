@@ -28,7 +28,7 @@ export async function createExercise(input: {
 }
 
 type ExerciseUpdate = Partial<
-  Pick<Exercise, "name" | "category" | "prWeight" | "prReps" | "prDate">
+  Pick<Exercise, "name" | "category" | "prWeight" | "prReps" | "prDate" | "pr1RM" | "pr1RMDate">
 >;
 
 export async function updateExercise(
@@ -49,8 +49,8 @@ export async function deleteExercise(id: string): Promise<void> {
 }
 
 /**
- * Opdaterer øvelsens PR hvis det angivne vægt/reps-par slår den nuværende
- * rekord. Højere vægt vinder altid; ved samme vægt vinder flere reps.
+ * Opdaterer øvelsens tungeste sæt-PR hvis det angivne vægt/reps-par slår den:
+ * højere vægt vinder altid, ved samme vægt vinder flere reps.
  */
 export async function maybeUpdatePr(
   exerciseId: string,

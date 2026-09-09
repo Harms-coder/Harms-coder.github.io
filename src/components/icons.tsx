@@ -440,3 +440,53 @@ export function IconCheck(props: IconProps) {
     </svg>
   );
 }
+
+export function IconFlame(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3c1 2.5-2.5 3.8-2.5 6.8a2.5 2.5 0 0 0 5 0c1.3 1 2 2.5 2 4a4.5 4.5 0 0 1-9 0C7.5 10 9 6.5 12 3Z" />
+    </svg>
+  );
+}
+
+export function IconChevronLeft(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M14.5 6 8 12l6.5 6" />
+    </svg>
+  );
+}
+
+export function IconChevronRight(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M9.5 6 16 12l-6.5 6" />
+    </svg>
+  );
+}
+
+export function IconPause(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M8 5v14M16 5v14" />
+    </svg>
+  );
+}
+
+export function IconPlay(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M7 4.5v15l13-7.5-13-7.5Z" />
+    </svg>
+  );
+}
+
+export function IconTarget(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}

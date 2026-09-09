@@ -1,23 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
-import { listExercises, maybeUpdatePr } from "../../db/exercises";
+import { PageBackdrop } from "../../components/PageBackdrop";
+import { listExercises } from "../../db/exercises";
 import { endSession, getActiveSession, startSession } from "../../db/sessions";
-import { addSet, deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
+import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseSessionCard } from "./ExerciseSessionCard";
-
-function orderFromSets(sessionSets: SetEntry[]): string[] {
-  const seen = new Set<string>();
-  const order: string[] = [];
-  for (const set of [...sessionSets].sort((a, b) => a.createdAt.localeCompare(b.createdAt))) {
-    if (!seen.has(set.exerciseId)) {
-      seen.add(set.exerciseId);
-      order.push(set.exerciseId);
-    }
-  }
-  return order;
-}
+import { orderFromSets } from "./exerciseOrder";
+import { logSet } from "./logSet";
 
 export function TrainingPage() {
   const [loading, setLoading] = useState(true);
@@ -88,7 +80,7 @@ export function TrainingPage() {
   ) {
     if (!session) return;
     const existingForExercise = sets.filter((s) => s.exerciseId === exerciseId);
-    const newSet = await addSet({
+    const { newSet, updatedExercise } = await logSet({
       sessionId: session.id,
       exerciseId,
       weight: values.weight,
@@ -97,14 +89,10 @@ export function TrainingPage() {
       order: existingForExercise.length,
     });
     setSets((current) => [...current, newSet]);
-
-    if (values.setType === "normal" || values.setType === "1rm") {
-      const updatedExercise = await maybeUpdatePr(exerciseId, values.weight, values.reps);
-      if (updatedExercise) {
-        setExercises((current) =>
-          current.map((exercise) => (exercise.id === exerciseId ? updatedExercise : exercise)),
-        );
-      }
+    if (updatedExercise) {
+      setExercises((current) =>
+        current.map((exercise) => (exercise.id === exerciseId ? updatedExercise : exercise)),
+      );
     }
   }
 
@@ -125,8 +113,9 @@ export function TrainingPage() {
 
   if (!session) {
     return (
-      <div className="flex flex-col items-center gap-4 px-4 pt-16 text-center">
-        <h1 className="text-2xl font-semibold text-(--color-text)">Træning</h1>
+      <div className="flex flex-col items-center gap-4 px-4 pt-6 text-center">
+        <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
+        <h1 className="mt-8 text-2xl font-semibold text-(--color-text)">Træning</h1>
         <p className="text-sm text-(--color-text-muted)">
           Start en træning for at begynde at logge sæt.
         </p>
@@ -137,6 +126,7 @@ export function TrainingPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <h1 className="text-2xl font-semibold text-(--color-text)">Træning</h1>
@@ -152,6 +142,13 @@ export function TrainingPage() {
           Afslut
         </Button>
       </div>
+
+      <Link
+        to="/traening/live"
+        className="rounded-2xl border border-(--color-border-accent) bg-(--color-surface-2) px-4 py-3 text-center text-[14px] font-medium text-(--color-accent-bright) active:opacity-80"
+      >
+        Skift til live-tilstand →
+      </Link>
 
       {exerciseOrder.map((exerciseId) => {
         const exercise = exerciseById.get(exerciseId);

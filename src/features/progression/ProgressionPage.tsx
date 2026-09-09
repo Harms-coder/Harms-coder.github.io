@@ -5,19 +5,24 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { IconTrophy } from "../../components/icons";
+import { PageBackdrop } from "../../components/PageBackdrop";
+import { ProgressBadge } from "../../components/ProgressBadge";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { listExercises } from "../../db/exercises";
+import { listSessions } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
-import { formatShortDate } from "../../lib/date";
+import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
+import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
-import type { Exercise, SetEntry } from "../../types";
+import type { Exercise, SetEntry, WorkoutSession } from "../../types";
 
 interface DailyStat {
   date: string;
@@ -48,18 +53,26 @@ function buildDailyStats(sets: SetEntry[]): DailyStat[] {
 export function ProgressionPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [allSets, setAllSets] = useState<SetEntry[]>([]);
+  const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    void Promise.all([listExercises(), listAllSets()]).then(([exerciseList, setList]) => {
-      setExercises(exerciseList);
-      setAllSets(setList);
-      setLoading(false);
-    });
+    void Promise.all([listExercises(), listAllSets(), listSessions()]).then(
+      ([exerciseList, setList, sessionList]) => {
+        setExercises(exerciseList);
+        setAllSets(setList);
+        setSessions(sessionList);
+        setLoading(false);
+      },
+    );
   }, []);
 
   const setsByExercise = useMemo(() => groupSetsByExercise(allSets), [allSets]);
+  const badges = useMemo(
+    () => computeBadges({ exercises, setsByExercise, sessions, goalProgress: [] }),
+    [exercises, setsByExercise, sessions],
+  );
 
   const sortedExercises = useMemo(
     () =>
@@ -98,6 +111,7 @@ export function ProgressionPage() {
   if (exercises.length === 0) {
     return (
       <div className="flex flex-col gap-2 px-4 pt-6">
+        <PageBackdrop image="/images/progression-peak.jpg" imagePosition="center 40%" />
         <h1 className="text-2xl font-semibold text-(--color-text)">Progression</h1>
         <p className="text-sm text-(--color-text-muted)">
           Opret øvelser og log nogle sæt for at se din udvikling her.
@@ -108,12 +122,21 @@ export function ProgressionPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/progression-peak.jpg" imagePosition="center 40%" />
       <div className="flex flex-col gap-1">
         <h1 className="text-[28px] font-bold text-(--color-text)">Progression</h1>
         <p className="text-[13px] text-(--color-text-secondary)">
           Synlige fremskridt. Reelle resultater.
         </p>
       </div>
+
+      {badges.length > 0 && (
+        <div className="no-scrollbar flex gap-2 overflow-x-auto">
+          {badges.map((badge) => (
+            <ProgressBadge key={`${badge.kind}-${badge.label}`} badge={badge} />
+          ))}
+        </div>
+      )}
 
       {strengthGains.length > 0 && avgGainPercent !== undefined && (
         <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
@@ -146,7 +169,7 @@ export function ProgressionPage() {
             className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
               selectedId === exercise.id
                 ? "accent-fill text-(--color-text)"
-                : "bg-(--color-surface-2) text-(--color-text-muted)"
+                : "glass-fill text-(--color-text-muted)"
             }`}
           >
             {exercise.name}
@@ -155,15 +178,40 @@ export function ProgressionPage() {
       </div>
 
       {selectedExercise &&
-        (selectedExercise.prWeight !== undefined || selectedExercise.prReps !== undefined) && (
-          <div className="accent-glow-ring flex items-center justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <span className="flex items-center gap-2 text-[13px] font-medium text-(--color-text-muted)">
-              <IconTrophy className="h-4 w-4 text-(--color-accent-bright)" />
-              Nuværende PR
-            </span>
-            <span className="text-[15px] font-semibold text-(--color-accent-glow)">
-              {selectedExercise.prWeight} kg × {selectedExercise.prReps}
-            </span>
+        (selectedExercise.prWeight !== undefined || selectedExercise.pr1RM !== undefined) && (
+          <div className="grid grid-cols-2 gap-3">
+            {selectedExercise.prWeight !== undefined && (
+              <div className="accent-glow-ring flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+                <span className="flex items-center gap-1.5 text-[12px] font-medium text-(--color-text-muted)">
+                  <IconTrophy className="h-3.5 w-3.5 text-(--color-accent-bright)" />
+                  Tungeste sæt
+                </span>
+                <span className="text-[17px] font-semibold text-(--color-accent-glow)">
+                  {selectedExercise.prWeight} kg × {selectedExercise.prReps}
+                </span>
+                {selectedExercise.prDate && (
+                  <span className="text-[11px] text-(--color-text-muted)">
+                    {formatMediumDate(parseISODate(selectedExercise.prDate.slice(0, 10)))}
+                  </span>
+                )}
+              </div>
+            )}
+            {selectedExercise.pr1RM !== undefined && (
+              <div className="accent-glow-ring flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+                <span className="flex items-center gap-1.5 text-[12px] font-medium text-(--color-text-muted)">
+                  <IconTrophy className="h-3.5 w-3.5 text-(--color-accent-bright)" />
+                  1RM
+                </span>
+                <span className="text-[17px] font-semibold text-(--color-accent-glow)">
+                  {selectedExercise.pr1RM} kg
+                </span>
+                {selectedExercise.pr1RMDate && (
+                  <span className="text-[11px] text-(--color-text-muted)">
+                    {formatMediumDate(parseISODate(selectedExercise.pr1RMDate.slice(0, 10)))}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -174,9 +222,17 @@ export function ProgressionPage() {
       ) : (
         <>
           <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
-              Tungeste vægt pr. træning (kg)
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-medium text-(--color-text-muted)">
+                Tungeste vægt pr. træning (kg)
+              </span>
+              {selectedExercise?.pr1RM !== undefined && (
+                <span className="flex items-center gap-1 text-[11px] text-(--color-text-muted)">
+                  <span className="h-2 w-2 rounded-full bg-(--color-success)" />
+                  Dit 1RM
+                </span>
+              )}
+            </div>
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
@@ -184,6 +240,13 @@ export function ProgressionPage() {
                   <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                   <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                   <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                  {selectedExercise?.pr1RM !== undefined && (
+                    <ReferenceLine
+                      y={selectedExercise.pr1RM}
+                      stroke="var(--color-success)"
+                      strokeDasharray="4 4"
+                    />
+                  )}
                   <Line
                     type="monotone"
                     dataKey="maxWeight"

@@ -1,13 +1,15 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { DemoSeedPage } from "./features/demo/DemoSeedPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
+import { GoalsPage } from "./features/goals/GoalsPage";
 import { HistoryPage } from "./features/history/HistoryPage";
 import { OverviewPage } from "./features/overview/OverviewPage";
 import { PlanPage } from "./features/plan/PlanPage";
+import { LiveTrainingPage } from "./features/training/LiveTrainingPage";
 import { TrainingPage } from "./features/training/TrainingPage";
 
 // Recharts er tung (~375 kB), så siderne der bruger den lazy-loades
@@ -40,11 +42,15 @@ function LazyPage({ children }: { children: ReactNode }) {
 }
 
 function App() {
+  const location = useLocation();
+  const hideBottomNav = location.pathname === "/traening/live";
+
   return (
-    <div className="min-h-full bg-(--color-bg) pb-24">
+    <div className={`min-h-full bg-(--color-bg) ${hideBottomNav ? "" : "pb-24"}`}>
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/traening" element={<TrainingPage />} />
+        <Route path="/traening/live" element={<LiveTrainingPage />} />
         <Route path="/cardio" element={<CardioPage />} />
         <Route
           path="/progression"
@@ -66,6 +72,7 @@ function App() {
           }
         />
         <Route path="/plan" element={<PlanPage />} />
+        <Route path="/mal" element={<GoalsPage />} />
         <Route
           path="/minutter"
           element={
@@ -84,7 +91,7 @@ function App() {
         />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
-      <BottomNav />
+      {!hideBottomNav && <BottomNav />}
     </div>
   );
 }

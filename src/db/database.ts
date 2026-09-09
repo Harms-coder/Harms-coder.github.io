@@ -3,6 +3,7 @@ import type {
   BodyweightEntry,
   CardioEntry,
   Exercise,
+  Goal,
   PlannedWorkout,
   Routine,
   SetEntry,
@@ -44,10 +45,14 @@ interface TraeningsappDB extends DBSchema {
     value: PlannedWorkout;
     indexes: { "by-date": string };
   };
+  goals: {
+    key: string;
+    value: Goal;
+  };
 }
 
 const DB_NAME = "traeningsapp";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 
@@ -78,6 +83,10 @@ export function getDb() {
 
           const plannedWorkouts = db.createObjectStore("plannedWorkouts", { keyPath: "id" });
           plannedWorkouts.createIndex("by-date", "date");
+        }
+
+        if (oldVersion < 3) {
+          db.createObjectStore("goals", { keyPath: "id" });
         }
       },
     });
