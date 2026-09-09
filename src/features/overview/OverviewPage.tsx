@@ -202,9 +202,10 @@ export function OverviewPage() {
         subtitle="Din indsats tæller. Bliv ved."
         image="/images/dashboard-peaks.jpg"
         imagePosition="center 40%"
+        bottomPadding="pb-3"
       />
 
-      <div className="-mt-2">
+      <div className="-mt-4">
         <TodayCard />
       </div>
 

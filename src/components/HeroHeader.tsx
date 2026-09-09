@@ -9,10 +9,19 @@ interface HeroHeaderProps {
   imagePosition?: string;
   /** Valgfri knap ved siden af titlen, fx en "+ Tilføj"-handling. */
   action?: ReactNode;
+  /** Tailwind-klasse for luften under subtitlen — mindre værdi flytter næste element tættere på. */
+  bottomPadding?: string;
 }
 
 /** Genanvendelig hero-sektion: foto-baggrund med logo + titel + subtitle ovenpå, der blender ned i sidens baggrund. */
-export function HeroHeader({ title, subtitle, image, imagePosition = "center", action }: HeroHeaderProps) {
+export function HeroHeader({
+  title,
+  subtitle,
+  image,
+  imagePosition = "center",
+  action,
+  bottomPadding = "pb-9",
+}: HeroHeaderProps) {
   return (
     <div className="relative -mx-4 -mt-6 h-72 overflow-hidden">
       <img
@@ -23,7 +32,7 @@ export function HeroHeader({ title, subtitle, image, imagePosition = "center", a
       />
       <div className="hero-scrim absolute inset-0" />
       <div
-        className="relative flex h-full flex-col justify-between px-4 pb-9"
+        className={`relative flex h-full flex-col justify-between px-4 ${bottomPadding}`}
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)" }}
       >
         <VigorraLogo />
