@@ -57,7 +57,7 @@ export function HistoryPage() {
           return (
             <div
               key={session.id}
-              className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4"
+              className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow"
             >
               <button
                 type="button"

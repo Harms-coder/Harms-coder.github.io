@@ -22,6 +22,12 @@ const BodyweightPage = lazy(() =>
     default: m.BodyweightPage,
   })),
 );
+const MinutesPage = lazy(() =>
+  import("./features/minutes/MinutesPage").then((m) => ({ default: m.MinutesPage })),
+);
+const DistancePage = lazy(() =>
+  import("./features/distance/DistancePage").then((m) => ({ default: m.DistancePage })),
+);
 
 function LazyPage({ children }: { children: ReactNode }) {
   return (
@@ -60,6 +66,22 @@ function App() {
           }
         />
         <Route path="/plan" element={<PlanPage />} />
+        <Route
+          path="/minutter"
+          element={
+            <LazyPage>
+              <MinutesPage />
+            </LazyPage>
+          }
+        />
+        <Route
+          path="/kilometer"
+          element={
+            <LazyPage>
+              <DistancePage />
+            </LazyPage>
+          }
+        />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
       <BottomNav />

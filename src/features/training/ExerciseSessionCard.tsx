@@ -31,7 +31,7 @@ export function ExerciseSessionCard({
   onDeleteSet,
 }: ExerciseSessionCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <button
         type="button"
         onClick={onToggle}
@@ -69,7 +69,7 @@ export function ExerciseSessionCard({
                     </span>
                   )}
                   {isPr && (
-                    <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-accent-green)">
+                    <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-accent-glow)">
                       <IconTrophy className="h-3.5 w-3.5" />
                       PR
                     </span>

@@ -10,10 +10,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { IconTrophy } from "../../components/icons";
+import { StrengthGainList } from "../../components/StrengthGainList";
 import { listExercises } from "../../db/exercises";
-import { listSetsForExercise } from "../../db/sets";
+import { listAllSets } from "../../db/sets";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatShortDate } from "../../lib/date";
+import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import type { Exercise, SetEntry } from "../../types";
 
 interface DailyStat {
@@ -44,30 +47,48 @@ function buildDailyStats(sets: SetEntry[]): DailyStat[] {
 
 export function ProgressionPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [allSets, setAllSets] = useState<SetEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [sets, setSets] = useState<SetEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadExercises() {
-    const all = await listExercises();
-    setExercises(all);
-    setSelectedId(all[0]?.id ?? null);
-    setLoading(false);
-  }
-
   useEffect(() => {
-    void loadExercises();
+    void Promise.all([listExercises(), listAllSets()]).then(([exerciseList, setList]) => {
+      setExercises(exerciseList);
+      setAllSets(setList);
+      setLoading(false);
+    });
   }, []);
 
-  useEffect(() => {
-    if (!selectedId) {
-      setSets([]);
-      return;
-    }
-    void listSetsForExercise(selectedId).then(setSets);
-  }, [selectedId]);
+  const setsByExercise = useMemo(() => groupSetsByExercise(allSets), [allSets]);
 
-  const dailyStats = useMemo(() => buildDailyStats(sets), [sets]);
+  const sortedExercises = useMemo(
+    () =>
+      [...exercises].sort((a, b) => {
+        const diff = (setsByExercise.get(b.id)?.length ?? 0) - (setsByExercise.get(a.id)?.length ?? 0);
+        return diff !== 0 ? diff : a.name.localeCompare(b.name);
+      }),
+    [exercises, setsByExercise],
+  );
+
+  useEffect(() => {
+    if (selectedId || sortedExercises.length === 0) return;
+    setSelectedId(sortedExercises[0].id);
+  }, [sortedExercises, selectedId]);
+
+  const strengthGains = useMemo(
+    () => buildStrengthGains(exercises, setsByExercise).sort((a, b) => b.percent - a.percent),
+    [exercises, setsByExercise],
+  );
+  const avgGainPercent = useMemo(() => {
+    if (strengthGains.length === 0) return undefined;
+    const sum = strengthGains.reduce((acc, g) => acc + g.percent, 0);
+    return Math.round((sum / strengthGains.length) * 10) / 10;
+  }, [strengthGains]);
+
+  const dailyStats = useMemo(
+    () => buildDailyStats(setsByExercise.get(selectedId ?? "") ?? []),
+    [setsByExercise, selectedId],
+  );
   const selectedExercise = exercises.find((e) => e.id === selectedId);
 
   if (loading) {
@@ -87,17 +108,44 @@ export function ProgressionPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <h1 className="text-2xl font-semibold text-(--color-text)">Progression</h1>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-[28px] font-bold text-(--color-text)">Progression</h1>
+        <p className="text-[13px] text-(--color-text-secondary)">
+          Synlige fremskridt. Reelle resultater.
+        </p>
+      </div>
+
+      {strengthGains.length > 0 && avgGainPercent !== undefined && (
+        <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-[13px] font-medium text-(--color-text-muted)">
+              Styrke-fremgang
+            </span>
+            <span
+              className={`text-[15px] font-semibold ${
+                avgGainPercent >= 0 ? "text-(--color-accent-glow)" : "text-(--color-text-muted)"
+              }`}
+            >
+              {avgGainPercent > 0 ? "+" : ""}
+              {avgGainPercent}% i gennemsnit
+            </span>
+          </div>
+          <span className="text-[11px] text-(--color-text-muted)">
+            Fra din første logning til nu (PR), pr. øvelse — ikke bundet til en bestemt periode
+          </span>
+          <StrengthGainList gains={strengthGains} className="max-h-64 overflow-y-auto pr-1 pt-1" />
+        </div>
+      )}
 
       <div className="no-scrollbar flex gap-2 overflow-x-auto">
-        {exercises.map((exercise) => (
+        {sortedExercises.map((exercise) => (
           <button
             key={exercise.id}
             type="button"
             onClick={() => setSelectedId(exercise.id)}
             className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
               selectedId === exercise.id
-                ? "bg-(--color-accent) text-white"
+                ? "accent-fill text-(--color-text)"
                 : "bg-(--color-surface-2) text-(--color-text-muted)"
             }`}
           >
@@ -108,11 +156,12 @@ export function ProgressionPage() {
 
       {selectedExercise &&
         (selectedExercise.prWeight !== undefined || selectedExercise.prReps !== undefined) && (
-          <div className="flex items-center justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
+          <div className="accent-glow-ring flex items-center justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+            <span className="flex items-center gap-2 text-[13px] font-medium text-(--color-text-muted)">
+              <IconTrophy className="h-4 w-4 text-(--color-accent-bright)" />
               Nuværende PR
             </span>
-            <span className="text-[15px] font-semibold text-(--color-accent-green)">
+            <span className="text-[15px] font-semibold text-(--color-accent-glow)">
               {selectedExercise.prWeight} kg × {selectedExercise.prReps}
             </span>
           </div>
@@ -124,7 +173,7 @@ export function ProgressionPage() {
         </p>
       ) : (
         <>
-          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
             <span className="text-[13px] font-medium text-(--color-text-muted)">
               Tungeste vægt pr. træning (kg)
             </span>
@@ -138,16 +187,16 @@ export function ProgressionPage() {
                   <Line
                     type="monotone"
                     dataKey="maxWeight"
-                    stroke="var(--color-accent)"
+                    stroke="var(--color-accent-bright)"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: "var(--color-accent)" }}
+                    dot={{ r: 3, fill: "var(--color-accent-bright)" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
             <span className="text-[13px] font-medium text-(--color-text-muted)">
               Volume pr. træning (kg × reps)
             </span>
@@ -158,7 +207,7 @@ export function ProgressionPage() {
                   <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                   <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                   <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
-                  <Bar dataKey="volume" fill="var(--color-accent-green)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

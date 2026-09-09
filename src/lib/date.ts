@@ -54,6 +54,12 @@ export function formatShortDate(iso: string): string {
   return `${date.getDate()}/${date.getMonth() + 1}`;
 }
 
+/** Formats a "YYYY-MM" month key as a short Danish label, e.g. "jan 2026". */
+export function formatMonthLabel(monthKey: string): string {
+  const [year, month] = monthKey.split("-").map(Number);
+  return `${DA_MONTHS[month - 1].slice(0, 3)} ${year}`;
+}
+
 export function formatMediumDate(date: Date): string {
   return `${date.getDate()}. ${DA_MONTHS[date.getMonth()].slice(0, 3)} ${date.getFullYear()}`;
 }

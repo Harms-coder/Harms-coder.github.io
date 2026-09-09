@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/Button";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
+import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { TextField } from "../../components/TextField";
 import { listExercises } from "../../db/exercises";
-import { createRoutine, deleteRoutine, listRoutines, updateRoutine } from "../../db/routines";
+import {
+  createRoutine,
+  deleteRoutine,
+  listRoutines,
+  ROUTINE_COLORS,
+  updateRoutine,
+} from "../../db/routines";
 import type { Exercise, Routine } from "../../types";
 import { RoutineCard } from "./RoutineCard";
 
@@ -14,6 +21,7 @@ export function PlanPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState("");
   const [newExerciseIds, setNewExerciseIds] = useState<string[]>([]);
+  const [newColor, setNewColor] = useState<string>(ROUTINE_COLORS[0]);
 
   async function refresh() {
     const [allRoutines, allExercises] = await Promise.all([listRoutines(), listExercises()]);
@@ -36,14 +44,18 @@ export function PlanPage() {
 
   async function handleAdd() {
     if (!newName.trim() || newExerciseIds.length === 0) return;
-    await createRoutine({ name: newName, exerciseIds: newExerciseIds });
+    await createRoutine({ name: newName, exerciseIds: newExerciseIds, color: newColor });
     setNewName("");
     setNewExerciseIds([]);
+    setNewColor(ROUTINE_COLORS[0]);
     setIsAdding(false);
     await refresh();
   }
 
-  async function handleUpdate(id: string, changes: { name: string; exerciseIds: string[] }) {
+  async function handleUpdate(
+    id: string,
+    changes: { name: string; exerciseIds: string[]; color?: string },
+  ) {
     await updateRoutine(id, changes);
     await refresh();
   }
@@ -70,7 +82,7 @@ export function PlanPage() {
       </p>
 
       {isAdding && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <TextField
             label="Navn"
             placeholder="fx Træning 1"
@@ -84,6 +96,10 @@ export function PlanPage() {
             selectedIds={newExerciseIds}
             onToggle={toggleNewExercise}
           />
+          <span className="text-[13px] font-medium text-(--color-text-muted)">
+            Farve (vises i kalenderen)
+          </span>
+          <RoutineColorPicker value={newColor} onChange={setNewColor} />
           <Button onClick={handleAdd} disabled={!newName.trim() || newExerciseIds.length === 0}>
             Gem gruppe
           </Button>

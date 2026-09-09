@@ -43,8 +43,10 @@ const BASE_WEIGHT: Record<string, number> = {
   "Stående tåhæv": 40,
 };
 
+const WEEKS = 52;
+
 /**
- * Genererer ca. 6 måneders realistisk brugshistorik (træninger, cardio,
+ * Genererer ca. et års realistisk brugshistorik (træninger, cardio,
  * kropsvægt, rutiner, planlagte dage) direkte i den lokale IndexedDB via
  * de rigtige db-funktioner/typer. Bruges kun som en engangs "prøv appen
  * som om du havde brugt den længe"-handling.
@@ -79,7 +81,7 @@ export async function generateDemoHistory(): Promise<{
   const today = new Date();
   today.setHours(18, 0, 0, 0);
   const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 26 * 7);
+  startDate.setDate(startDate.getDate() - WEEKS * 7);
 
   const splitOrder = Object.keys(SPLITS);
   const bestByExercise = new Map<string, { weight: number; reps: number; date: string }>();
@@ -87,7 +89,7 @@ export async function generateDemoHistory(): Promise<{
   let sessionCount = 0;
   let setCount = 0;
 
-  for (let week = 0; week < 26; week++) {
+  for (let week = 0; week < WEEKS; week++) {
     const dayOffsets = [1, 3, 5];
     for (const dayOffset of dayOffsets) {
       const sessionDate = new Date(startDate);
@@ -119,7 +121,7 @@ export async function generateDemoHistory(): Promise<{
         if (!exercise) continue;
 
         const baseWeight = BASE_WEIGHT[exName] ?? 20;
-        const progressed = baseWeight * (1 + week * 0.018);
+        const progressed = baseWeight * (1 + week * 0.011);
         const setsThisExercise = Math.round(rand(3, 4));
 
         for (let setIndex = 0; setIndex < setsThisExercise; setIndex++) {
@@ -176,7 +178,7 @@ export async function generateDemoHistory(): Promise<{
   }
 
   let cardioCount = 0;
-  for (let week = 0; week < 26; week++) {
+  for (let week = 0; week < WEEKS; week++) {
     const runsThisWeek = Math.random() < 0.5 ? 1 : 2;
     for (let i = 0; i < runsThisWeek; i++) {
       const runDate = new Date(startDate);
@@ -202,15 +204,15 @@ export async function generateDemoHistory(): Promise<{
 
   let weightCount = 0;
   const weightStart = 85;
-  const weightEnd = 80.5;
-  for (let week = 0; week < 26; week++) {
+  const weightEnd = 78;
+  for (let week = 0; week < WEEKS; week++) {
     const logsThisWeek = Math.round(rand(2, 3));
     for (let i = 0; i < logsThisWeek; i++) {
       const logDate = new Date(startDate);
       logDate.setDate(logDate.getDate() + week * 7 + Math.floor(rand(0, 6)));
       if (logDate > today) continue;
 
-      const progress = week / 26;
+      const progress = week / WEEKS;
       const trendWeight = weightStart + (weightEnd - weightStart) * progress;
       const weight = Math.round((trendWeight + rand(-0.6, 0.6)) * 10) / 10;
 

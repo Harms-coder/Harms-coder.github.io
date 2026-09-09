@@ -14,7 +14,7 @@ export function DemoSeedPage() {
   async function handleSeed() {
     if (
       !window.confirm(
-        "Dette tilføjer ca. 6 måneders eksempeldata (træninger, cardio, kropsvægt, rutiner) oven i det du allerede har. Fortsæt?",
+        "Dette tilføjer ca. et års eksempeldata (træninger, cardio, kropsvægt, rutiner) oven i det du allerede har. Fortsæt?",
       )
     ) {
       return;
@@ -32,17 +32,17 @@ export function DemoSeedPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <h1 className="text-2xl font-semibold text-(--color-text)">Eksempeldata</h1>
       <p className="text-sm text-(--color-text-muted)">
-        Tilføjer ca. 6 måneders realistisk brugshistorik (træninger med stigende vægt, cardio,
-        kropsvægt og et par øvelsesgrupper), så du kan se hvordan appen ser ud efter noget tids
+        Tilføjer ca. et års realistisk brugshistorik (træninger med stigende vægt, cardio,
+        kropsvægt og et par øvelsesgrupper), så du kan se hvordan appen ser ud efter et års
         brug. Kan ikke fortrydes bagefter, kun ryddes manuelt igen.
       </p>
 
       <Button onClick={handleSeed} disabled={status.kind === "loading"}>
-        {status.kind === "loading" ? "Genererer…" : "Indlæs 6 måneders eksempeldata"}
+        {status.kind === "loading" ? "Genererer…" : "Indlæs et års eksempeldata"}
       </Button>
 
       {status.kind === "done" && (
-        <div className="flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-[14px] text-(--color-text)">
+        <div className="flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow text-[14px] text-(--color-text)">
           <span>Færdig! Tilføjede:</span>
           <span className="text-(--color-text-muted)">
             {status.sessionCount} træninger · {status.setCount} sæt · {status.cardioCount}{" "}

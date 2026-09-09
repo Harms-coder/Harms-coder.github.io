@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { CardActions } from "../../components/CardActions";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
+import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { TextField } from "../../components/TextField";
-import { IconPencil, IconTrash } from "../../components/icons";
+import { ROUTINE_COLORS } from "../../db/routines";
 import type { Exercise, Routine } from "../../types";
 
 interface RoutineCardProps {
   routine: Routine;
   exercises: Exercise[];
-  onUpdate: (changes: { name: string; exerciseIds: string[] }) => Promise<void> | void;
+  onUpdate: (changes: { name: string; exerciseIds: string[]; color?: string }) => Promise<void> | void;
   onDelete: () => Promise<void> | void;
 }
 
@@ -16,6 +18,7 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(routine.name);
   const [exerciseIds, setExerciseIds] = useState(routine.exerciseIds);
+  const [color, setColor] = useState(routine.color ?? ROUTINE_COLORS[0]);
 
   const exerciseById = new Map(exercises.map((e) => [e.id, e]));
 
@@ -30,7 +33,7 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
   async function handleSave() {
     const trimmedName = name.trim();
     if (!trimmedName || exerciseIds.length === 0) return;
-    await onUpdate({ name: trimmedName, exerciseIds });
+    await onUpdate({ name: trimmedName, exerciseIds, color });
     setIsEditing(false);
   }
 
@@ -42,7 +45,7 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <TextField label="Navn" value={name} onChange={(e) => setName(e.target.value)} />
         <span className="text-[13px] font-medium text-(--color-text-muted)">Øvelser</span>
         <ExerciseMultiSelect
@@ -50,6 +53,10 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
           selectedIds={exerciseIds}
           onToggle={toggleExercise}
         />
+        <span className="text-[13px] font-medium text-(--color-text-muted)">
+          Farve (vises i kalenderen)
+        </span>
+        <RoutineColorPicker value={color} onChange={setColor} />
         <div className="flex gap-2">
           <Button onClick={handleSave}>Gem</Button>
           <Button variant="secondary" onClick={() => setIsEditing(false)}>
@@ -61,27 +68,16 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between">
-        <span className="text-[15px] font-medium text-(--color-text)">{routine.name}</span>
-        <div className="flex flex-shrink-0 gap-2">
-          <button
-            type="button"
-            onClick={() => setIsEditing(true)}
-            aria-label="Redigér"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
-          >
-            <IconPencil className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            aria-label="Slet"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
-          >
-            <IconTrash className="h-4 w-4" />
-          </button>
-        </div>
+        <span className="flex items-center gap-2 text-[15px] font-medium text-(--color-text)">
+          <span
+            className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+            style={{ backgroundColor: routine.color ?? "var(--color-accent)" }}
+          />
+          {routine.name}
+        </span>
+        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
       </div>
       <span className="text-[13px] text-(--color-text-muted)">
         {routine.exerciseIds

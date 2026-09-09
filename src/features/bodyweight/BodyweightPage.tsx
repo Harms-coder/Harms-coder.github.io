@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
-  Line,
-  LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -72,13 +73,22 @@ export function BodyweightPage() {
     [entries],
   );
 
+  const stats = useMemo(() => {
+    if (chartData.length === 0) return undefined;
+    const weights = chartData.map((d) => d.weight);
+    const min = Math.min(...weights);
+    const max = Math.max(...weights);
+    const avg = weights.reduce((sum, w) => sum + w, 0) / weights.length;
+    return { min, max, avg: Math.round(avg * 10) / 10 };
+  }, [chartData]);
+
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <h1 className="text-2xl font-semibold text-(--color-text)">Kropsvægt</h1>
 
       <form
         onSubmit={handleAdd}
-        className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4"
+        className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow"
       >
         <span className="text-[13px] font-medium text-(--color-text-muted)">Log kropsvægt</span>
         <div className="grid grid-cols-2 gap-3">
@@ -100,12 +110,34 @@ export function BodyweightPage() {
         <Button type="submit">Gem</Button>
       </form>
 
-      {chartData.length > 1 && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      {chartData.length > 1 && stats && (
+        <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <span className="text-[13px] font-medium text-(--color-text-muted)">Udvikling</span>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-col rounded-xl bg-(--color-surface-2) px-3 py-2">
+              <span className="text-[11px] text-(--color-text-muted)">Laveste</span>
+              <span className="text-[15px] font-semibold text-(--color-text)">{stats.min} kg</span>
+            </div>
+            <div className="flex flex-col rounded-xl bg-(--color-surface-2) px-3 py-2">
+              <span className="text-[11px] text-(--color-text-muted)">Gennemsnit</span>
+              <span className="text-[15px] font-semibold text-(--color-text)">{stats.avg} kg</span>
+            </div>
+            <div className="flex flex-col rounded-xl bg-(--color-surface-2) px-3 py-2">
+              <span className="text-[11px] text-(--color-text-muted)">Højeste</span>
+              <span className="text-[15px] font-semibold text-(--color-text)">{stats.max} kg</span>
+            </div>
+          </div>
+
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="weightFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-accent-bright)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--color-accent-bright)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                 <YAxis
@@ -119,14 +151,22 @@ export function BodyweightPage() {
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
                 />
-                <Line
+                <ReferenceLine
+                  y={stats.avg}
+                  stroke="var(--color-text-muted)"
+                  strokeDasharray="4 4"
+                  strokeWidth={1}
+                />
+                <Area
                   type="monotone"
                   dataKey="weight"
-                  stroke="var(--color-accent)"
+                  stroke="var(--color-accent-bright)"
                   strokeWidth={2}
-                  dot={{ r: 3, fill: "var(--color-accent)" }}
+                  fill="url(#weightFill)"
+                  dot={{ r: 3, fill: "var(--color-accent-bright)" }}
+                  activeDot={{ r: 5 }}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>

@@ -48,7 +48,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
             onClick={() => setSetType(type)}
             className={`min-h-9 rounded-full px-3 text-[13px] font-medium ${
               setType === type
-                ? "bg-(--color-accent) text-white"
+                ? "accent-fill text-(--color-text)"
                 : "bg-(--color-surface-2) text-(--color-text-muted)"
             }`}
           >
@@ -108,7 +108,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
                 onClick={() => setReps(preset.toString())}
                 className={`min-h-9 min-w-9 rounded-full px-2 text-[13px] font-medium ${
                   reps === preset.toString()
-                    ? "bg-(--color-accent) text-white"
+                    ? "accent-fill text-(--color-text)"
                     : "bg-(--color-surface-2) text-(--color-text-muted)"
                 }`}
               >

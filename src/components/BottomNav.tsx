@@ -45,7 +45,7 @@ export function BottomNav() {
             className={({ isActive }) =>
               `flex min-w-16 flex-shrink-0 flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[11px] font-medium transition-colors ${
                 isActive
-                  ? "text-(--color-accent)"
+                  ? "text-(--color-accent-bright)"
                   : "text-(--color-text-muted) active:text-(--color-text)"
               }`
             }

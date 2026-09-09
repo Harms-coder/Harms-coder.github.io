@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { CardActions } from "../../components/CardActions";
 import { CategoryPicker } from "../../components/CategoryPicker";
+import { ExerciseIcon } from "../../components/ExerciseIcon";
 import { TextField } from "../../components/TextField";
-import { IconPencil, IconTrash } from "../../components/icons";
 import type { Exercise } from "../../types";
 
 type ExerciseUpdate = Partial<
@@ -44,7 +45,7 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <TextField label="Navn" value={name} onChange={(e) => setName(e.target.value)} />
         <span className="text-[13px] font-medium text-(--color-text-muted)">
           Kategori (valgfri)
@@ -79,40 +80,26 @@ export function ExerciseCard({ exercise, onUpdate, onDelete }: ExerciseCardProps
   const hasPr = exercise.prWeight !== undefined || exercise.prReps !== undefined;
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="truncate text-[15px] font-medium text-(--color-text)">
-          {exercise.name}
-        </span>
-        {exercise.category && (
-          <span className="text-[13px] text-(--color-text-muted)">{exercise.category}</span>
-        )}
-        {hasPr && (
-          <span className="text-[13px] font-medium text-(--color-accent-green)">
-            PR: {exercise.prWeight !== undefined ? `${exercise.prWeight} kg` : ""}
-            {exercise.prWeight !== undefined && exercise.prReps !== undefined ? " × " : ""}
-            {exercise.prReps !== undefined ? `${exercise.prReps} reps` : ""}
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+      <div className="flex min-w-0 items-center gap-3">
+        <ExerciseIcon exercise={exercise} />
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="truncate text-[15px] font-medium text-(--color-text)">
+            {exercise.name}
           </span>
-        )}
+          {exercise.category && (
+            <span className="text-[13px] text-(--color-text-muted)">{exercise.category}</span>
+          )}
+          {hasPr && (
+            <span className="text-[13px] font-medium text-(--color-accent-glow)">
+              PR: {exercise.prWeight !== undefined ? `${exercise.prWeight} kg` : ""}
+              {exercise.prWeight !== undefined && exercise.prReps !== undefined ? " × " : ""}
+              {exercise.prReps !== undefined ? `${exercise.prReps} reps` : ""}
+            </span>
+          )}
+        </div>
       </div>
-      <div className="flex flex-shrink-0 gap-2">
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          aria-label="Redigér"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
-        >
-          <IconPencil className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          aria-label="Slet"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
-        >
-          <IconTrash className="h-4 w-4" />
-        </button>
-      </div>
+      <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
     </div>
   );
 }

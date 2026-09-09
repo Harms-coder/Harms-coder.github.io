@@ -15,7 +15,7 @@ export function ActivityPicker({ value, onChange }: ActivityPickerProps) {
           onClick={() => onChange(activity)}
           className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
             value === activity
-              ? "bg-(--color-accent) text-white"
+              ? "accent-fill text-(--color-text)"
               : "bg-(--color-surface-2) text-(--color-text-muted)"
           }`}
         >

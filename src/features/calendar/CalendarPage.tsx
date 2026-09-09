@@ -105,9 +105,18 @@ export function CalendarPage() {
   }
 
   const exerciseById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
+  const routineById = useMemo(() => new Map(routines.map((r) => [r.id, r])), [routines]);
   const sessionDates = useMemo(() => new Set(sessions.map((s) => s.date)), [sessions]);
   const cardioDates = useMemo(() => new Set(cardioEntries.map((c) => c.date)), [cardioEntries]);
   const planDates = useMemo(() => new Set(plans.map((p) => p.date)), [plans]);
+  const routineColorByDate = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const plan of plans) {
+      const color = plan.routineId ? routineById.get(plan.routineId)?.color : undefined;
+      if (color) map.set(plan.date, color);
+    }
+    return map;
+  }, [plans, routineById]);
   const selectedPlan = plans.find((p) => p.date === selectedDate);
   const selectedCardioEntries = cardioEntries.filter((c) => c.date === selectedDate);
 
@@ -166,6 +175,7 @@ export function CalendarPage() {
           const hasSession = sessionDates.has(iso);
           const hasCardio = cardioDates.has(iso);
           const hasPlan = planDates.has(iso);
+          const routineColor = routineColorByDate.get(iso);
 
           return (
             <button
@@ -174,7 +184,7 @@ export function CalendarPage() {
               onClick={() => setSelectedDate(iso)}
               className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[14px] ${
                 isSelected
-                  ? "bg-(--color-accent) text-white"
+                  ? "accent-fill text-(--color-text)"
                   : isCurrentMonth
                     ? "text-(--color-text)"
                     : "text-(--color-text-muted)"
@@ -183,14 +193,22 @@ export function CalendarPage() {
               <span>{date.getDate()}</span>
               <span className="flex h-1.5 gap-0.5">
                 {hasSession && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-green)" />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: routineColor ?? "var(--color-text-muted)" }}
+                  />
                 )}
                 {hasCardio && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-orange)" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-(--color-text-muted)" />
                 )}
                 {hasPlan && (
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-(--color-accent)"}`}
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      backgroundColor: isSelected
+                        ? "var(--color-text)"
+                        : (routineColor ?? "var(--color-text-muted)"),
+                    }}
                   />
                 )}
               </span>
@@ -205,7 +223,7 @@ export function CalendarPage() {
         </span>
 
         {setsByExercise.size > 0 && (
-          <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
             <span className="text-[13px] font-medium text-(--color-text-muted)">
               Gennemført træning
             </span>
@@ -223,7 +241,7 @@ export function CalendarPage() {
         )}
 
         {selectedCardioEntries.length > 0 && (
-          <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
             <span className="text-[13px] font-medium text-(--color-text-muted)">Cardio</span>
             {selectedCardioEntries.map((entry) => (
               <div key={entry.id} className="flex flex-col gap-0.5">

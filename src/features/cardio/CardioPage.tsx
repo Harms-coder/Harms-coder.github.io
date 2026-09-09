@@ -65,8 +65,11 @@ export function CardioPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-(--color-text)">Cardio</h1>
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[28px] font-bold text-(--color-text)">Cardio</h1>
+          <p className="text-[13px] text-(--color-text-secondary)">Find dit tempo. Kom længere.</p>
+        </div>
         <Button
           variant={isAdding ? "secondary" : "primary"}
           onClick={() => setIsAdding((v) => !v)}
@@ -78,7 +81,7 @@ export function CardioPage() {
       {isAdding && (
         <form
           onSubmit={handleAdd}
-          className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4"
+          className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow"
         >
           <TextField
             label="Dato"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { CardActions } from "../../components/CardActions";
 import { TextField } from "../../components/TextField";
-import { IconPencil, IconTrash } from "../../components/icons";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import type { BodyweightEntry } from "../../types";
 
@@ -31,7 +31,7 @@ export function BodyweightEntryCard({ entry, onUpdate, onDelete }: BodyweightEnt
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="grid grid-cols-2 gap-3">
           <TextField
             label="Dato"
@@ -58,31 +58,14 @@ export function BodyweightEntryCard({ entry, onUpdate, onDelete }: BodyweightEnt
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex flex-col gap-1">
         <span className="text-[15px] font-medium text-(--color-text)">{entry.weight} kg</span>
         <span className="text-[13px] text-(--color-text-muted)">
           {formatMediumDate(parseISODate(entry.date))}
         </span>
       </div>
-      <div className="flex flex-shrink-0 gap-2">
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          aria-label="Redigér"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
-        >
-          <IconPencil className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          aria-label="Slet"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
-        >
-          <IconTrash className="h-4 w-4" />
-        </button>
-      </div>
+      <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
     </div>
   );
 }

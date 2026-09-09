@@ -22,7 +22,7 @@ export function ExerciseFilterBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Søg efter øvelse…"
-          className="min-h-11 flex-1 bg-transparent text-[15px] text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
+          className="min-h-11 flex-1 bg-transparent text-base text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
         />
       </div>
       <div className="no-scrollbar flex gap-2 overflow-x-auto">
@@ -31,7 +31,7 @@ export function ExerciseFilterBar({
           onClick={() => onCategoryChange(null)}
           className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
             category === null
-              ? "bg-(--color-accent) text-white"
+              ? "accent-fill text-(--color-text)"
               : "bg-(--color-surface-2) text-(--color-text-muted)"
           }`}
         >
@@ -44,7 +44,7 @@ export function ExerciseFilterBar({
             onClick={() => onCategoryChange(c)}
             className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
               category === c
-                ? "bg-(--color-accent) text-white"
+                ? "accent-fill text-(--color-text)"
                 : "bg-(--color-surface-2) text-(--color-text-muted)"
             }`}
           >

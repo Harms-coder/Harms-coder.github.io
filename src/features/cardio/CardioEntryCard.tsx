@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
+import { CardActions } from "../../components/CardActions";
 import { TextField } from "../../components/TextField";
-import { IconPencil, IconTrash } from "../../components/icons";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import { formatPace } from "../../lib/format";
 import type { CardioEntry } from "../../types";
@@ -45,7 +45,7 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <TextField
           label="Dato"
           type="date"
@@ -81,7 +81,7 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex flex-col gap-1">
         <span className="text-[15px] font-medium text-(--color-text)">
           {formatMediumDate(parseISODate(entry.date))} · {entry.activity}
@@ -91,24 +91,7 @@ export function CardioEntryCard({ entry, onUpdate, onDelete }: CardioEntryCardPr
           {formatPace(entry.distanceKm, entry.durationMin)}
         </span>
       </div>
-      <div className="flex flex-shrink-0 gap-2">
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          aria-label="Redigér"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
-        >
-          <IconPencil className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          aria-label="Slet"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-danger)/15 text-(--color-danger) active:opacity-70"
-        >
-          <IconTrash className="h-4 w-4" />
-        </button>
-      </div>
+      <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
     </div>
   );
 }

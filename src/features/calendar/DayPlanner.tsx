@@ -45,7 +45,7 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
 
   if (!isEditing && plan) {
     return (
-      <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+      <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <span className="text-[13px] font-medium text-(--color-text-muted)">Planlagt</span>
         <span className="text-[15px] text-(--color-text)">
           {plan.exerciseIds
@@ -66,17 +66,17 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <span className="text-[15px] font-medium text-(--color-text)">Planlæg denne dag</span>
 
-      <div className="flex gap-2">
+      <div className="flex gap-1 rounded-full border border-(--color-border) bg-(--color-bg-tertiary) p-1">
         <button
           type="button"
           onClick={() => setMode("routine")}
           className={`min-h-9 flex-1 rounded-full text-[13px] font-medium ${
             mode === "routine"
-              ? "bg-(--color-accent) text-white"
-              : "bg-(--color-surface-2) text-(--color-text-muted)"
+              ? "accent-fill text-(--color-text)"
+              : "bg-transparent text-(--color-text-muted)"
           }`}
         >
           Gruppe
@@ -86,8 +86,8 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
           onClick={() => setMode("custom")}
           className={`min-h-9 flex-1 rounded-full text-[13px] font-medium ${
             mode === "custom"
-              ? "bg-(--color-accent) text-white"
-              : "bg-(--color-surface-2) text-(--color-text-muted)"
+              ? "accent-fill text-(--color-text)"
+              : "bg-transparent text-(--color-text-muted)"
           }`}
         >
           Vælg øvelser
@@ -106,12 +106,16 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
                 key={routine.id}
                 type="button"
                 onClick={() => setSelectedRoutineId(routine.id)}
-                className={`min-h-11 rounded-xl px-3.5 text-left text-[15px] ${
+                className={`flex min-h-11 items-center gap-2 rounded-xl px-3.5 text-left text-[15px] ${
                   selectedRoutineId === routine.id
                     ? "bg-(--color-accent)/15 text-(--color-accent)"
                     : "bg-(--color-surface-2) text-(--color-text)"
                 }`}
               >
+                <span
+                  className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                  style={{ backgroundColor: routine.color ?? "var(--color-accent)" }}
+                />
                 {routine.name}
               </button>
             ))}

@@ -8,6 +8,11 @@ export async function listSetsForSession(sessionId: string): Promise<SetEntry[]>
   return all.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
+export async function listAllSets(): Promise<SetEntry[]> {
+  const db = await getDb();
+  return db.getAll("sets");
+}
+
 export async function listSetsForExercise(exerciseId: string): Promise<SetEntry[]> {
   const db = await getDb();
   const all = await db.getAllFromIndex("sets", "by-exercise", exerciseId);

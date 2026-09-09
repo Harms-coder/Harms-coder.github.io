@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
+import { ExerciseIcon } from "../../components/ExerciseIcon";
 import { filterExercises } from "../../lib/exerciseFilter";
 import type { Exercise } from "../../types";
 
@@ -20,7 +21,7 @@ export function ExercisePicker({ exercises, onSelect, onClose }: ExercisePickerP
   );
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between">
         <span className="text-[15px] font-medium text-(--color-text)">Vælg øvelse</span>
         <button
@@ -57,8 +58,9 @@ export function ExercisePicker({ exercises, onSelect, onClose }: ExercisePickerP
                   key={exercise.id}
                   type="button"
                   onClick={() => onSelect(exercise)}
-                  className="min-h-11 flex-shrink-0 rounded-xl bg-(--color-surface-2) px-3.5 text-left text-[15px] text-(--color-text) active:opacity-70"
+                  className="flex min-h-11 flex-shrink-0 items-center gap-2.5 rounded-xl bg-(--color-surface-2) px-3 text-left text-[15px] text-(--color-text) active:opacity-70"
                 >
+                  <ExerciseIcon exercise={exercise} size={36} />
                   {exercise.name}
                 </button>
               ))

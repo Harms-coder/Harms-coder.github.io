@@ -16,7 +16,7 @@ export function CategoryPicker({ value, onChange, allowDeselect = true }: Catego
           onClick={() => onChange(allowDeselect && value === category ? undefined : category)}
           className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
             value === category
-              ? "bg-(--color-accent) text-white"
+              ? "accent-fill text-(--color-text)"
               : "bg-(--color-surface-2) text-(--color-text-muted)"
           }`}
         >
