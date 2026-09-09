@@ -49,7 +49,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
             className={`min-h-9 rounded-full px-3 text-[13px] font-medium ${
               setType === type
                 ? "accent-fill text-(--color-text)"
-                : "bg-(--color-surface-2) text-(--color-text-muted)"
+                : "glass-fill text-(--color-text-muted)"
             }`}
           >
             {SET_TYPE_LABELS[type]}
@@ -65,7 +65,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
               key={delta}
               type="button"
               onClick={() => adjustWeight(delta)}
-              className="min-h-11 min-w-11 flex-shrink-0 rounded-xl bg-(--color-surface-2) text-[15px] font-medium text-(--color-text) active:opacity-70"
+              className="min-h-11 min-w-11 flex-shrink-0 rounded-xl glass-fill text-[15px] font-medium text-(--color-text) active:opacity-70"
             >
               {delta}
             </button>
@@ -82,7 +82,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
               key={delta}
               type="button"
               onClick={() => adjustWeight(delta)}
-              className="min-h-11 min-w-11 flex-shrink-0 rounded-xl bg-(--color-surface-2) text-[15px] font-medium text-(--color-text) active:opacity-70"
+              className="min-h-11 min-w-11 flex-shrink-0 rounded-xl glass-fill text-[15px] font-medium text-(--color-text) active:opacity-70"
             >
               +{delta}
             </button>
@@ -109,7 +109,7 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
                 className={`min-h-9 min-w-9 rounded-full px-2 text-[13px] font-medium ${
                   reps === preset.toString()
                     ? "accent-fill text-(--color-text)"
-                    : "bg-(--color-surface-2) text-(--color-text-muted)"
+                    : "glass-fill text-(--color-text-muted)"
                 }`}
               >
                 {preset}

@@ -109,7 +109,7 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
                 className={`flex min-h-11 items-center gap-2 rounded-xl px-3.5 text-left text-[15px] ${
                   selectedRoutineId === routine.id
                     ? "bg-(--color-accent)/15 text-(--color-accent)"
-                    : "bg-(--color-surface-2) text-(--color-text)"
+                    : "glass-fill text-(--color-text)"
                 }`}
               >
                 <span

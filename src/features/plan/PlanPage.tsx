@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/Button";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
+import { PageBackdrop } from "../../components/PageBackdrop";
 import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { TextField } from "../../components/TextField";
 import { listExercises } from "../../db/exercises";
@@ -67,6 +68,7 @@ export function PlanPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-(--color-text)">Min Plan</h1>
         <Button

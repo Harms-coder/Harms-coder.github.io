@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IconChevronDown } from "../../components/icons";
+import { PageBackdrop } from "../../components/PageBackdrop";
 import { listExercises } from "../../db/exercises";
 import { listSessions } from "../../db/sessions";
 import { listSetsForSession } from "../../db/sets";
@@ -42,6 +43,7 @@ export function HistoryPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/historik-footprints.jpg" imagePosition="center 65%" />
       <h1 className="text-2xl font-semibold text-(--color-text)">Historik</h1>
 
       {entries.length === 0 && (

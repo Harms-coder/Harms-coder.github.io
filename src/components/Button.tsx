@@ -8,7 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary: "accent-fill text-(--color-text) active:opacity-80",
-  secondary: "bg-(--color-surface-2) text-(--color-text) active:opacity-80",
+  secondary: "glass-fill text-(--color-text) active:opacity-80",
   danger: "bg-(--color-danger)/15 text-(--color-danger) active:opacity-80",
   ghost: "bg-transparent text-(--color-accent) active:opacity-60",
 };

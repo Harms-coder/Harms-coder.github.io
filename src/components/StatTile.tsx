@@ -18,7 +18,7 @@ export function StatTile({ label, value, to, icon: Icon, delta, className = "" }
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-medium text-(--color-text-muted)">{label}</span>
         {Icon && (
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-(--color-surface-2)">
+          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-(--color-accent-dark)/20">
             <Icon className="h-3.5 w-3.5 text-(--color-accent-bright)" />
           </span>
         )}
@@ -37,7 +37,7 @@ export function StatTile({ label, value, to, icon: Icon, delta, className = "" }
       )}
     </>
   );
-  const sharedClassName = `flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow ${className}`;
+  const sharedClassName = `flex flex-col gap-1 rounded-2xl border border-(--color-border-accent) bg-(--color-surface) p-4 card-shadow ${className}`;
 
   if (!to) {
     return <div className={sharedClassName}>{content}</div>;

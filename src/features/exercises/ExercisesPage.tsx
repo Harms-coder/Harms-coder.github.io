@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "../../components/Button";
 import { CategoryPicker } from "../../components/CategoryPicker";
 import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
+import { PageBackdrop } from "../../components/PageBackdrop";
 import { TextField } from "../../components/TextField";
 import {
   createExercise,
@@ -62,6 +63,7 @@ export function ExercisesPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/ovelser-weights.jpg" imagePosition="center 40%" />
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-1">
           <h1 className="text-[28px] font-bold text-(--color-text)">Øvelser</h1>

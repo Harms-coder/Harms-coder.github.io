@@ -21,7 +21,8 @@
   --color-shadow: rgba(0, 0, 0, 0.45);
   --color-glow: rgba(224, 138, 75, 0.25);
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
 html,
@@ -68,12 +69,38 @@ body {
 
 /* Delt design-system-lag: genanvendes via className i stedet for at blive duplikeret pr. side. */
 .card-shadow {
-  box-shadow: 0 8px 24px var(--color-shadow);
+  /* !important overskriver den parrede `border-(--color-border)`-utility, der stadig står i hvert kalds className
+     (for at holde diffen lille) — så ALLE kort i appen får den samme varme kant ét sted fra, uden at hver fil skal røres. */
+  border-color: var(--color-border-accent) !important;
+  box-shadow:
+    0 8px 24px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
 }
 
 .accent-fill {
-  background: linear-gradient(180deg, var(--color-accent-bright), var(--color-accent-dark));
-  box-shadow: 0 2px 10px var(--color-glow);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-accent-glow) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-accent-bright) 90%, transparent) 48%,
+    color-mix(in srgb, var(--color-accent-dark) 94%, transparent) 100%
+  );
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 6px 22px var(--color-glow),
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -10px 14px rgba(0, 0, 0, 0.14);
+}
+
+/* Glaseret mørk overflade til sekundære knapper/pills — matcher .accent-fill's gennemsigtige, "illuminated" følelse uden farve. */
+.glass-fill {
+  background: color-mix(in srgb, var(--color-surface-2) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .accent-glow-ring {
@@ -84,6 +111,16 @@ body {
   background:
     radial-gradient(circle at top, var(--color-glow) 0%, transparent 45%),
     var(--color-surface-3);
+}
+
+/* Blender et hero-billede/-scene naturligt ned i den mørke sidebaggrund, så tekst forbliver læselig. */
+.hero-scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(11, 14, 14, 0.1) 0%,
+    rgba(11, 14, 14, 0.6) 62%,
+    var(--color-bg) 100%
+  );
 }
 
 button,

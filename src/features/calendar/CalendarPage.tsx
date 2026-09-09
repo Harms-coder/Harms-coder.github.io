@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { PageBackdrop } from "../../components/PageBackdrop";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
 import {
@@ -132,6 +133,7 @@ export function CalendarPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <PageBackdrop image="/images/kalender-trail.jpg" imagePosition="center 30%" />
       <h1 className="text-2xl font-semibold text-(--color-text)">Kalender</h1>
 
       <div className="flex items-center justify-between">
@@ -141,7 +143,7 @@ export function CalendarPage() {
             setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() - 1, 1))
           }
           aria-label="Forrige måned"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
+          className="flex h-9 w-9 items-center justify-center rounded-full glass-fill text-(--color-text) active:opacity-70"
         >
           ‹
         </button>
@@ -154,7 +156,7 @@ export function CalendarPage() {
             setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() + 1, 1))
           }
           aria-label="Næste måned"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-surface-2) text-(--color-text) active:opacity-70"
+          className="flex h-9 w-9 items-center justify-center rounded-full glass-fill text-(--color-text) active:opacity-70"
         >
           ›
         </button>

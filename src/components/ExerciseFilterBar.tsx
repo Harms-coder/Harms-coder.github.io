@@ -32,7 +32,7 @@ export function ExerciseFilterBar({
           className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
             category === null
               ? "accent-fill text-(--color-text)"
-              : "bg-(--color-surface-2) text-(--color-text-muted)"
+              : "glass-fill text-(--color-text-muted)"
           }`}
         >
           Alle

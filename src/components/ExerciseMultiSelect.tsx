@@ -53,7 +53,7 @@ export function ExerciseMultiSelect({
                 className={`flex min-h-11 flex-shrink-0 items-center justify-between rounded-xl px-3.5 text-left text-[15px] ${
                   isSelected
                     ? "bg-(--color-accent)/15 text-(--color-accent)"
-                    : "bg-(--color-surface-2) text-(--color-text)"
+                    : "glass-fill text-(--color-text)"
                 }`}
               >
                 <span>{exercise.name}</span>

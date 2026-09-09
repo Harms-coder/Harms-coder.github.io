@@ -55,6 +55,13 @@ export function Sparkline({
           <stop offset="0%" stopColor={color} stopOpacity={0.32} />
           <stop offset="100%" stopColor={color} stopOpacity={0} />
         </linearGradient>
+        <filter id="sparklineGlow" x="-20%" y="-60%" width="140%" height="220%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
       <text x={0} y={10} fontSize={10} fill="var(--color-text-muted)" textAnchor="start">
         {values[0]}{unit}
@@ -79,6 +86,7 @@ export function Sparkline({
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
+        filter="url(#sparklineGlow)"
       />
       {values.map((value, index) => (
         <circle

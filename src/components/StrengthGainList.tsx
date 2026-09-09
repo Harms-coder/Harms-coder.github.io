@@ -19,9 +19,9 @@ export function StrengthGainList({ gains, className = "" }: StrengthGainListProp
               {gain.percent}%
             </span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-(--color-surface-2)">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-(--color-surface-2)">
             <div
-              className="h-1.5 rounded-full bg-(--color-accent)"
+              className="accent-fill h-full rounded-full"
               style={{ width: `${Math.max(4, (Math.abs(gain.percent) / maxPercent) * 100)}%` }}
             />
           </div>

@@ -1,8 +1,13 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
+import { HeroHeader } from "../../components/HeroHeader";
+import { IconClock, IconMapPin, IconRun } from "../../components/icons";
+import { MetricCard } from "../../components/MetricCard";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { TextField } from "../../components/TextField";
 import {
+  CARDIO_ACTIVITIES,
   createCardioEntry,
   deleteCardioEntry,
   listCardioEntries,
@@ -12,10 +17,17 @@ import { todayISODate } from "../../lib/date";
 import type { CardioEntry } from "../../types";
 import { CardioEntryCard } from "./CardioEntryCard";
 
+const FILTER_ALL = "Alle";
+const FILTER_OPTIONS = [FILTER_ALL, ...CARDIO_ACTIVITIES].map((activity) => ({
+  value: activity,
+  label: activity,
+}));
+
 export function CardioPage() {
   const [entries, setEntries] = useState<CardioEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [activityFilter, setActivityFilter] = useState<string>(FILTER_ALL);
   const [date, setDate] = useState(todayISODate());
   const [activity, setActivity] = useState("Løb");
   const [distanceKm, setDistanceKm] = useState("");
@@ -63,20 +75,37 @@ export function CardioPage() {
     await refresh();
   }
 
+  const filteredEntries = useMemo(
+    () => (activityFilter === FILTER_ALL ? entries : entries.filter((e) => e.activity === activityFilter)),
+    [entries, activityFilter],
+  );
+
+  const monthStats = useMemo(() => {
+    const monthKey = todayISODate().slice(0, 7);
+    const thisMonth = entries.filter((e) => e.date.slice(0, 7) === monthKey);
+    return {
+      km: Math.round(thisMonth.reduce((sum, e) => sum + e.distanceKm, 0) * 10) / 10,
+      count: thisMonth.length,
+      minutes: thisMonth.reduce((sum, e) => sum + e.durationMin, 0),
+    };
+  }, [entries]);
+
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[28px] font-bold text-(--color-text)">Cardio</h1>
-          <p className="text-[13px] text-(--color-text-secondary)">Find dit tempo. Kom længere.</p>
-        </div>
-        <Button
-          variant={isAdding ? "secondary" : "primary"}
-          onClick={() => setIsAdding((v) => !v)}
-        >
-          {isAdding ? "Annuller" : "+ Tilføj"}
-        </Button>
-      </div>
+      <HeroHeader
+        title="Cardio"
+        subtitle="Find dit tempo. Kom længere."
+        image="/images/cardio-runner.jpg"
+        imagePosition="center 55%"
+      />
+
+      <Button
+        variant={isAdding ? "secondary" : "primary"}
+        onClick={() => setIsAdding((v) => !v)}
+        className="self-end"
+      >
+        {isAdding ? "Annuller" : "+ Tilføj"}
+      </Button>
 
       {isAdding && (
         <form
@@ -113,6 +142,21 @@ export function CardioPage() {
         </form>
       )}
 
+      <SegmentedControl
+        options={FILTER_OPTIONS}
+        value={activityFilter}
+        onChange={setActivityFilter}
+        layout="scroll"
+      />
+
+      <div className="flex gap-3">
+        <MetricCard icon={IconMapPin} value={`${monthStats.km} km`} label="Denne måned" />
+        <MetricCard icon={IconRun} value={`${monthStats.count}`} label="Løbeture" />
+        <MetricCard icon={IconClock} value={`${monthStats.minutes} min`} label="Total tid" />
+      </div>
+
+      <span className="text-[13px] font-medium text-(--color-text-muted)">Seneste træninger</span>
+
       {loading && <p className="text-sm text-(--color-text-muted)">Indlæser…</p>}
 
       {!loading && entries.length === 0 && !isAdding && (
@@ -121,8 +165,14 @@ export function CardioPage() {
         </p>
       )}
 
+      {!loading && entries.length > 0 && filteredEntries.length === 0 && (
+        <p className="text-sm text-(--color-text-muted)">
+          Ingen træninger matcher "{activityFilter}".
+        </p>
+      )}
+
       <div className="flex flex-col gap-3">
-        {entries.map((entry) => (
+        {filteredEntries.map((entry) => (
           <CardioEntryCard
             key={entry.id}
             entry={entry}
