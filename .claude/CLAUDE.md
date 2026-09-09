@@ -1,0 +1,44 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Personal, mobile-first PWA for logging strength training, cardio, and bodyweight. Local-only (no backend, no auth, no sync) — all data lives in IndexedDB in the browser. UI text is Danish; code (identifiers, comments) is English.
+
+## Commands
+
+```bash
+npm run dev      # Vite dev server
+npm run build    # tsc -b (type-check) && vite build — build fails on type errors
+npm run lint     # oxlint
+npm run preview  # preview a production build
+```
+
+There is no test suite / test runner configured.
+
+## Architecture
+
+**Stack:** React 19 + TypeScript + Vite, Tailwind CSS v4 (CSS-based `@theme` config, no `tailwind.config.js`), `react-router-dom`, `idb` (IndexedDB wrapper), `recharts` for charts.
+
+**Data layer (`src/db/`):** One IndexedDB database (`traeningsapp`, versioned schema in `src/db/database.ts`). Each domain entity has its own module (`exercises.ts`, `sessions.ts`, `sets.ts`, `cardio.ts`, `bodyweight.ts`, `routines.ts`, `plannedWorkouts.ts`) exposing typed CRUD functions built on `getDb()`. There is no global store/context — feature pages call these functions directly and refetch after each mutation. Domain types live in `src/types/index.ts`.
+
+When adding a store or index, bump `DB_VERSION` and add a new `if (oldVersion < N)` block in the `upgrade()` callback — don't edit the existing version blocks.
+
+**ID generation:** always use `generateId()` from `src/lib/id.ts`, never `crypto.randomUUID()` directly. `crypto.randomUUID` is unavailable in insecure contexts (e.g. opening the dev server from a phone via `http://<lan-ip>:5173`), which silently breaks every create action. `generateId()` falls back to a non-crypto unique string in that case.
+
+**Date handling:** date-only values are stored as `YYYY-MM-DD` strings. Use `parseISODate()` / `toISODate()` from `src/lib/date.ts` to convert, not `new Date(isoString)` directly — that parses as UTC midnight and can shift the displayed day depending on the local timezone.
+
+**Routing (`src/App.tsx`):** routes map 1:1 to `src/features/<name>/<Name>Page.tsx`. `ProgressionPage` and `BodyweightPage` are loaded via `React.lazy` because they pull in `recharts` (~350 kB); Vite splits this into a shared `chart` chunk. Follow the same lazy pattern for any new chart-heavy page rather than importing `recharts` at the top level.
+
+**Design system:** dark-mode only. Colors are CSS custom properties defined under `@theme` in `src/index.css`, referenced from JSX as Tailwind arbitrary-value classes, e.g. `bg-(--color-surface)`, `text-(--color-text-muted)`. All icons are hand-drawn inline SVGs in `src/components/icons.tsx` — no emoji and no icon library anywhere in the UI; add new icons there in the same style (24×24 viewBox, `stroke="currentColor"`).
+
+**Fixed categories, not free text:** exercise categories (`EXERCISE_CATEGORIES` in `src/db/exerciseSeed.ts`) and cardio activity types (`CARDIO_ACTIVITIES` in `src/db/cardio.ts`) are closed enums driving chip-style pickers (`CategoryPicker`, `ActivityPicker`). Exercise search/filtering (by name + category) is centralized in `src/lib/exerciseFilter.ts` and shared by `ExercisePicker`, `ExerciseMultiSelect`, and `ExercisesPage` — extend that instead of duplicating filter logic.
+
+**Default data:** `seedDefaultExercisesIfNeeded()` (`src/db/exerciseSeed.ts`) seeds 100 default exercises on first run. It's gated by a `localStorage` flag (not just "store is empty"), so it never re-seeds after a user deletes everything, and it's `await`ed in `main.tsx` *before* React renders — dispatching it from inside a component effect race with that component's own data fetch.
+
+**PR tracking:** `maybeUpdatePr()` (`src/db/exercises.ts`) is called from `TrainingPage` after logging a `normal` or `1rm` set. `warmup`/`dropset` sets never count toward a PR.
+
+**Scroll container:** `#root` is the only scrollable element (`html`/`body` are locked with `overflow: hidden`, plus `overscroll-behavior` tuning) — see `src/index.css`. This keeps the `position: fixed` bottom nav from jumping/disappearing during mobile rubber-band scrolling. Don't add `overflow`/height rules to `body` or `html`.
+
+**`/demo` route (`src/features/demo/DemoSeedPage.tsx`):** a hidden dev-only page (not in the bottom nav) that generates ~6 months of synthetic history via `src/db/demoSeed.ts`, for visually testing what a populated app looks like. Not a real feature — don't link to it from the nav.
