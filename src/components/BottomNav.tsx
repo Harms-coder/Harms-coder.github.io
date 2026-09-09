@@ -27,9 +27,9 @@ const navItems: NavItem[] = [
   { to: "/mal", label: "Mål", Icon: IconTarget },
   { to: "/oevelser", label: "Øvelser", Icon: IconList },
   { to: "/kalender", label: "Kalender", Icon: IconCalendar },
-  { to: "/historik", label: "Historik", Icon: IconClock },
   { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale },
   { to: "/plan", label: "Min Plan", Icon: IconClipboard },
+  { to: "/historik", label: "Historik", Icon: IconClock },
 ];
 
 export function BottomNav() {

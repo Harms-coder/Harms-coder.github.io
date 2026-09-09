@@ -4,12 +4,7 @@ import { CategoryPicker } from "../../components/CategoryPicker";
 import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { TextField } from "../../components/TextField";
-import {
-  createExercise,
-  deleteExercise,
-  listExercises,
-  updateExercise,
-} from "../../db/exercises";
+import { createExercise, deleteExercise, listExercises } from "../../db/exercises";
 import { filterExercises } from "../../lib/exerciseFilter";
 import type { Exercise } from "../../types";
 import { ExerciseCard } from "./ExerciseCard";
@@ -40,14 +35,6 @@ export function ExercisesPage() {
     setNewName("");
     setNewCategory(undefined);
     setIsAdding(false);
-    await refresh();
-  }
-
-  async function handleUpdate(
-    id: string,
-    changes: Parameters<typeof updateExercise>[1],
-  ) {
-    await updateExercise(id, changes);
     await refresh();
   }
 
@@ -121,7 +108,6 @@ export function ExercisesPage() {
           <ExerciseCard
             key={exercise.id}
             exercise={exercise}
-            onUpdate={(changes) => handleUpdate(exercise.id, changes)}
             onDelete={() => handleDelete(exercise.id)}
           />
         ))}

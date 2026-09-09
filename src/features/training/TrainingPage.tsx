@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listExercises } from "../../db/exercises";
-import { endSession, getActiveSession, startSession } from "../../db/sessions";
+import { deleteSession, endSession, getActiveSession, startSession } from "../../db/sessions";
 import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
@@ -55,6 +55,19 @@ export function TrainingPage() {
     if (!session) return;
     if (!window.confirm("Afslut træningen?")) return;
     await endSession(session.id);
+    setSession(null);
+    setSets([]);
+    setExerciseOrder([]);
+    setExpandedExerciseId(null);
+  }
+
+  async function handleCancel() {
+    if (!session) return;
+    if (!window.confirm("Annuller denne træning? Den tæller så ikke som en træning, og logget sæt slettes.")) {
+      return;
+    }
+    await Promise.all(sets.map((set) => deleteSet(set.id)));
+    await deleteSession(session.id);
     setSession(null);
     setSets([]);
     setExerciseOrder([]);
@@ -127,6 +140,13 @@ export function TrainingPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
+      <button
+        type="button"
+        onClick={handleCancel}
+        className="self-start text-[13px] font-medium text-(--color-text-muted) active:opacity-70"
+      >
+        Annuller træning
+      </button>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <h1 className="text-2xl font-semibold text-(--color-text)">Træning</h1>

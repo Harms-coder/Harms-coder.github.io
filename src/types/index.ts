@@ -2,6 +2,8 @@ export interface Exercise {
   id: string;
   name: string;
   category?: string;
+  /** Kort, valgfri beskrivelse af øvelsen, indtastet af brugeren. */
+  description?: string;
   /** Tungeste sæt-PR. */
   prWeight?: number;
   prReps?: number;

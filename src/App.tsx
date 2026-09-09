@@ -4,6 +4,7 @@ import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { DemoSeedPage } from "./features/demo/DemoSeedPage";
+import { ExerciseDetailPage } from "./features/exercises/ExerciseDetailPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
 import { GoalsPage } from "./features/goals/GoalsPage";
 import { HistoryPage } from "./features/history/HistoryPage";
@@ -61,6 +62,7 @@ function App() {
           }
         />
         <Route path="/oevelser" element={<ExercisesPage />} />
+        <Route path="/oevelser/:id" element={<ExerciseDetailPage />} />
         <Route path="/kalender" element={<CalendarPage />} />
         <Route path="/historik" element={<HistoryPage />} />
         <Route

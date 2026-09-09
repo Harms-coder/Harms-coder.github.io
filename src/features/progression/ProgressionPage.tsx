@@ -14,12 +14,14 @@ import {
 import { IconTrophy } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { ProgressBadge } from "../../components/ProgressBadge";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { listExercises } from "../../db/exercises";
 import { listSessions } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
+import { RANGE_KEYS, RANGE_LABELS, getRangeStart, type RangeKey } from "../../lib/dateRange";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import type { Exercise, SetEntry, WorkoutSession } from "../../types";
@@ -56,6 +58,7 @@ export function ProgressionPage() {
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [gainsRange, setGainsRange] = useState<RangeKey>("always");
 
   useEffect(() => {
     void Promise.all([listExercises(), listAllSets(), listSessions()]).then(
@@ -88,9 +91,13 @@ export function ProgressionPage() {
     setSelectedId(sortedExercises[0].id);
   }, [sortedExercises, selectedId]);
 
+  const gainsRangeStart = getRangeStart(gainsRange);
   const strengthGains = useMemo(
-    () => buildStrengthGains(exercises, setsByExercise).sort((a, b) => b.percent - a.percent),
-    [exercises, setsByExercise],
+    () =>
+      buildStrengthGains(exercises, setsByExercise, gainsRangeStart).sort(
+        (a, b) => b.percent - a.percent,
+      ),
+    [exercises, setsByExercise, gainsRangeStart],
   );
   const avgGainPercent = useMemo(() => {
     if (strengthGains.length === 0) return undefined;
@@ -138,12 +145,12 @@ export function ProgressionPage() {
         </div>
       )}
 
-      {strengthGains.length > 0 && avgGainPercent !== undefined && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-          <div className="flex items-center justify-between">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
-              Styrke-fremgang
-            </span>
+      <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-(--color-text-muted)">
+            Styrke-fremgang
+          </span>
+          {avgGainPercent !== undefined && (
             <span
               className={`text-[15px] font-semibold ${
                 avgGainPercent >= 0 ? "text-(--color-accent-glow)" : "text-(--color-text-muted)"
@@ -152,13 +159,24 @@ export function ProgressionPage() {
               {avgGainPercent > 0 ? "+" : ""}
               {avgGainPercent}% i gennemsnit
             </span>
-          </div>
-          <span className="text-[11px] text-(--color-text-muted)">
-            Fra din første logning til nu (PR), pr. øvelse — ikke bundet til en bestemt periode
-          </span>
-          <StrengthGainList gains={strengthGains} className="max-h-64 overflow-y-auto pr-1 pt-1" />
+          )}
         </div>
-      )}
+
+        <SegmentedControl
+          options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
+          value={gainsRange}
+          onChange={setGainsRange}
+          layout="scroll"
+        />
+
+        {strengthGains.length > 0 ? (
+          <StrengthGainList gains={strengthGains} className="max-h-64 overflow-y-auto pr-1 pt-1" />
+        ) : (
+          <p className="text-[13px] text-(--color-text-muted)">
+            Ingen øvelser med nok historik i denne periode.
+          </p>
+        )}
+      </div>
 
       <div className="no-scrollbar flex gap-2 overflow-x-auto">
         {sortedExercises.map((exercise) => (

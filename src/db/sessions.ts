@@ -35,6 +35,11 @@ export async function startSession(): Promise<WorkoutSession> {
   return session;
 }
 
+export async function deleteSession(id: string): Promise<void> {
+  const db = await getDb();
+  await db.delete("workoutSessions", id);
+}
+
 export async function endSession(id: string): Promise<WorkoutSession> {
   const db = await getDb();
   const existing = await db.get("workoutSessions", id);

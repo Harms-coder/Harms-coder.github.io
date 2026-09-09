@@ -11,8 +11,8 @@ import {
 } from "../../components/icons";
 import { getPlannedWorkoutForDate } from "../../db/plannedWorkouts";
 import { listExercises } from "../../db/exercises";
-import { endSession, getActiveSession } from "../../db/sessions";
-import { listSetsForExercise, listSetsForSession } from "../../db/sets";
+import { deleteSession, endSession, getActiveSession } from "../../db/sessions";
+import { deleteSet, listSetsForExercise, listSetsForSession } from "../../db/sets";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
@@ -161,6 +161,16 @@ export function LiveTrainingPage() {
     navigate("/");
   }
 
+  async function handleCancel() {
+    if (!session) return;
+    if (!window.confirm("Annuller denne træning? Den tæller så ikke som en træning, og logget sæt slettes.")) {
+      return;
+    }
+    await Promise.all(sets.map((set) => deleteSet(set.id)));
+    await deleteSession(session.id);
+    navigate("/");
+  }
+
   if (loading) {
     return <p className="px-4 pt-6 text-sm text-(--color-text-muted)">Indlæser…</p>;
   }
@@ -203,6 +213,14 @@ export function LiveTrainingPage() {
           Afslut
         </Button>
       </div>
+
+      <button
+        type="button"
+        onClick={handleCancel}
+        className="self-end text-[13px] font-medium text-(--color-text-muted) active:opacity-70"
+      >
+        Annuller træning
+      </button>
 
       {currentExercise ? (
         <>

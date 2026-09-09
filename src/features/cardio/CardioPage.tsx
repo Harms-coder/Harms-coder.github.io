@@ -97,15 +97,15 @@ export function CardioPage() {
         subtitle="Find dit tempo. Kom længere."
         image="/images/cardio-runner.jpg"
         imagePosition="center 55%"
+        action={
+          <Button
+            variant={isAdding ? "secondary" : "primary"}
+            onClick={() => setIsAdding((v) => !v)}
+          >
+            {isAdding ? "Annuller" : "+ Tilføj"}
+          </Button>
+        }
       />
-
-      <Button
-        variant={isAdding ? "secondary" : "primary"}
-        onClick={() => setIsAdding((v) => !v)}
-        className="self-end"
-      >
-        {isAdding ? "Annuller" : "+ Tilføj"}
-      </Button>
 
       {isAdding && (
         <form

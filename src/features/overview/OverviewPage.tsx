@@ -19,9 +19,9 @@ import {
   formatShortDate,
   getCurrentWeekRange,
   parseISODate,
-  toISODate,
   todayISODate,
 } from "../../lib/date";
+import { RANGE_KEYS, RANGE_LABELS, getPreviousRangeBounds, getRangeStart, type RangeKey } from "../../lib/dateRange";
 import { computeGoalProgress } from "../../lib/goalProgress";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
@@ -36,39 +36,6 @@ import type {
 import { TodayCard } from "./TodayCard";
 
 const TOP_GAINS_SHOWN = 5;
-
-type RangeKey = "week" | "month" | "quarter" | "halfyear" | "year";
-
-const RANGE_LABELS: Record<RangeKey, string> = {
-  week: "Uge",
-  month: "Måned",
-  quarter: "3 mdr",
-  halfyear: "6 mdr",
-  year: "År",
-};
-
-const RANGE_DAYS: Record<RangeKey, number> = {
-  week: 7,
-  month: 30,
-  quarter: 91,
-  halfyear: 182,
-  year: 365,
-};
-
-function getRangeStart(range: RangeKey): string {
-  const start = new Date();
-  start.setDate(start.getDate() - (RANGE_DAYS[range] - 1));
-  return toISODate(start);
-}
-
-/** Den forudgående periode af samme længde, brugt til at vise ↑/↓ vs. sidst. */
-function getPreviousRangeBounds(range: RangeKey): { start: string; end: string } {
-  const end = new Date();
-  end.setDate(end.getDate() - RANGE_DAYS[range]);
-  const start = new Date(end);
-  start.setDate(start.getDate() - (RANGE_DAYS[range] - 1));
-  return { start: toISODate(start), end: toISODate(end) };
-}
 
 /** Procentvis ændring; udefineret hvis der intet var at sammenligne med i forrige periode. */
 function percentChange(current: number, previous: number): number | undefined {
@@ -163,9 +130,11 @@ export function OverviewPage() {
     [exercises, setsByExercise, allSessions, goalProgressList],
   );
 
+  const rangeStart = getRangeStart(range);
+
   const strengthGains = useMemo(() => {
-    return buildStrengthGains(exercises, setsByExercise).sort((a, b) => b.percent - a.percent);
-  }, [exercises, setsByExercise]);
+    return buildStrengthGains(exercises, setsByExercise, rangeStart).sort((a, b) => b.percent - a.percent);
+  }, [exercises, setsByExercise, rangeStart]);
   const topGains = strengthGains.slice(0, TOP_GAINS_SHOWN);
   const avgGainPercent =
     strengthGains.length > 0
@@ -174,7 +143,6 @@ export function OverviewPage() {
 
   const totalMinutes = sessions.reduce((sum, s) => sum + (s.durationMin ?? 0), 0);
   const totalCardioKm = cardioEntries.reduce((sum, c) => sum + c.distanceKm, 0);
-  const rangeStart = getRangeStart(range);
 
   const prevTotalMinutes = prevSessions.reduce((sum, s) => sum + (s.durationMin ?? 0), 0);
   const prevTotalCardioKm = prevCardioEntries.reduce((sum, c) => sum + c.distanceKm, 0);
@@ -227,11 +195,13 @@ export function OverviewPage() {
       <HeroHeader
         title="Oversigt"
         subtitle="Din indsats tæller. Bliv ved."
-        image="/images/dashboard-mountains.jpg"
-        imagePosition="center 60%"
+        image="/images/dashboard-peaks.jpg"
+        imagePosition="center 40%"
       />
 
-      <TodayCard />
+      <div className="-mt-2">
+        <TodayCard />
+      </div>
 
       {badges.length > 0 && (
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
@@ -265,12 +235,10 @@ export function OverviewPage() {
       </div>
 
       <SegmentedControl
-        options={(Object.keys(RANGE_LABELS) as RangeKey[]).map((key) => ({
-          value: key,
-          label: RANGE_LABELS[key],
-        }))}
+        options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
         value={range}
         onChange={setRange}
+        layout="scroll"
       />
 
       <div className="relative flex min-h-36 flex-col justify-end gap-1 overflow-hidden rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
@@ -363,11 +331,11 @@ export function OverviewPage() {
         )}
       </div>
 
-      {topGains.length > 0 && (
+      {allSets.length > 0 && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <div className="flex items-center justify-between">
             <span className="text-[13px] font-medium text-(--color-text-muted)">
-              Styrke-fremgang
+              Styrke-fremgang · {RANGE_LABELS[range].toLowerCase()}
             </span>
             {avgGainPercent !== undefined && (
               <span className="text-[15px] font-semibold text-(--color-accent-glow)">
@@ -377,7 +345,13 @@ export function OverviewPage() {
             )}
           </div>
 
-          <StrengthGainList gains={topGains} />
+          {topGains.length > 0 ? (
+            <StrengthGainList gains={topGains} />
+          ) : (
+            <p className="text-[13px] text-(--color-text-muted)">
+              Ingen styrke-fremgang registreret i denne periode endnu.
+            </p>
+          )}
 
           <Link to="/progression" className="text-[13px] font-medium text-(--color-accent)">
             Se alle øvelser →
