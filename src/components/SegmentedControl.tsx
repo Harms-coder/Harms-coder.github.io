@@ -14,6 +14,8 @@ interface SegmentedControlProps<T extends string> {
   layout?: "wrap" | "scroll";
   /** Kategorifarve på det aktive valg, så filtre matcher sidens farve. Default: accent/orange. */
   tone?: Tone;
+  /** "sm" er en anelse lavere — til kontroller der ikke skal dominere toppen af en side. */
+  size?: "md" | "sm";
 }
 
 /** Genanvendelig "glow"-pille-kontrol til faner/filtre — aktivt valg får gradient + glow i sidens tone, resten er dæmpede. */
@@ -23,15 +25,17 @@ export function SegmentedControl<T extends string>({
   onChange,
   layout = "wrap",
   tone = "accent",
+  size = "md",
 }: SegmentedControlProps<T>) {
+  const height = size === "sm" ? "min-h-8" : "min-h-9";
   const containerClass =
     layout === "wrap"
-      ? "glass-fill flex gap-1 rounded-full p-1"
+      ? `glass-fill flex gap-1 rounded-full ${size === "sm" ? "p-0.5" : "p-1"}`
       : "no-scrollbar flex gap-2 overflow-x-auto";
   const buttonClass =
     layout === "wrap"
-      ? "min-h-9 flex-1 whitespace-nowrap rounded-full px-1 text-[12px] font-medium"
-      : "min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium";
+      ? `${height} flex-1 whitespace-nowrap rounded-full px-1 text-[12px] font-medium`
+      : `${height} flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium`;
   const inactiveClass = layout === "wrap" ? "bg-transparent" : "glass-fill";
 
   return (

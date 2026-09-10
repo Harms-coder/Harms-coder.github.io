@@ -253,6 +253,7 @@ export function CalendarPage() {
         value={view}
         onChange={setView}
         tone="plan"
+        size="sm"
       />
 
       <div className="flex items-center justify-between">
