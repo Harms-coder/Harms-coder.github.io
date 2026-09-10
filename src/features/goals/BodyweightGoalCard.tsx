@@ -85,7 +85,7 @@ export function BodyweightGoalCard({
   const remaining = round1(Math.abs(target - current));
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconTarget className="h-5 w-5 text-(--color-text-secondary)" />
@@ -104,7 +104,7 @@ export function BodyweightGoalCard({
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={84} label="" statusText="" percent={progress.percent} />
+            <GoalProgress variant="circular" size={72} label="" statusText="" percent={progress.percent} />
             <div className="flex flex-col gap-1">
               <span className="text-[20px] font-semibold text-(--color-text)">
                 {current} / {target} kg
@@ -126,6 +126,7 @@ export function BodyweightGoalCard({
               values={recentAscending.map((e) => e.weight)}
               labels={sparseMonthLabels(recentAscending)}
               projection={projectedDate ? { value: target, label: monthAbbrev(projectedDate) } : undefined}
+              height={46}
             />
           )}
         </>

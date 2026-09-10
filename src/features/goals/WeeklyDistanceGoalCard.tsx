@@ -61,7 +61,7 @@ export function WeeklyDistanceGoalCard({
   const onPace = achieved || current >= expectedByNow;
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconRun className="h-5 w-5 text-(--color-text-secondary)" />
@@ -80,7 +80,7 @@ export function WeeklyDistanceGoalCard({
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={84} label="" statusText="" percent={progress.percent} />
+            <GoalProgress variant="circular" size={72} label="" statusText="" percent={progress.percent} />
             <div className="flex flex-col gap-1">
               <span className="text-[20px] font-semibold text-(--color-text)">
                 {current} / {target} km
@@ -102,7 +102,7 @@ export function WeeklyDistanceGoalCard({
           </div>
 
           {cumulative.some((v) => v > 0) && (
-            <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero />
+            <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero height={46} />
           )}
 
           <div className="flex justify-end">
