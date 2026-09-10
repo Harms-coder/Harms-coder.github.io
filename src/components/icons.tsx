@@ -435,15 +435,33 @@ export function IconMore(props: IconProps) {
   );
 }
 
+/**
+ * Løbe-piktogram: slanke lemmer med skarpe knæ og albuer, afrundede ender, løsrevet
+ * hoved og tilspidsede fartstriber. Tegnet efter en reference brugeren valgte.
+ * Farven kommer fra currentColor, så den følger den kategori den vises i.
+ */
 export function IconRun(props: IconProps) {
   return (
     <svg {...base(props)} fill="currentColor" stroke="none">
-      <circle cx="15.8" cy="4.3" r="2.1" />
-      <path d="M14.3 6.2 11.2 12.2 15.5 10.3 12.8 7.2Z" />
-      <path d="M15.5 10.3 13.8 15.8 12.4 15.2 14.5 10Z" />
-      <path d="M11.9 10.8 5.2 17.9 4 17 10.6 10.3Z" />
-      <path d="M14.6 6 18.5 9.5 17.4 10.7 13.6 6.9Z" />
-      <path d="M13 6.3 9.3 9 11.3 11.8 13.9 7.1Z" />
+      <circle cx="19" cy="6.05" r="2.05" />
+      <g
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="miter"
+        strokeMiterlimit={3}
+        strokeWidth={2.15}
+      >
+        <path d="M17.4 8.2 12.7 12.9" />
+        <path d="M15.6 8.4 13.85 4.7 10.6 7.55" strokeWidth={2} />
+        <path d="M18.4 9.2 18.75 11.15 22.05 11.85" strokeWidth={2} />
+        <path d="M12.7 12.9 18.2 15.3 12.8 17.65" />
+        <path d="M12.55 13.15 5.6 19.2" />
+      </g>
+      {/* Fartstriber: tykke ved kroppen, spidse bagud. */}
+      <path d="M2.1 9.95 11.2 9.5 11.2 10.4Z" />
+      <path d="M1.5 11.85 9.7 11.4 9.7 12.3Z" />
+      <path d="M1.5 13.75 8.2 13.3 8.2 14.2Z" />
     </svg>
   );
 }
