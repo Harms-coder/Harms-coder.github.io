@@ -393,12 +393,18 @@ export function OverviewPage() {
         </div>
       )}
 
-      <Link
-        to="/demo"
-        className="pb-2 text-center text-[11px] text-(--color-text-muted) active:opacity-70"
-      >
-        Eksempeldata
-      </Link>
+      <div className="flex flex-col items-center gap-2 pb-2">
+        <Link
+          to="/backup"
+          className="flex items-center gap-1 text-[13px] font-medium text-(--color-cat-progress) active:opacity-70"
+        >
+          Gem en backup af dine data
+          <IconChevronRight className="h-3.5 w-3.5" />
+        </Link>
+        <Link to="/demo" className="text-[11px] text-(--color-text-muted) active:opacity-70">
+          Eksempeldata
+        </Link>
+      </div>
     </div>
   );
 }

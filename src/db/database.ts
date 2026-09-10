@@ -52,7 +52,7 @@ interface TraeningsappDB extends DBSchema {
 }
 
 const DB_NAME = "traeningsapp";
-const DB_VERSION = 3;
+export const DB_VERSION = 3;
 
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 

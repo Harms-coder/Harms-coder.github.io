@@ -152,6 +152,28 @@ export function IconSearch(props: IconProps) {
   );
 }
 
+/** Pil ned i en bakke — "gem en kopi ud af appen". */
+export function IconDownload(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 4v10" />
+      <path d="M8 10.5l4 4 4-4" />
+      <path d="M4 17v1.5A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5V17" />
+    </svg>
+  );
+}
+
+/** Pil op fra en bakke — "læs en fil ind i appen". */
+export function IconUpload(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 14V4" />
+      <path d="M8 7.5l4-4 4 4" />
+      <path d="M4 17v1.5A1.5 1.5 0 005.5 20h13a1.5 1.5 0 001.5-1.5V17" />
+    </svg>
+  );
+}
+
 /** Udstyr (stænger, vægtskiver, bænke, håndvægte) tegnes altid i denne farve, adskilt fra selve figuren (currentColor), så man kan se forskel på manden og det han løfter. */
 const EQUIPMENT = "var(--color-text)";
 

@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
+import { BackupPage } from "./features/data/BackupPage";
 import { DemoSeedPage } from "./features/demo/DemoSeedPage";
 import { ExerciseDetailPage } from "./features/exercises/ExerciseDetailPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
@@ -93,6 +94,7 @@ function App() {
             </LazyPage>
           }
         />
+        <Route path="/backup" element={<BackupPage />} />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
       </div>
