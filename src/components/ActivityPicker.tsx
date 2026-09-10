@@ -7,7 +7,7 @@ interface ActivityPickerProps {
 
 export function ActivityPicker({ value, onChange }: ActivityPickerProps) {
   return (
-    <div className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto">
+    <div className="no-scrollbar glow-scroller glow-scroller-x flex gap-2 overflow-x-auto">
       {CARDIO_ACTIVITIES.map((activity) => (
         <button
           key={activity}

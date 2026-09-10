@@ -143,6 +143,16 @@ h1 {
   margin-block: -1.125rem;
 }
 
+/*
+ * Samme trick vandret, til den første og sidste pille i rækken. Holdes adskilt fra
+ * .glow-scroller, fordi bundnavigationens scroller ligger klods op ad den fastgjorte
+ * Oversigt-fane — dér ville et vandret udhæng opsluge tryk på nabofanen.
+ */
+.glow-scroller-x {
+  padding-inline: 1.125rem;
+  margin-inline: -1.125rem;
+}
+
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */
 .no-scrollbar {
   scrollbar-width: none;

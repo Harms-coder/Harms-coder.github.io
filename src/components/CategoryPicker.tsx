@@ -14,7 +14,7 @@ interface CategoryPickerProps {
 export function CategoryPicker({ value, onChange, allowDeselect = true }: CategoryPickerProps) {
   return (
     <div
-      className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto"
+      className="no-scrollbar glow-scroller glow-scroller-x flex gap-2 overflow-x-auto"
       style={{ "--badge-color": "var(--color-cat-library)" } as CSSProperties}
     >
       {EXERCISE_CATEGORIES.map((category) => (

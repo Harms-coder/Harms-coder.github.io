@@ -218,7 +218,7 @@ export function OverviewPage() {
       </div>
 
       {badges.length > 0 && (
-        <div className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto">
+        <div className="no-scrollbar glow-scroller glow-scroller-x flex gap-2 overflow-x-auto">
           {badges.map((badge) => (
             <ProgressBadge key={`${badge.kind}-${badge.label}`} badge={badge} />
           ))}
