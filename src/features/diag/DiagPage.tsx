@@ -39,6 +39,8 @@ export function DiagPanel() {
         ["menuens højde", nav ? `${Math.round(nav.height)}px` : "(ingen)"],
         ["afstand til bunden", nav ? `${Math.round(window.innerHeight - nav.bottom)}px` : "?"],
         ["standalone", String((window.navigator as { standalone?: boolean }).standalone ?? "?")],
+        ["display-mode: standalone", String(window.matchMedia("(display-mode: standalone)").matches)],
+        ["skærm minus viewport", `${window.screen.height - window.innerHeight}px`],
         ["devicePixelRatio", String(window.devicePixelRatio)],
       ]);
     }

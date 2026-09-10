@@ -193,6 +193,22 @@ h1 {
 }
 
 /*
+ * iOS med apple-mobile-web-app-status-bar-style: black-translucent flytter websiden OP
+ * under statuslinjen uden at gøre viewporten tilsvarende højere. Målt på en iPhone:
+ * window.innerHeight = 894, screen.height = 956, safe-area-inset-top = 62 — altså slutter
+ * viewporten præcis 62 px (toppens safe-area) før skærmkanten, og en menu i bunden af
+ * viewporten efterlader en sort stribe.
+ *
+ * Vi skubber menuen det stykke ned igen. Kun i standalone: i Safari med adresselinje er
+ * viewporten korrekt, og det samme greb ville skubbe menuen ud over skærmkanten.
+ */
+@media (display-mode: standalone) {
+  .bottom-nav {
+    bottom: calc(-1 * env(safe-area-inset-top, 0px));
+  }
+}
+
+/*
  * Sikkerhedsnet: menuens egen baggrund forlænges ned til skærmkanten. Skulle en fremtidig
  * iOS-version placere den et par pixels for højt, bliver mellemrummet menufarvet frem for sort.
  */
