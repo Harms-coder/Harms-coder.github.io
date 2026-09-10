@@ -19,7 +19,12 @@ import { StrengthGainList } from "../../components/StrengthGainList";
 import { listExercises } from "../../db/exercises";
 import { listSessions } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
-import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import {
+  chartAxisTick,
+  chartBarCursor,
+  chartLineCursor,
+  chartTooltipStyle,
+} from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
 import {
@@ -322,10 +327,11 @@ export function ProgressionPage() {
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                       <Tooltip
-                  active={tooltipActive}
-                  contentStyle={chartTooltipStyle}
-                  labelStyle={{ color: "var(--color-text)" }}
-                />
+                        active={tooltipActive}
+                        cursor={chartLineCursor}
+                        contentStyle={chartTooltipStyle}
+                        labelStyle={{ color: "var(--color-text)" }}
+                      />
                       {selectedExercise?.pr1RM !== undefined && (
                         <ReferenceLine
                           y={selectedExercise.pr1RM}
@@ -339,6 +345,7 @@ export function ProgressionPage() {
                         stroke="var(--color-accent-bright)"
                         strokeWidth={2}
                         dot={{ r: 3, fill: "var(--color-accent-bright)" }}
+                        activeDot={tooltipActive === false ? false : { r: 5 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -356,10 +363,11 @@ export function ProgressionPage() {
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                       <Tooltip
-                  active={tooltipActive}
-                  contentStyle={chartTooltipStyle}
-                  labelStyle={{ color: "var(--color-text)" }}
-                />
+                        active={tooltipActive}
+                        cursor={chartBarCursor}
+                        contentStyle={chartTooltipStyle}
+                        labelStyle={{ color: "var(--color-text)" }}
+                      />
                       <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>

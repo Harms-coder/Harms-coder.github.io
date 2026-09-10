@@ -19,7 +19,7 @@ import {
   listBodyweightEntries,
   updateBodyweightEntry,
 } from "../../db/bodyweight";
-import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartLineCursor, chartTooltipStyle } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatShortDate, todayISODate } from "../../lib/date";
 import {
@@ -177,6 +177,7 @@ export function BodyweightPage() {
                 />
                 <Tooltip
                   active={tooltipActive}
+                  cursor={chartLineCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
                 />
@@ -193,7 +194,7 @@ export function BodyweightPage() {
                   strokeWidth={2}
                   fill="url(#weightFill)"
                   dot={{ r: 3, fill: "var(--color-cat-body)" }}
-                  activeDot={{ r: 5 }}
+                  activeDot={tooltipActive === false ? false : { r: 5 }}
                 />
               </AreaChart>
             </ResponsiveContainer>

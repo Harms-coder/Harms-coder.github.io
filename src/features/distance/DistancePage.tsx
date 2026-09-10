@@ -11,7 +11,7 @@ import {
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { listCardioEntries } from "../../db/cardio";
 import { monthKey, sumByKey, weekKey } from "../../lib/aggregate";
-import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartBarCursor, chartTooltipStyle } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatMonthLabel, formatShortDate } from "../../lib/date";
 import type { CardioEntry } from "../../types";
@@ -76,6 +76,7 @@ export function DistancePage() {
                 <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={32} />
                 <Tooltip
                   active={tooltipActive}
+                  cursor={chartBarCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
                 />

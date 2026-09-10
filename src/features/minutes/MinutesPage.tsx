@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { listSessions } from "../../db/sessions";
 import { sumByKey, weekKey } from "../../lib/aggregate";
-import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartBarCursor, chartTooltipStyle } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatShortDate } from "../../lib/date";
 import type { WorkoutSession } from "../../types";
@@ -66,6 +66,7 @@ export function MinutesPage() {
                 <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={32} />
                 <Tooltip
                   active={tooltipActive}
+                  cursor={chartBarCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
                 />
