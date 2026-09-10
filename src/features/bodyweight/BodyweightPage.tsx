@@ -21,7 +21,13 @@ import {
 } from "../../db/bodyweight";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatShortDate, todayISODate } from "../../lib/date";
-import { RANGE_KEYS, RANGE_LABELS, getRangeStart, type RangeKey } from "../../lib/dateRange";
+import {
+  DEFAULT_RANGE,
+  RANGE_KEYS,
+  RANGE_LABELS,
+  getRangeStart,
+  type RangeKey,
+} from "../../lib/dateRange";
 import type { BodyweightEntry } from "../../types";
 import { BodyweightEntryCard } from "./BodyweightEntryCard";
 
@@ -30,7 +36,7 @@ export function BodyweightPage() {
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(todayISODate());
   const [weight, setWeight] = useState("");
-  const [range, setRange] = useState<RangeKey>("always");
+  const [range, setRange] = useState<RangeKey>(DEFAULT_RANGE);
 
   async function refresh() {
     const all = await listBodyweightEntries();

@@ -29,6 +29,7 @@ import {
   toISODate,
 } from "../../lib/date";
 import {
+  DEFAULT_RANGE,
   RANGE_KEYS,
   RANGE_LABELS,
   getPreviousRangeBounds,
@@ -147,7 +148,7 @@ export function HistoryPage() {
   const [loading, setLoading] = useState(true);
 
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
-  const [range, setRange] = useState<RangeKey>("always");
+  const [range, setRange] = useState<RangeKey>(DEFAULT_RANGE);
   const [collapsedMonths, setCollapsedMonths] = useState<Set<string>>(new Set());
   const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set());
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);

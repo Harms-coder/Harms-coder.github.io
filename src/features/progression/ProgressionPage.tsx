@@ -21,7 +21,13 @@ import { listSessions } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
-import { RANGE_KEYS, RANGE_LABELS, getRangeStart, type RangeKey } from "../../lib/dateRange";
+import {
+  DEFAULT_RANGE,
+  RANGE_KEYS,
+  RANGE_LABELS,
+  getRangeStart,
+  type RangeKey,
+} from "../../lib/dateRange";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import type { Exercise, SetEntry, WorkoutSession } from "../../types";
@@ -58,8 +64,8 @@ export function ProgressionPage() {
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [gainsRange, setGainsRange] = useState<RangeKey>("always");
-  const [chartsRange, setChartsRange] = useState<RangeKey>("always");
+  const [gainsRange, setGainsRange] = useState<RangeKey>(DEFAULT_RANGE);
+  const [chartsRange, setChartsRange] = useState<RangeKey>(DEFAULT_RANGE);
 
   useEffect(() => {
     void Promise.all([listExercises(), listAllSets(), listSessions()]).then(

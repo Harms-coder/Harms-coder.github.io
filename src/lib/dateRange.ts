@@ -13,6 +13,12 @@ export const RANGE_LABELS: Record<RangeKey, string> = {
 
 export const RANGE_KEYS = Object.keys(RANGE_LABELS) as RangeKey[];
 
+/**
+ * Grafer og periodefiltre starter på "Måned". Oversigt er undtagelsen og starter på "Uge",
+ * fordi den viser "hvordan går det lige nu" frem for en historik.
+ */
+export const DEFAULT_RANGE: RangeKey = "month";
+
 const RANGE_DAYS: Record<Exclude<RangeKey, "always">, number> = {
   week: 7,
   month: 30,

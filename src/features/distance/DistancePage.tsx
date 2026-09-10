@@ -27,7 +27,7 @@ type Granularity = "week" | "month";
 export function DistancePage() {
   const [entries, setEntries] = useState<CardioEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [granularity, setGranularity] = useState<Granularity>("week");
+  const [granularity, setGranularity] = useState<Granularity>("month");
 
   useEffect(() => {
     void listCardioEntries().then((all) => {
