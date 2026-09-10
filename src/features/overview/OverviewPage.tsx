@@ -1,3 +1,4 @@
+import { DiagPanel } from "../diag/DiagPage";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { HeroHeader } from "../../components/HeroHeader";
@@ -204,6 +205,8 @@ export function OverviewPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      {/* MIDLERTIDIG: safe-area-måling, fjernes når bundmenuen sidder rigtigt */}
+      <DiagPanel />
       <HeroHeader
         title="Oversigt"
         subtitle="Disciplin i dag — et stærkere dig i morgen."

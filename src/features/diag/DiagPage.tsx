@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
  * Midlertidig diagnose-side. Viser de faktiske mål fra enheden, så safe-area-problemer
  * kan afgøres med tal frem for gæt. Ikke i bundmenuen — nås via /diag.
  */
-export function DiagPage() {
+export function DiagPanel() {
   const [rows, setRows] = useState<[string, string][]>([]);
 
   useEffect(() => {
@@ -49,12 +49,7 @@ export function DiagPage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3 px-4 pt-6">
-      <h1 className="text-(--color-text)">Diagnose</h1>
-      <p className="text-[13px] text-(--color-text-secondary)">
-        Send et skærmbillede af denne side.
-      </p>
-      <div className="flex flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+    <div className="flex flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         {rows.map(([navn, vaerdi], i) => (
           <div
             key={navn}
@@ -68,7 +63,15 @@ export function DiagPage() {
             </span>
           </div>
         ))}
-      </div>
+    </div>
+  );
+}
+
+export function DiagPage() {
+  return (
+    <div className="flex flex-col gap-3 px-4 pt-6">
+      <h1 className="text-(--color-text)">Diagnose</h1>
+      <DiagPanel />
     </div>
   );
 }
