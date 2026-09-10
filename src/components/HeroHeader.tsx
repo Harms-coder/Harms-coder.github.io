@@ -11,6 +11,10 @@ interface HeroHeaderProps {
   action?: ReactNode;
   /** Tailwind-klasse for luften under subtitlen — mindre værdi flytter næste element tættere på. */
   bottomPadding?: string;
+  /** Tailwind højde-klasse for hero-banen. Default h-72. */
+  height?: string;
+  /** Sløre billedet let, til motiver der ellers virker for skarpe/dominerende (fx nærbilleder af udstyr). */
+  imageBlur?: boolean;
 }
 
 /** Genanvendelig hero-sektion: foto-baggrund med logo + titel + subtitle ovenpå, der blender ned i sidens baggrund. */
@@ -21,13 +25,15 @@ export function HeroHeader({
   imagePosition = "center",
   action,
   bottomPadding = "pb-9",
+  height = "h-72",
+  imageBlur = false,
 }: HeroHeaderProps) {
   return (
-    <div className="relative -mx-4 -mt-6 h-72 overflow-hidden">
+    <div className={`relative -mx-4 -mt-6 ${height} overflow-hidden`}>
       <img
         src={image}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover"
+        className={`absolute inset-0 h-full w-full object-cover ${imageBlur ? "scale-110 blur-sm" : ""}`}
         style={{ objectPosition: imagePosition }}
       />
       <div className="hero-scrim absolute inset-0" />

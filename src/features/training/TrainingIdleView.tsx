@@ -94,6 +94,8 @@ export function TrainingIdleView({
         image="/images/traening-gym.jpg"
         imagePosition="center 55%"
         bottomPadding="pb-6"
+        height="h-56"
+        imageBlur
       />
       <Button onClick={onStart} className="self-center">
         Start træning
