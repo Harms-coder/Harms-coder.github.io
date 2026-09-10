@@ -33,7 +33,7 @@ export function DemoSeedPage() {
       <h1 className="text-2xl font-bold text-(--color-text)">Eksempeldata</h1>
       <p className="text-sm text-(--color-text-muted)">
         Tilføjer ca. et års realistisk brugshistorik (træninger med stigende vægt, cardio,
-        kropsvægt og et par øvelsesgrupper), så du kan se hvordan appen ser ud efter et års
+        kropsvægt og et par programmer), så du kan se hvordan appen ser ud efter et års
         brug. Kan ikke fortrydes bagefter, kun ryddes manuelt igen.
       </p>
 

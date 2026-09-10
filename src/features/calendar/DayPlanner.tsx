@@ -79,7 +79,7 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
               : "bg-transparent text-(--color-text-muted)"
           }`}
         >
-          Gruppe
+          Program
         </button>
         <button
           type="button"
@@ -97,7 +97,7 @@ export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayP
       {mode === "routine" ? (
         routines.length === 0 ? (
           <p className="text-sm text-(--color-text-muted)">
-            Du har ingen øvelsesgrupper endnu. Opret en under "Min Plan".
+            Du har ingen programmer endnu. Opret et under "Programmer".
           </p>
         ) : (
           <div className="flex flex-col gap-2">

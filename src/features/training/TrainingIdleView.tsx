@@ -140,7 +140,7 @@ export function TrainingIdleView({
           <span className="text-[13px] text-(--color-text-muted)">
             {nextPlanDate
               ? `Ingen plan for i dag. Næste planlagte pas er ${formatMediumDate(parseISODate(nextPlanDate))}.`
-              : "Ingen plan for i dag. Læg en plan i Min Plan eller Kalender, eller start en fri træning."}
+              : "Ingen plan for i dag. Læg en plan under Programmer eller Kalender, eller start en fri træning."}
           </span>
         )}
       </div>

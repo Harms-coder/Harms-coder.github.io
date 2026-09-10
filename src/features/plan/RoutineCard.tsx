@@ -38,7 +38,7 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
   }
 
   function handleDelete() {
-    if (window.confirm(`Slet gruppen "${routine.name}"? Dette kan ikke fortrydes.`)) {
+    if (window.confirm(`Slet programmet "${routine.name}"? Dette kan ikke fortrydes.`)) {
       void onDelete();
     }
   }

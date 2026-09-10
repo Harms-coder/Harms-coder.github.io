@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   { to: "/oevelser", label: "Øvelser", Icon: IconList },
   { to: "/kalender", label: "Kalender", Icon: IconCalendar },
   { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale },
-  { to: "/plan", label: "Min Plan", Icon: IconClipboard },
+  { to: "/plan", label: "Programmer", Icon: IconClipboard },
   { to: "/historik", label: "Historik", Icon: IconClock },
 ];
 

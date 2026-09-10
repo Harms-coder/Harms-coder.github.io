@@ -43,7 +43,7 @@ export async function updateRoutine(
 ): Promise<Routine> {
   const db = await getDb();
   const existing = await db.get("routines", id);
-  if (!existing) throw new Error("Gruppe findes ikke");
+  if (!existing) throw new Error("Programmet findes ikke");
   const updated: Routine = { ...existing, ...changes };
   await db.put("routines", updated);
   return updated;

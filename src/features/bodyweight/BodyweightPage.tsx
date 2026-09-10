@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { Button } from "../../components/Button";
 import { PageBackdrop } from "../../components/PageBackdrop";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { TextField } from "../../components/TextField";
 import {
   createBodyweightEntry,
@@ -20,6 +21,7 @@ import {
 } from "../../db/bodyweight";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
 import { formatShortDate, todayISODate } from "../../lib/date";
+import { RANGE_KEYS, RANGE_LABELS, getRangeStart, type RangeKey } from "../../lib/dateRange";
 import type { BodyweightEntry } from "../../types";
 import { BodyweightEntryCard } from "./BodyweightEntryCard";
 
@@ -28,6 +30,7 @@ export function BodyweightPage() {
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(todayISODate());
   const [weight, setWeight] = useState("");
+  const [range, setRange] = useState<RangeKey>("always");
 
   async function refresh() {
     const all = await listBodyweightEntries();
@@ -62,16 +65,18 @@ export function BodyweightPage() {
     await refresh();
   }
 
+  const rangeStart = getRangeStart(range);
   const chartData = useMemo(
     () =>
       [...entries]
+        .filter((entry) => entry.date >= rangeStart)
         .sort((a, b) => a.date.localeCompare(b.date))
         .map((entry) => ({
           date: entry.date,
           label: formatShortDate(entry.date),
           weight: entry.weight,
         })),
-    [entries],
+    [entries, rangeStart],
   );
 
   const stats = useMemo(() => {
@@ -112,10 +117,23 @@ export function BodyweightPage() {
         <Button type="submit">Gem</Button>
       </form>
 
-      {chartData.length > 1 && stats && (
+      {entries.length > 1 && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <span className="text-[13px] font-medium text-(--color-text-muted)">Udvikling</span>
 
+          <SegmentedControl
+            options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
+            value={range}
+            onChange={setRange}
+            layout="scroll"
+          />
+
+          {!(chartData.length > 1 && stats) ? (
+            <p className="text-[13px] text-(--color-text-muted)">
+              Ingen målinger i denne periode.
+            </p>
+          ) : (
+            <>
           <div className="grid grid-cols-3 gap-2">
             <div className="flex flex-col rounded-xl bg-(--color-surface-2) px-3 py-2">
               <span className="text-[11px] text-(--color-text-muted)">Laveste</span>
@@ -171,6 +189,8 @@ export function BodyweightPage() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+            </>
+          )}
         </div>
       )}
 

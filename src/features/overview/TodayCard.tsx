@@ -130,7 +130,7 @@ export function TodayCard() {
       <span className="text-[15px] font-medium text-(--color-text)">
         {state.nextPlanDate
           ? formatMediumDate(parseISODate(state.nextPlanDate))
-          : "Start en fri træning, eller læg en plan i Min Plan/Kalender."}
+          : "Start en fri træning, eller læg en plan under Programmer/Kalender."}
       </span>
       <Button onClick={handleStart}>Start træning</Button>
     </div>

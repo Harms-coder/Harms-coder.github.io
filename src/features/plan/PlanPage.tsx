@@ -70,16 +70,16 @@ export function PlanPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-(--color-text)">Min Plan</h1>
+        <h1 className="text-2xl font-bold text-(--color-text)">Programmer</h1>
         <Button
           variant={isAdding ? "secondary" : "primary"}
           onClick={() => setIsAdding((v) => !v)}
         >
-          {isAdding ? "Annuller" : "+ Ny gruppe"}
+          {isAdding ? "Annuller" : "+ Nyt program"}
         </Button>
       </div>
       <p className="text-sm text-(--color-text-muted)">
-        Saml øvelser i grupper (fx "Træning 1", "Træning 2"), så du hurtigt kan lægge en hel
+        Saml øvelser i programmer (fx "Træning 1", "Push"), så du hurtigt kan lægge en hel
         træning ind i kalenderen.
       </p>
 
@@ -103,7 +103,7 @@ export function PlanPage() {
           </span>
           <RoutineColorPicker value={newColor} onChange={setNewColor} />
           <Button onClick={handleAdd} disabled={!newName.trim() || newExerciseIds.length === 0}>
-            Gem gruppe
+            Gem program
           </Button>
         </div>
       )}
@@ -112,7 +112,7 @@ export function PlanPage() {
 
       {!loading && routines.length === 0 && !isAdding && (
         <p className="text-sm text-(--color-text-muted)">
-          Du har ingen grupper endnu. Tryk "+ Ny gruppe" for at oprette den første.
+          Du har ingen programmer endnu. Tryk "+ Nyt program" for at oprette det første.
         </p>
       )}
 
