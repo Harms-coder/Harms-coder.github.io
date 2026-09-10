@@ -1,6 +1,6 @@
 import { parseISODate, toISODate } from "../lib/date";
 import { generateId } from "../lib/id";
-import type { PlannedWorkout } from "../types";
+import type { PlannedStatus, PlannedWorkout } from "../types";
 import { getDb } from "./database";
 
 export async function getPlannedWorkoutForDate(
@@ -52,6 +52,39 @@ export async function setPlannedWorkoutSeries(
     cursor.setDate(cursor.getDate() + 7);
   }
   return occurrences;
+}
+
+export async function setPlannedStatus(
+  id: string,
+  status: PlannedStatus,
+): Promise<PlannedWorkout | undefined> {
+  const db = await getDb();
+  const existing = await db.get("plannedWorkouts", id);
+  if (!existing) return undefined;
+  const updated: PlannedWorkout = { ...existing, status };
+  await db.put("plannedWorkouts", updated);
+  return updated;
+}
+
+/**
+ * Flytter en plan til en anden dag. Ligger der allerede en plan på måldagen, overskrives
+ * den — én plan pr. dag er hele modellen, og to planer samme dag ville ikke kunne vises.
+ */
+export async function movePlannedWorkout(
+  id: string,
+  toDate: string,
+): Promise<PlannedWorkout | undefined> {
+  const db = await getDb();
+  const existing = await db.get("plannedWorkouts", id);
+  if (!existing) return undefined;
+
+  const atTarget = await getPlannedWorkoutForDate(toDate);
+  if (atTarget && atTarget.id !== id) {
+    await db.delete("plannedWorkouts", atTarget.id);
+  }
+  const moved: PlannedWorkout = { ...existing, date: toDate, status: "postponed" };
+  await db.put("plannedWorkouts", moved);
+  return moved;
 }
 
 export async function deletePlannedWorkout(id: string): Promise<void> {

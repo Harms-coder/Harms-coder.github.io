@@ -63,11 +63,18 @@ export interface Routine {
   createdAt: string;
 }
 
+/**
+ * Hvor en planlagt træning endte. Manglende værdi betyder "planned" — alle planer lagt
+ * før feltet fandtes, læses altså som planlagte, uden migration.
+ */
+export type PlannedStatus = "planned" | "done" | "postponed" | "skipped";
+
 export interface PlannedWorkout {
   id: string;
   date: string;
   routineId?: string;
   exerciseIds: string[];
+  status?: PlannedStatus;
 }
 
 export type GoalType =
