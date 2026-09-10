@@ -401,9 +401,14 @@ export function OverviewPage() {
           Gem en backup af dine data
           <IconChevronRight className="h-3.5 w-3.5" />
         </Link>
-        <Link to="/demo" className="text-[11px] text-(--color-text-muted) active:opacity-70">
-          Eksempeldata
-        </Link>
+        <span className="flex items-center gap-3">
+          <Link to="/demo" className="text-[11px] text-(--color-text-muted) active:opacity-70">
+            Eksempeldata
+          </Link>
+          <Link to="/diag" className="text-[11px] text-(--color-text-muted) active:opacity-70">
+            Diagnose
+          </Link>
+        </span>
       </div>
     </div>
   );
