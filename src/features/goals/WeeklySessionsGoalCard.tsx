@@ -110,51 +110,57 @@ export function WeeklySessionsGoalCard({
         />
       ) : (
         <>
-          <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={84} label="" statusText="" percent={progress.percent} />
-            <div className="flex flex-col gap-1">
-              <span className="text-[20px] font-semibold text-(--color-text)">
-                {current} / {target} træninger
-              </span>
-              <span className="text-[13px] text-(--color-text-muted)">
-                {achieved ? "Mål nået" : `${remaining} træning${remaining === 1 ? "" : "er"} tilbage`}
-              </span>
-              {streak > 0 && (
-                <span className="flex items-center gap-1 text-[13px] font-medium text-(--color-accent-bright)">
-                  <IconFlame className="h-3.5 w-3.5" />
-                  {streak} ugers streak
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-4">
+              <GoalProgress variant="circular" size={84} label="" statusText="" percent={progress.percent} />
+              <div className="flex flex-col gap-1">
+                <span className="text-[20px] font-semibold text-(--color-text)">
+                  {current} / {target} træninger
                 </span>
-              )}
+                <span className="text-[13px] text-(--color-text-muted)">
+                  {achieved ? "Mål nået" : `${remaining} træning${remaining === 1 ? "" : "er"} tilbage`}
+                </span>
+                {streak > 0 && (
+                  <span className="flex items-center gap-1 text-[13px] font-medium text-(--color-accent-bright)">
+                    <IconFlame className="h-3.5 w-3.5" />
+                    {streak} ugers streak
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-shrink-0 flex-col gap-1">
+              {DA_WEEKDAYS_SHORT.map((day, i) => {
+                const isCompleted = completedDays[i];
+                const isToday = i === todayIndex;
+                return (
+                  <div key={day} className="flex items-center gap-1.5">
+                    <span className="w-3.5 text-[10.5px] font-medium text-(--color-text-muted)">
+                      {day[0]}
+                    </span>
+                    <span
+                      className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                        isCompleted
+                          ? "accent-fill border-transparent"
+                          : isToday
+                            ? "border-2 border-(--color-accent)"
+                            : "border-(--color-border)"
+                      }`}
+                    >
+                      {isCompleted && <IconCheck className="h-3 w-3 text-(--color-text)" />}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            {DA_WEEKDAYS_SHORT.map((day, i) => {
-              const isCompleted = completedDays[i];
-              const isToday = i === todayIndex;
-              return (
-                <div key={day} className="flex flex-col items-center gap-1">
-                  <span className="text-[11px] font-medium text-(--color-text-muted)">{day[0]}</span>
-                  <span
-                    className={`flex h-7 w-7 items-center justify-center rounded-full border ${
-                      isCompleted
-                        ? "accent-fill border-transparent"
-                        : isToday
-                          ? "border-2 border-(--color-accent)"
-                          : "border-(--color-border)"
-                    }`}
-                  >
-                    {isCompleted && <IconCheck className="h-3.5 w-3.5 text-(--color-text)" />}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="flex justify-end">
+            <Button size="sm" onClick={handleStart} className="flex items-center gap-1.5">
+              <IconPlay className="h-3.5 w-3.5" />
+              Start træning
+            </Button>
           </div>
-
-          <Button onClick={handleStart} className="flex items-center justify-center gap-2">
-            <IconPlay className="h-4 w-4" />
-            Start træning
-          </Button>
         </>
       )}
     </div>

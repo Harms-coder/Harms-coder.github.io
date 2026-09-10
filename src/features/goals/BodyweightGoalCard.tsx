@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { AxisTrendChart } from "../../components/AxisTrendChart";
 import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconCalendar, IconTarget } from "../../components/icons";
-import { Sparkline } from "../../components/Sparkline";
-import { formatMediumDate, formatShortDate, parseISODate, toISODate } from "../../lib/date";
+import { DA_MONTHS, formatMediumDate, parseISODate, toISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { BodyweightEntry } from "../../types";
 import { GoalTargetEditForm } from "./GoalTargetEditForm";
@@ -13,6 +13,22 @@ const MAX_PROJECTION_DAYS = 3650;
 
 function round1(value: number): number {
   return Math.round(value * 10) / 10;
+}
+
+function monthAbbrev(dateISO: string): string {
+  const name = DA_MONTHS[parseISODate(dateISO).getMonth()].slice(0, 3);
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/** Viser kun månedsnavnet ved første punkt i hver måned, så x-aksen ikke gentager sig punkt for punkt. */
+function sparseMonthLabels(entries: BodyweightEntry[]): string[] {
+  let lastMonth = "";
+  return entries.map((entry) => {
+    const label = monthAbbrev(entry.date);
+    if (label === lastMonth) return "";
+    lastMonth = label;
+    return label;
+  });
 }
 
 /** Lineær fremskrivning ud fra den seneste vægt-trend, af hvornår kropsvægtsmålet nås. undefined hvis der ikke er nok data eller trenden går væk fra målet. */
@@ -106,11 +122,10 @@ export function BodyweightGoalCard({
           </div>
 
           {recentAscending.length >= 2 && (
-            <Sparkline
+            <AxisTrendChart
               values={recentAscending.map((e) => e.weight)}
-              labels={recentAscending.map((e) => formatShortDate(e.date))}
-              height={48}
-              unit=" kg"
+              labels={sparseMonthLabels(recentAscending)}
+              projection={projectedDate ? { value: target, label: monthAbbrev(projectedDate) } : undefined}
             />
           )}
         </>

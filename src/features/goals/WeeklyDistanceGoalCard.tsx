@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AxisTrendChart } from "../../components/AxisTrendChart";
 import { Button } from "../../components/Button";
 import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconPlay, IconRun } from "../../components/icons";
-import { Sparkline } from "../../components/Sparkline";
 import { DA_WEEKDAYS_SHORT, parseISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { CardioEntry } from "../../types";
@@ -102,16 +102,19 @@ export function WeeklyDistanceGoalCard({
           </div>
 
           {cumulative.some((v) => v > 0) && (
-            <Sparkline values={cumulative} labels={DA_WEEKDAYS_SHORT} height={48} unit=" km" />
+            <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero />
           )}
 
-          <Button
-            onClick={() => navigate("/cardio", { state: { autoAdd: true } })}
-            className="flex items-center justify-center gap-2"
-          >
-            <IconPlay className="h-4 w-4" />
-            Start løb
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              onClick={() => navigate("/cardio", { state: { autoAdd: true } })}
+              className="flex items-center gap-1.5"
+            >
+              <IconPlay className="h-3.5 w-3.5" />
+              Start løb
+            </Button>
+          </div>
         </>
       )}
     </div>
