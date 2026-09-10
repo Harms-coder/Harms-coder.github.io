@@ -164,6 +164,21 @@ export function LiveTrainingPage() {
 
   async function handleEnd() {
     if (!session) return;
+
+    /*
+     * Uden sæt er der ikke noget at gemme. Blev den alligevel gemt, ville den tælle som
+     * en træning på Oversigt og i mål og streaks, men være skjult i Historik — og dermed
+     * umulig at slette igen.
+     */
+    if (sets.length === 0) {
+      if (!window.confirm("Du har ikke logget nogen sæt. Afslut uden at gemme træningen?")) {
+        return;
+      }
+      await deleteSession(session.id);
+      navigate("/");
+      return;
+    }
+
     if (!window.confirm("Afslut træningen?")) return;
     await endSession(session.id);
     navigate("/");

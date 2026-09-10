@@ -109,7 +109,7 @@ export function TrainingIdleView({
             <IconBadge icon={IconDumbbell} accent="var(--color-cat-strength)" />
             <span className="text-[16px] font-bold text-(--color-text)">Dagens plan</span>
           </div>
-          {plan && (
+          {plan && !completedToday && (
             <span className="cat-badge flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] font-medium"
               style={{ "--badge-color": "var(--color-cat-progress)", color: "var(--color-cat-progress)" } as CSSProperties}
             >
@@ -119,7 +119,12 @@ export function TrainingIdleView({
           )}
         </div>
 
-        {plan ? (
+        {/* Samme rækkefølge som TodayCard på Oversigt: har man trænet, er planen ikke længere dagens opgave. */}
+        {completedToday ? (
+          <span className="text-[13px] text-(--color-success)">
+            Godt klaret! Du har allerede trænet i dag.
+          </span>
+        ) : plan ? (
           <Link to="/kalender" className="flex flex-col gap-2 active:opacity-70">
             <span className="text-[15px] font-semibold text-(--color-text)">{plan.title}</span>
             <StatRow
@@ -139,10 +144,6 @@ export function TrainingIdleView({
               <span className="text-[13px] text-(--color-text-muted)">{plan.categoriesLine}</span>
             )}
           </Link>
-        ) : completedToday ? (
-          <span className="text-[13px] text-(--color-success)">
-            Godt klaret! Du har allerede trænet i dag.
-          </span>
         ) : (
           <span className="text-[13px] text-(--color-text-muted)">
             {nextPlanDate

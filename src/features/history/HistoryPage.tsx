@@ -191,7 +191,8 @@ export function HistoryPage() {
           session,
         };
       })
-      .filter((item) => item.sets.length > 0);
+      // Træninger uden sæt vises også: de tæller med på Oversigt, så de skal kunne slettes her.
+      .filter((item) => item.sets.length > 0 || Boolean(item.session.endedAt));
 
     const cardioItems: HistoryItem[] = cardio.map((entry) => ({
       kind: "cardio" as const,
@@ -442,8 +443,12 @@ export function HistoryPage() {
                                   ...(item.durationMin !== undefined
                                     ? [{ icon: IconClock, text: `${item.durationMin} min` }]
                                     : []),
-                                  { icon: IconList, text: `${item.exerciseIds.length} øvelser` },
-                                  { icon: IconClipboard, text: `${item.sets.length} sæt` },
+                                  ...(item.sets.length === 0
+                                    ? [{ icon: IconClipboard, text: "Ingen sæt logget" }]
+                                    : [
+                                        { icon: IconList, text: `${item.exerciseIds.length} øvelser` },
+                                        { icon: IconClipboard, text: `${item.sets.length} sæt` },
+                                      ]),
                                 ]
                               : [
                                   { icon: IconClock, text: `${item.durationMin} min` },
