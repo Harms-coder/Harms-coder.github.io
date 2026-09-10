@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { CardActions } from "../../components/CardActions";
-import { Button } from "../../components/Button";
 import { GoalProgress } from "../../components/GoalProgress";
-import { TextField } from "../../components/TextField";
 import { GOAL_TYPE_LABELS } from "../../db/goals";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
+import { GoalTargetEditForm } from "./GoalTargetEditForm";
 
 interface GoalCardProps {
   progress: GoalProgressData;
@@ -38,20 +37,12 @@ export function GoalCard({ progress, onUpdate, onDelete }: GoalCardProps) {
       </div>
 
       {isEditing ? (
-        <div className="flex items-end gap-2">
-          <TextField
-            label="Mål"
-            type="number"
-            inputMode="decimal"
-            value={target}
-            onChange={(e) => setTarget(e.target.value)}
-            className="flex-1"
-          />
-          <Button onClick={handleSave}>Gem</Button>
-          <Button variant="secondary" onClick={() => setIsEditing(false)}>
-            Annuller
-          </Button>
-        </div>
+        <GoalTargetEditForm
+          target={target}
+          onTargetChange={setTarget}
+          onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
+        />
       ) : (
         <div className="flex items-center gap-4">
           <GoalProgress

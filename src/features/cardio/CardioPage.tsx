@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useLocation } from "react-router-dom";
 import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
 import { HeroHeader } from "../../components/HeroHeader";
@@ -26,7 +27,10 @@ const FILTER_OPTIONS = [FILTER_ALL, ...CARDIO_ACTIVITIES].map((activity) => ({
 export function CardioPage() {
   const [entries, setEntries] = useState<CardioEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
+  const location = useLocation();
+  const [isAdding, setIsAdding] = useState(
+    Boolean((location.state as { autoAdd?: boolean } | null)?.autoAdd),
+  );
   const [activityFilter, setActivityFilter] = useState<string>(FILTER_ALL);
   const [date, setDate] = useState(todayISODate());
   const [activity, setActivity] = useState("Løb");

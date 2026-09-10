@@ -7,12 +7,16 @@ import { listBodyweightEntries } from "../../db/bodyweight";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
 import { createGoal, deleteGoal, listGoals, updateGoal } from "../../db/goals";
-import { listSessionsInRange } from "../../db/sessions";
+import { listSessions, listSessionsInRange } from "../../db/sessions";
 import { computeGoalProgress } from "../../lib/goalProgress";
 import { getCurrentWeekRange } from "../../lib/date";
 import type { BodyweightEntry, CardioEntry, Exercise, Goal, GoalType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "../training/ExercisePicker";
+import { BodyweightGoalCard } from "./BodyweightGoalCard";
 import { GoalCard } from "./GoalCard";
+import { WeekSummaryCard } from "./WeekSummaryCard";
+import { WeeklyDistanceGoalCard } from "./WeeklyDistanceGoalCard";
+import { WeeklySessionsGoalCard } from "./WeeklySessionsGoalCard";
 
 const EXERCISE_GOAL_TYPES: GoalType[] = ["exerciseWeight", "exercise1RM"];
 
@@ -20,8 +24,10 @@ export function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [weekSessions, setWeekSessions] = useState<WorkoutSession[]>([]);
+  const [allSessions, setAllSessions] = useState<WorkoutSession[]>([]);
   const [weekCardio, setWeekCardio] = useState<CardioEntry[]>([]);
   const [bodyweightEntries, setBodyweightEntries] = useState<BodyweightEntry[]>([]);
+  const [weekStart, setWeekStart] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [isAdding, setIsAdding] = useState(false);
@@ -32,18 +38,21 @@ export function GoalsPage() {
 
   async function refresh() {
     const { start, end } = getCurrentWeekRange();
-    const [allGoals, allExercises, sessions, cardio, bodyweight] = await Promise.all([
+    const [allGoals, allExercises, sessions, everySession, cardio, bodyweight] = await Promise.all([
       listGoals(),
       listExercises(),
       listSessionsInRange(start, end),
+      listSessions(),
       listCardioEntriesInRange(start, end),
       listBodyweightEntries(),
     ]);
     setGoals(allGoals);
     setExercises(allExercises);
     setWeekSessions(sessions.filter((s) => s.endedAt));
+    setAllSessions(everySession);
     setWeekCardio(cardio);
     setBodyweightEntries(bodyweight);
+    setWeekStart(start);
     setLoading(false);
   }
 
@@ -163,15 +172,55 @@ export function GoalsPage() {
         </p>
       )}
 
+      {!loading && progressList.length > 0 && <WeekSummaryCard progressList={progressList} />}
+
       <div className="flex flex-col gap-3">
-        {progressList.map((progress) => (
-          <GoalCard
-            key={progress.goal.id}
-            progress={progress}
-            onUpdate={(target) => handleUpdate(progress.goal.id, target)}
-            onDelete={() => handleDelete(progress.goal.id)}
-          />
-        ))}
+        {progressList.map((progress) => {
+          const key = progress.goal.id;
+          switch (progress.goal.type) {
+            case "sessionsPerWeek":
+              return (
+                <WeeklySessionsGoalCard
+                  key={key}
+                  progress={progress}
+                  weekSessions={weekSessions}
+                  allSessions={allSessions}
+                  weekStartISO={weekStart}
+                  onUpdate={(target) => handleUpdate(progress.goal.id, target)}
+                  onDelete={() => handleDelete(progress.goal.id)}
+                />
+              );
+            case "distanceKmPerWeek":
+              return (
+                <WeeklyDistanceGoalCard
+                  key={key}
+                  progress={progress}
+                  weekCardio={weekCardio}
+                  onUpdate={(target) => handleUpdate(progress.goal.id, target)}
+                  onDelete={() => handleDelete(progress.goal.id)}
+                />
+              );
+            case "bodyweight":
+              return (
+                <BodyweightGoalCard
+                  key={key}
+                  progress={progress}
+                  bodyweightEntries={bodyweightEntries}
+                  onUpdate={(target) => handleUpdate(progress.goal.id, target)}
+                  onDelete={() => handleDelete(progress.goal.id)}
+                />
+              );
+            default:
+              return (
+                <GoalCard
+                  key={key}
+                  progress={progress}
+                  onUpdate={(target) => handleUpdate(progress.goal.id, target)}
+                  onDelete={() => handleDelete(progress.goal.id)}
+                />
+              );
+          }
+        })}
       </div>
     </div>
   );
