@@ -54,12 +54,15 @@ export function BottomNav() {
           <span className="whitespace-nowrap">{homeItem.label}</span>
         </NavLink>
         <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
-        <div className="no-scrollbar flex flex-1 gap-1 overflow-x-auto pr-2">
-          {scrollableItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className={linkClassName}>
-              <item.Icon className="h-5 w-5" />
-              <span className="whitespace-nowrap">{item.label}</span>
-            </NavLink>
+        <div className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto pr-2">
+          {scrollableItems.map((item, i) => (
+            <div key={item.to} className="flex items-center gap-1">
+              {i > 0 && <span className="h-6 w-px flex-shrink-0 bg-(--color-border)" />}
+              <NavLink to={item.to} className={linkClassName}>
+                <item.Icon className="h-5 w-5" />
+                <span className="whitespace-nowrap">{item.label}</span>
+              </NavLink>
+            </div>
           ))}
         </div>
       </div>

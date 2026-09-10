@@ -59,6 +59,7 @@ export function ProgressionPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [gainsRange, setGainsRange] = useState<RangeKey>("always");
+  const [chartsRange, setChartsRange] = useState<RangeKey>("always");
 
   useEffect(() => {
     void Promise.all([listExercises(), listAllSets(), listSessions()]).then(
@@ -108,6 +109,11 @@ export function ProgressionPage() {
   const dailyStats = useMemo(
     () => buildDailyStats(setsByExercise.get(selectedId ?? "") ?? []),
     [setsByExercise, selectedId],
+  );
+  const chartsRangeStart = getRangeStart(chartsRange);
+  const filteredDailyStats = useMemo(
+    () => dailyStats.filter((d) => d.date >= chartsRangeStart),
+    [dailyStats, chartsRangeStart],
   );
   const selectedExercise = exercises.find((e) => e.id === selectedId);
 
@@ -239,60 +245,73 @@ export function ProgressionPage() {
         </p>
       ) : (
         <>
-          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] font-medium text-(--color-text-muted)">
-                Tungeste vægt pr. træning (kg)
-              </span>
-              {selectedExercise?.pr1RM !== undefined && (
-                <span className="flex items-center gap-1 text-[11px] text-(--color-text-muted)">
-                  <span className="h-2 w-2 rounded-full bg-(--color-success)" />
-                  Dit 1RM
-                </span>
-              )}
-            </div>
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
-                  <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
-                  <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
-                  {selectedExercise?.pr1RM !== undefined && (
-                    <ReferenceLine
-                      y={selectedExercise.pr1RM}
-                      stroke="var(--color-success)"
-                      strokeDasharray="4 4"
-                    />
-                  )}
-                  <Line
-                    type="monotone"
-                    dataKey="maxWeight"
-                    stroke="var(--color-accent-bright)"
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: "var(--color-accent-bright)" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <SegmentedControl
+            options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
+            value={chartsRange}
+            onChange={setChartsRange}
+            layout="scroll"
+          />
 
-          <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
-              Volume pr. træning (kg × reps)
-            </span>
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
-                  <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
-                  <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
-                  <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          {filteredDailyStats.length === 0 ? (
+            <p className="text-sm text-(--color-text-muted)">Ingen sæt logget i denne periode.</p>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-medium text-(--color-text-muted)">
+                    Tungeste vægt pr. træning (kg)
+                  </span>
+                  {selectedExercise?.pr1RM !== undefined && (
+                    <span className="flex items-center gap-1 text-[11px] text-(--color-text-muted)">
+                      <span className="h-2 w-2 rounded-full bg-(--color-success)" />
+                      Dit 1RM
+                    </span>
+                  )}
+                </div>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                      <CartesianGrid stroke="var(--color-border)" vertical={false} />
+                      <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
+                      <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
+                      <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                      {selectedExercise?.pr1RM !== undefined && (
+                        <ReferenceLine
+                          y={selectedExercise.pr1RM}
+                          stroke="var(--color-success)"
+                          strokeDasharray="4 4"
+                        />
+                      )}
+                      <Line
+                        type="monotone"
+                        dataKey="maxWeight"
+                        stroke="var(--color-accent-bright)"
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: "var(--color-accent-bright)" }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+                <span className="text-[13px] font-medium text-(--color-text-muted)">
+                  Volume pr. træning (kg × reps)
+                </span>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                      <CartesianGrid stroke="var(--color-border)" vertical={false} />
+                      <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
+                      <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
+                      <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                      <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
