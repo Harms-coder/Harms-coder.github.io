@@ -67,7 +67,12 @@ function buildDailyStats(sets: SetEntry[]): DailyStat[] {
 }
 
 export function ProgressionPage() {
-  const { handlers, tooltipActive } = useChartTouch();
+  /*
+   * Én tilstand pr. diagram. Med en fælles ville en berøring på det ene sætte flaget for
+   * begge, og det andet diagram ville få lov at vise sin gamle, skjulte tooltip igen.
+   */
+  const vaegtGraf = useChartTouch();
+  const volumeGraf = useChartTouch();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [allSets, setAllSets] = useState<SetEntry[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
@@ -320,14 +325,14 @@ export function ProgressionPage() {
                     </span>
                   )}
                 </div>
-                <div className="h-48" {...handlers}>
+                <div className="h-48" {...vaegtGraf.handlers}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                       <CartesianGrid stroke="var(--color-border)" vertical={false} />
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                       <Tooltip
-                        active={tooltipActive}
+                        active={vaegtGraf.tooltipActive}
                         cursor={chartLineCursor}
                         contentStyle={chartTooltipStyle}
                         labelStyle={{ color: "var(--color-text)" }}
@@ -345,7 +350,7 @@ export function ProgressionPage() {
                         stroke="var(--color-accent-bright)"
                         strokeWidth={2}
                         dot={{ r: 3, fill: "var(--color-accent-bright)" }}
-                        activeDot={tooltipActive === false ? false : { r: 5 }}
+                        activeDot={vaegtGraf.tooltipActive === false ? false : { r: 5 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -356,14 +361,14 @@ export function ProgressionPage() {
                 <span className="text-[13px] font-medium text-(--color-text-muted)">
                   Volume pr. træning (kg × reps)
                 </span>
-                <div className="h-48" {...handlers}>
+                <div className="h-48" {...volumeGraf.handlers}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                       <CartesianGrid stroke="var(--color-border)" vertical={false} />
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
                       <Tooltip
-                        active={tooltipActive}
+                        active={volumeGraf.tooltipActive}
                         cursor={chartBarCursor}
                         contentStyle={chartTooltipStyle}
                         labelStyle={{ color: "var(--color-text)" }}
