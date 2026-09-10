@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { CategoryPicker } from "../../components/CategoryPicker";
 import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
@@ -10,6 +11,8 @@ import type { Exercise } from "../../types";
 import { ExerciseCard } from "./ExerciseCard";
 
 export function ExercisesPage() {
+  const location = useLocation();
+  const filterIds = (location.state as { filterIds?: string[] } | null)?.filterIds;
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -17,6 +20,7 @@ export function ExercisesPage() {
   const [newCategory, setNewCategory] = useState<string | undefined>(undefined);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const [showingFiltered, setShowingFiltered] = useState(Boolean(filterIds?.length));
 
   async function refresh() {
     const all = await listExercises();
@@ -43,10 +47,13 @@ export function ExercisesPage() {
     await refresh();
   }
 
-  const filtered = useMemo(
-    () => filterExercises(exercises, category, query),
-    [exercises, category, query],
-  );
+  const filtered = useMemo(() => {
+    const base =
+      showingFiltered && filterIds?.length
+        ? exercises.filter((e) => filterIds.includes(e.id))
+        : exercises;
+    return filterExercises(base, category, query);
+  }, [exercises, category, query, showingFiltered, filterIds]);
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
@@ -92,6 +99,21 @@ export function ExercisesPage() {
         <p className="text-sm text-(--color-text-muted)">
           Du har ingen øvelser endnu. Tryk "+ Tilføj" for at oprette den første.
         </p>
+      )}
+
+      {showingFiltered && (
+        <div className="flex items-center justify-between rounded-xl border border-(--color-border-accent) bg-(--color-surface-2) px-3.5 py-2">
+          <span className="text-[13px] text-(--color-text-secondary)">
+            Viser {filterIds?.length} øvelse{filterIds?.length === 1 ? "" : "r"}
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowingFiltered(false)}
+            className="text-[13px] font-medium text-(--color-accent)"
+          >
+            Vis alle →
+          </button>
+        </div>
       )}
 
       {exercises.length > 0 && (

@@ -7,6 +7,8 @@ export type BadgeKind = "pr" | "oneRm" | "gain" | "streak" | "bestMonth" | "goal
 export interface Badge {
   kind: BadgeKind;
   label: string;
+  exerciseIds?: string[];
+  linkTo?: string;
 }
 
 const RECENT_PR_DAYS = 7;
@@ -23,9 +25,9 @@ function biggestRecentGain(
   exercises: Exercise[],
   setsByExercise: Map<string, SetEntry[]>,
   days: number,
-): { exerciseName: string; deltaKg: number } | undefined {
+): { exerciseId: string; exerciseName: string; deltaKg: number } | undefined {
   const cutoffIso = new Date(Date.now() - days * 86_400_000).toISOString();
-  let best: { exerciseName: string; deltaKg: number } | undefined;
+  let best: { exerciseId: string; exerciseName: string; deltaKg: number } | undefined;
 
   for (const exercise of exercises) {
     const sets = (setsByExercise.get(exercise.id) ?? [])
@@ -39,7 +41,7 @@ function biggestRecentGain(
     const deltaKg = Math.round((currentWeight - baselineWeight) * 10) / 10;
 
     if (deltaKg >= RECENT_GAIN_THRESHOLD_KG && (!best || deltaKg > best.deltaKg)) {
-      best = { exerciseName: exercise.name, deltaKg };
+      best = { exerciseId: exercise.id, exerciseName: exercise.name, deltaKg };
     }
   }
   return best;
@@ -97,6 +99,7 @@ export function computeBadges(input: {
         recentHeaviestPrs.length === 1
           ? `Ny PR: ${recentHeaviestPrs[0].name}`
           : `${recentHeaviestPrs.length} nye PR'er`,
+      exerciseIds: recentHeaviestPrs.map((e) => e.id),
     });
   }
 
@@ -108,12 +111,17 @@ export function computeBadges(input: {
         recent1RMPrs.length === 1
           ? `Ny 1RM: ${recent1RMPrs[0].name}`
           : `${recent1RMPrs.length} nye 1RM-rekorder`,
+      exerciseIds: recent1RMPrs.map((e) => e.id),
     });
   }
 
   const gain = biggestRecentGain(input.exercises, input.setsByExercise, RECENT_GAIN_DAYS);
   if (gain) {
-    badges.push({ kind: "gain", label: `+${gain.deltaKg} kg på ${gain.exerciseName} (30 dage)` });
+    badges.push({
+      kind: "gain",
+      label: `+${gain.deltaKg} kg på ${gain.exerciseName} (30 dage)`,
+      exerciseIds: [gain.exerciseId],
+    });
   }
 
   const streak = computeSessionStreak(input.sessions);
@@ -130,6 +138,7 @@ export function computeBadges(input: {
     badges.push({
       kind: "goal",
       label: achievedGoals.length === 1 ? "Mål nået" : `${achievedGoals.length} mål nået`,
+      linkTo: "/mal",
     });
   }
 
