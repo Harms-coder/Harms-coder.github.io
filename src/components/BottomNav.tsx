@@ -122,7 +122,7 @@ export function BottomNav() {
         <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
         <div
           ref={scrollerRef}
-          className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto pr-2"
+          className="no-scrollbar glow-scroller flex flex-1 items-center gap-1 overflow-x-auto pr-2"
         >
           {scrollableItems.map((item, i) => (
             <div key={item.to} className="flex items-center gap-1">

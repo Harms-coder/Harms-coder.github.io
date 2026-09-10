@@ -159,7 +159,7 @@ export function ProgressionPage() {
       </div>
 
       {badges.length > 0 && (
-        <div className="no-scrollbar flex gap-2 overflow-x-auto">
+        <div className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto">
           {badges.map((badge) => (
             <ProgressBadge key={`${badge.kind}-${badge.label}`} badge={badge} />
           ))}
@@ -229,7 +229,7 @@ export function ProgressionPage() {
         )}
       </div>
 
-      <div className="no-scrollbar flex gap-2 overflow-x-auto">
+      <div className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto">
         {sortedExercises.map((exercise) => (
           <button
             key={exercise.id}

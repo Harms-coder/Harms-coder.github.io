@@ -31,7 +31,7 @@ export function SegmentedControl<T extends string>({
   const containerClass =
     layout === "wrap"
       ? `glass-fill flex gap-1 rounded-full ${size === "sm" ? "p-0.5" : "p-1"}`
-      : "no-scrollbar flex gap-2 overflow-x-auto";
+      : "no-scrollbar glow-scroller flex gap-2 overflow-x-auto";
   const buttonClass =
     layout === "wrap"
       ? `${height} flex-1 whitespace-nowrap rounded-full px-1 text-[12px] font-medium`

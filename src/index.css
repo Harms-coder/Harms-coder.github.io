@@ -132,6 +132,17 @@ h1 {
   letter-spacing: var(--tracking-eyebrow);
 }
 
+/*
+ * Vandret scrollende række med plads til gløden omkring aktive piller.
+ * overflow-x: auto beskærer OGSÅ lodret, så uden denne padding klippes gløden af i en
+ * lige linje over og under knappen. Den negative margin holder layoutet uændret.
+ */
+.glow-scroller {
+  /* Skal være mindst så bred som glødens blur (16 px), ellers ses en lige kant hvor den klippes. */
+  padding-block: 1.125rem;
+  margin-block: -1.125rem;
+}
+
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */
 .no-scrollbar {
   scrollbar-width: none;
@@ -184,7 +195,8 @@ h1 {
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    0 8px 28px color-mix(in srgb, var(--color-accent) 48%, transparent),
+    0 0 15px color-mix(in srgb, var(--color-accent) 50%, transparent),
+    0 5px 16px color-mix(in srgb, var(--color-accent) 38%, transparent),
     0 1px 3px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -10px 14px rgba(0, 0, 0, 0.16);
@@ -247,7 +259,8 @@ h1 {
   );
   border: 1px solid color-mix(in srgb, white 26%, transparent);
   box-shadow:
-    0 8px 26px color-mix(in srgb, var(--badge-color) 45%, transparent),
+    0 0 15px color-mix(in srgb, var(--badge-color) 48%, transparent),
+    0 5px 16px color-mix(in srgb, var(--badge-color) 36%, transparent),
     0 1px 3px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -10px 14px rgba(0, 0, 0, 0.16);

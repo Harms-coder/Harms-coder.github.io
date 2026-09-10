@@ -61,7 +61,7 @@ function CompletionTile({ percent }: { percent: number }) {
 
 export function CalendarMonthStats({ stats }: { stats: MonthStats }) {
   return (
-    <div className="no-scrollbar flex gap-2 overflow-x-auto">
+    <div className="no-scrollbar glow-scroller flex gap-2 overflow-x-auto">
       <Tile
         icon={IconDumbbell}
         color="var(--color-cat-strength)"
