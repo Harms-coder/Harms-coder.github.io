@@ -11,6 +11,8 @@ interface HeroHeaderProps {
   action?: ReactNode;
   /** Tailwind-klasse for luften under subtitlen — mindre værdi flytter næste element tættere på. */
   bottomPadding?: string;
+  /** Lille versal-tekst i højre side af hero'en, fx ["BEDRE VANER", "STÆRKERE DIG"]. */
+  sideNote?: string[];
 }
 
 /** Genanvendelig hero-sektion: foto-baggrund med logo + titel + subtitle ovenpå, der blender ned i sidens baggrund. */
@@ -21,6 +23,7 @@ export function HeroHeader({
   imagePosition = "center",
   action,
   bottomPadding = "pb-9",
+  sideNote,
 }: HeroHeaderProps) {
   return (
     <div className="relative -mx-4 -mt-6 h-72 overflow-hidden">
@@ -36,12 +39,28 @@ export function HeroHeader({
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.25rem)" }}
       >
         <VigorraLogo />
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="text-[30px] font-bold tracking-tight text-(--color-text)">{title}</h1>
-            {action}
+        <div className="flex items-end justify-between gap-3">
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex items-center justify-between gap-3">
+              <h1 className="text-[30px] font-bold tracking-tight text-(--color-text)">{title}</h1>
+              {action}
+            </div>
+            <p className="text-[13px] text-(--color-text-secondary)">{subtitle}</p>
           </div>
-          <p className="text-[13px] text-(--color-text-secondary)">{subtitle}</p>
+
+          {sideNote && (
+            <div className="flex flex-shrink-0 flex-col items-end gap-1 pb-1">
+              {sideNote.map((line) => (
+                <span
+                  key={line}
+                  className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)"
+                >
+                  {line}
+                </span>
+              ))}
+              <span className="mt-0.5 h-px w-7 bg-(--color-accent)" />
+            </div>
+          )}
         </div>
       </div>
     </div>

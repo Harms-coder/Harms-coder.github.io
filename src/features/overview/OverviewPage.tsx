@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { GoalProgress } from "../../components/GoalProgress";
 import { HeroHeader } from "../../components/HeroHeader";
 import { IconClock, IconDumbbell, IconMapPin, IconRun } from "../../components/icons";
 import { ProgressBadge } from "../../components/ProgressBadge";
@@ -8,6 +7,8 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
 import { StatTile } from "../../components/StatTile";
 import { StrengthGainList } from "../../components/StrengthGainList";
+import { ComparisonIllustration } from "./ComparisonIllustration";
+import { WeeklyGoalsCard } from "./WeeklyGoalsCard";
 import { listBodyweightEntries } from "../../db/bodyweight";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
@@ -199,10 +200,11 @@ export function OverviewPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <HeroHeader
         title="Oversigt"
-        subtitle="Din indsats tæller. Bliv ved."
+        subtitle="Disciplin i dag — et stærkere dig i morgen."
         image="/images/dashboard-peaks.jpg"
         imagePosition="center 40%"
         bottomPadding="pb-3"
+        sideNote={["Bedre vaner", "Stærkere dig"]}
       />
 
       <div className="-mt-4">
@@ -217,34 +219,26 @@ export function OverviewPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-        <div className="flex items-center justify-between">
-          <span className="text-[13px] font-medium text-(--color-text-muted)">Ugens målstatus</span>
-          <Link to="/mal" className="text-[13px] font-medium text-(--color-accent)">
-            Alle mål →
-          </Link>
-        </div>
-        {weeklyGoalProgress.length === 0 ? (
+      {weeklyGoalProgress.length > 0 ? (
+        <WeeklyGoalsCard goals={weeklyGoalProgress} />
+      ) : (
+        <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+          <div className="flex items-center justify-between">
+            <span className="text-[16px] font-bold text-(--color-text)">Ugens mål</span>
+            <Link to="/mal" className="text-[12.5px] font-medium text-(--color-accent)">
+              Alle mål →
+            </Link>
+          </div>
           <p className="text-[13px] text-(--color-text-muted)">
             Sæt et ugentligt mål for træning eller løb for at følge status her.
           </p>
-        ) : (
-          weeklyGoalProgress.map((progress) => (
-            <GoalProgress
-              key={progress.goal.id}
-              label={progress.label}
-              statusText={progress.statusText}
-              percent={progress.percent}
-            />
-          ))
-        )}
-      </div>
+        </div>
+      )}
 
       <SegmentedControl
         options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
         value={range}
         onChange={setRange}
-        layout="scroll"
       />
 
       <div className="relative flex min-h-36 flex-col justify-end gap-1 overflow-hidden rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
@@ -258,11 +252,22 @@ export function OverviewPage() {
         <span className="relative text-[13px] font-medium text-(--color-accent-bright)">
           Motivation
         </span>
-        <p className="relative text-[20px] font-semibold leading-snug text-(--color-text)">
-          Små skridt
-          <br />
-          skaber store resultater.
-        </p>
+        <div className="relative flex items-end justify-between gap-3">
+          <p className="text-[20px] font-semibold leading-snug text-(--color-text)">
+            Små skridt
+            <br />
+            skaber store resultater.
+          </p>
+          <div className="flex flex-shrink-0 flex-col items-end gap-1 pb-1">
+            <span className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)">
+              Fremgang
+            </span>
+            <span className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)">
+              hver dag
+            </span>
+            <span className="mt-0.5 h-px w-7 bg-(--color-accent)" />
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -271,6 +276,7 @@ export function OverviewPage() {
           value={`${sessions.length}`}
           to="/historik"
           icon={IconDumbbell}
+          accent="var(--color-cat-strength)"
           delta={sessionsDelta}
         />
         <StatTile
@@ -278,6 +284,7 @@ export function OverviewPage() {
           value={`${totalMinutes}`}
           to="/minutter"
           icon={IconClock}
+          accent="var(--color-cat-goal)"
           delta={minutesDelta}
         />
         <StatTile
@@ -285,6 +292,7 @@ export function OverviewPage() {
           value={`${cardioEntries.length}`}
           to="/cardio"
           icon={IconRun}
+          accent="var(--color-cat-cardio)"
           delta={cardioCountDelta}
         />
         <StatTile
@@ -292,13 +300,18 @@ export function OverviewPage() {
           value={totalCardioKm.toFixed(1)}
           to="/kilometer"
           icon={IconMapPin}
+          accent="var(--color-cat-cardio)"
           delta={cardioKmDelta}
         />
         <StatTile
           label={`Kg løftet · ${RANGE_LABELS[range].toLowerCase()}`}
           value={`${Math.round(totalKgLifted).toLocaleString("da-DK")} kg`}
           delta={kgLiftedDelta}
-          note={weightComparison}
+          note={weightComparison?.text}
+          noteIllustration={
+            weightComparison && <ComparisonIllustration kind={weightComparison.kind} />
+          }
+          icon={IconDumbbell}
           className="col-span-2"
         />
       </div>
