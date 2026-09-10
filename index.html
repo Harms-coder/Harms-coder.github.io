@@ -14,9 +14,16 @@
       rel="stylesheet"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <!-- black-translucent lader websiden strække sig op under statuslinjen, så hero-billederne
-         fortsætter helt op bag ur og batteri. "default" gav en ugennemsigtig hvid bjælke. -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!--
+      "black" giver en mørk statuslinje der falder i ét med appen. "default" gav en hvid
+      bjælke i toppen.
+
+      IKKE "black-translucent": den lader ganske vist billederne fortsætte op bag uret, men
+      iOS giver så websiden en viewport der er lavere end skærmen (målt: 894 mod 956), og de
+      manglende pixels ligger UDEN FOR websiden. Alt fastgjort til bunden efterlader derfor
+      en stribe, som ingen CSS kan dække.
+    -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Træning" />
     <title>Træningsapp</title>
   </head>
