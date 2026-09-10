@@ -47,7 +47,7 @@ function biggestRecentGain(
   return best;
 }
 
-function computeSessionStreak(sessions: WorkoutSession[]): number {
+export function computeSessionStreak(sessions: WorkoutSession[]): number {
   const dates = [...new Set(sessions.filter((s) => s.endedAt).map((s) => s.date))]
     .sort()
     .reverse();

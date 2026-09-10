@@ -492,3 +492,12 @@ export function IconTarget(props: IconProps) {
     </svg>
   );
 }
+
+export function IconLightbulb(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.5a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1v.5h5v-.5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3.5Z" />
+      <path d="M9.5 19.5h5M10.3 22h3.4" />
+    </svg>
+  );
+}

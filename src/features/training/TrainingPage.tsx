@@ -3,13 +3,59 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listExercises } from "../../db/exercises";
-import { deleteSession, endSession, getActiveSession, startSession } from "../../db/sessions";
+import { listGoals } from "../../db/goals";
+import { getPlannedWorkoutForDate, listPlannedWorkoutsInRange } from "../../db/plannedWorkouts";
+import { listRoutines } from "../../db/routines";
+import { deleteSession, endSession, getActiveSession, listSessions, startSession } from "../../db/sessions";
 import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
+import { formatShortDate, getCurrentWeekRange, parseISODate, toISODate, todayISODate } from "../../lib/date";
+import { computeSessionStreak } from "../../lib/progressBadges";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseSessionCard } from "./ExerciseSessionCard";
+import { TrainingIdleView } from "./TrainingIdleView";
 import { orderFromSets } from "./exerciseOrder";
 import { logSet } from "./logSet";
+
+const UPCOMING_PLAN_WINDOW_DAYS = 13;
+
+interface IdlePlanInfo {
+  title: string;
+  exerciseCount: number;
+  categoryCount: number;
+  categoriesLine?: string;
+}
+
+interface IdleLastSessionInfo {
+  title: string;
+  durationMin?: number;
+  setCount: number;
+  dateLabel: string;
+}
+
+interface IdleData {
+  completedToday: boolean;
+  plan?: IdlePlanInfo;
+  nextPlanDate?: string;
+  lastSession?: IdleLastSessionInfo;
+  weekSessionCount: number;
+  streakDays: number;
+  goalRemaining?: number;
+}
+
+function joinDanish(items: string[]): string {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  const lowered = items.map((item, i) => (i === 0 ? item : item.toLowerCase()));
+  return `${lowered.slice(0, -1).join(", ")} og ${lowered[lowered.length - 1]}`;
+}
+
+function relativeDayLabel(dateISO: string, today: string): string {
+  if (dateISO === today) return "i dag";
+  const yesterday = toISODate(new Date(parseISODate(today).getTime() - 86_400_000));
+  if (dateISO === yesterday) return "i går";
+  return formatShortDate(dateISO);
+}
 
 export function TrainingPage() {
   const [loading, setLoading] = useState(true);
@@ -22,6 +68,74 @@ export function TrainingPage() {
   const [seeds, setSeeds] = useState<Record<string, { weight: number; reps: number } | undefined>>(
     {},
   );
+  const [idleData, setIdleData] = useState<IdleData | null>(null);
+
+  async function loadIdleDashboard(allExercises: Exercise[]) {
+    const exerciseById = new Map(allExercises.map((e) => [e.id, e]));
+    const today = todayISODate();
+    const { start: weekStart, end: weekEnd } = getCurrentWeekRange();
+
+    const [plannedWorkout, routines, allSessions, goals] = await Promise.all([
+      getPlannedWorkoutForDate(today),
+      listRoutines(),
+      listSessions(),
+      listGoals(),
+    ]);
+
+    const completedToday = allSessions.some((s) => s.endedAt && s.date === today);
+    const weekSessionCount = allSessions.filter(
+      (s) => s.endedAt && s.date >= weekStart && s.date <= weekEnd,
+    ).length;
+    const streakDays = computeSessionStreak(allSessions);
+    const sessionsGoal = goals.find((g) => g.type === "sessionsPerWeek");
+    const goalRemaining = sessionsGoal ? Math.max(0, sessionsGoal.target - weekSessionCount) : undefined;
+
+    let plan: IdlePlanInfo | undefined;
+    let nextPlanDate: string | undefined;
+    if (plannedWorkout) {
+      const planExercises = plannedWorkout.exerciseIds
+        .map((id) => exerciseById.get(id))
+        .filter((e): e is Exercise => Boolean(e));
+      const categories = [...new Set(planExercises.map((e) => e.category).filter((c): c is string => Boolean(c)))];
+      const routine = plannedWorkout.routineId
+        ? routines.find((r) => r.id === plannedWorkout.routineId)
+        : undefined;
+      plan = {
+        title: routine?.name ?? "Din træning i dag",
+        exerciseCount: planExercises.length,
+        categoryCount: categories.length,
+        categoriesLine: routine?.name && categories.length > 0 ? joinDanish(categories) : undefined,
+      };
+    } else {
+      const windowEnd = new Date();
+      windowEnd.setDate(windowEnd.getDate() + UPCOMING_PLAN_WINDOW_DAYS);
+      const upcoming = await listPlannedWorkoutsInRange(today, toISODate(windowEnd));
+      nextPlanDate = upcoming
+        .filter((p) => p.date > today)
+        .sort((a, b) => a.date.localeCompare(b.date))[0]?.date;
+    }
+
+    const lastCompleted = allSessions.find((s) => s.endedAt);
+    let lastSession: IdleLastSessionInfo | undefined;
+    if (lastCompleted) {
+      const lastSets = await listSetsForSession(lastCompleted.id);
+      const categories = [
+        ...new Set(
+          lastSets
+            .map((s) => exerciseById.get(s.exerciseId)?.category)
+            .filter((c): c is string => Boolean(c)),
+        ),
+      ];
+      lastSession = {
+        title: categories.length > 0 ? joinDanish(categories) : "Træning",
+        durationMin: lastCompleted.durationMin,
+        setCount: lastSets.length,
+        dateLabel: relativeDayLabel(lastCompleted.date, today),
+      };
+    }
+
+    setIdleData({ completedToday, plan, nextPlanDate, lastSession, weekSessionCount, streakDays, goalRemaining });
+  }
 
   async function loadActiveSession() {
     const [allExercises, activeSession] = await Promise.all([
@@ -35,6 +149,8 @@ export function TrainingPage() {
       setSession(activeSession);
       setSets(sessionSets);
       setExerciseOrder(orderFromSets(sessionSets));
+    } else {
+      await loadIdleDashboard(allExercises);
     }
     setLoading(false);
   }
@@ -59,6 +175,7 @@ export function TrainingPage() {
     setSets([]);
     setExerciseOrder([]);
     setExpandedExerciseId(null);
+    await loadIdleDashboard(exercises);
   }
 
   async function handleCancel() {
@@ -72,6 +189,7 @@ export function TrainingPage() {
     setSets([]);
     setExerciseOrder([]);
     setExpandedExerciseId(null);
+    await loadIdleDashboard(exercises);
   }
 
   async function handleSelectExercise(exercise: Exercise) {
@@ -125,15 +243,18 @@ export function TrainingPage() {
   }
 
   if (!session) {
+    if (!idleData) return null;
     return (
-      <div className="flex flex-col items-center gap-4 px-4 pt-6 text-center">
-        <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
-        <h1 className="mt-8 text-2xl font-semibold text-(--color-text)">Træning</h1>
-        <p className="text-sm text-(--color-text-muted)">
-          Start en træning for at begynde at logge sæt.
-        </p>
-        <Button onClick={handleStart}>Start træning</Button>
-      </div>
+      <TrainingIdleView
+        onStart={handleStart}
+        completedToday={idleData.completedToday}
+        plan={idleData.plan}
+        nextPlanDate={idleData.nextPlanDate}
+        lastSession={idleData.lastSession}
+        weekSessionCount={idleData.weekSessionCount}
+        streakDays={idleData.streakDays}
+        goalRemaining={idleData.goalRemaining}
+      />
     );
   }
 
