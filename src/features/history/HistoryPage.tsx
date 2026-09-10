@@ -1,33 +1,182 @@
-import { useEffect, useState } from "react";
-import { IconChevronDown } from "../../components/icons";
+import { useEffect, useMemo, useState } from "react";
+import {
+  IconChevronDown,
+  IconClipboard,
+  IconClock,
+  IconDumbbell,
+  IconList,
+  IconMapPin,
+  IconRun,
+  IconTrendUp,
+  type IconComponent,
+} from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { SwipeToDelete } from "../../components/SwipeToDelete";
+import { deleteCardioEntry, listCardioEntries } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
 import { deleteSession, listSessions } from "../../db/sessions";
 import { deleteSet, listSetsForSession } from "../../db/sets";
-import { formatLongDate, parseISODate } from "../../lib/date";
-import type { Exercise, SetEntry, WorkoutSession } from "../../types";
+import {
+  DA_MONTHS,
+  formatDuration,
+  formatLongDate,
+  formatMonthTitle,
+  getWeekNumber,
+  getWeekStart,
+  parseISODate,
+  toISODate,
+} from "../../lib/date";
+import {
+  RANGE_KEYS,
+  RANGE_LABELS,
+  getPreviousRangeBounds,
+  getRangeStart,
+  type RangeKey,
+} from "../../lib/dateRange";
+import { joinDanish } from "../../lib/format";
+import type { CardioEntry, Exercise, SetEntry, WorkoutSession } from "../../types";
 
-interface SessionWithSets {
-  session: WorkoutSession;
+type TypeFilter = "all" | "strength" | "cardio";
+
+const TYPE_OPTIONS: { value: TypeFilter; label: string }[] = [
+  { value: "all", label: "Alle" },
+  { value: "strength", label: "Styrke" },
+  { value: "cardio", label: "Cardio" },
+];
+
+interface StrengthItem {
+  kind: "strength";
+  id: string;
+  date: string;
+  title: string;
+  durationMin?: number;
+  exerciseIds: string[];
   sets: SetEntry[];
+  session: WorkoutSession;
+}
+
+interface CardioItem {
+  kind: "cardio";
+  id: string;
+  date: string;
+  title: string;
+  durationMin: number;
+  distanceKm: number;
+  entry: CardioEntry;
+}
+
+type HistoryItem = StrengthItem | CardioItem;
+
+interface WeekGroup {
+  key: string;
+  items: HistoryItem[];
+  totalMin: number;
+}
+
+interface MonthGroup {
+  key: string;
+  totalMin: number;
+  count: number;
+  weeks: WeekGroup[];
+}
+
+/** Måneden en uge hører til: den måned ugens torsdag ligger i (samme regel som ISO-ugenumre). */
+function getWeekMonthKey(weekStartISO: string): string {
+  const thursday = parseISODate(weekStartISO);
+  thursday.setDate(thursday.getDate() + 3);
+  return toISODate(thursday).slice(0, 7);
+}
+
+function formatWeekRange(weekStartISO: string): string {
+  const start = parseISODate(weekStartISO);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  const short = (d: Date) => DA_MONTHS[d.getMonth()].slice(0, 3);
+  return start.getMonth() === end.getMonth()
+    ? `${start.getDate()}.–${end.getDate()}. ${short(end)}`
+    : `${start.getDate()}. ${short(start)} – ${end.getDate()}. ${short(end)}`;
+}
+
+function TypeBadge({ kind }: { kind: HistoryItem["kind"] }) {
+  const isStrength = kind === "strength";
+  const Icon = isStrength ? IconDumbbell : IconRun;
+  return (
+    <span
+      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl ${
+        isStrength ? "bg-(--color-accent-dark)/20" : "bg-(--color-success)/15"
+      }`}
+    >
+      <Icon
+        className={`h-5 w-5 ${isStrength ? "text-(--color-accent-bright)" : "text-(--color-success)"}`}
+      />
+    </span>
+  );
+}
+
+function StatLine({ items }: { items: { icon: IconComponent; text: string }[] }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+      {items.map((item, i) => (
+        <div key={i} className="flex items-center gap-2.5">
+          {i > 0 && <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />}
+          <span className="flex items-center gap-1.5 text-[12.5px] text-(--color-text-muted)">
+            <item.icon className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+            {item.text}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SummaryCell({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: IconComponent;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-1 flex-col items-center gap-1 px-1">
+      <Icon className="h-4 w-4 text-(--color-accent-bright)" />
+      <span className="text-center text-[14px] font-bold leading-tight text-(--color-text)">
+        {value}
+      </span>
+      <span className="text-center text-[10.5px] leading-tight text-(--color-text-muted)">
+        {label}
+      </span>
+    </div>
+  );
 }
 
 export function HistoryPage() {
-  const [entries, setEntries] = useState<SessionWithSets[]>([]);
+  const [sessions, setSessions] = useState<WorkoutSession[]>([]);
+  const [setsBySession, setSetsBySession] = useState<Map<string, SetEntry[]>>(new Map());
+  const [cardio, setCardio] = useState<CardioEntry[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [range, setRange] = useState<RangeKey>("always");
+  const [collapsedMonths, setCollapsedMonths] = useState<Set<string>>(new Set());
+  const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set());
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
   async function load() {
-    const [allSessions, allExercises] = await Promise.all([listSessions(), listExercises()]);
-    const withSets = await Promise.all(
-      allSessions.map(async (session) => ({
-        session,
-        sets: await listSetsForSession(session.id),
-      })),
+    const [allSessions, allExercises, allCardio] = await Promise.all([
+      listSessions(),
+      listExercises(),
+      listCardioEntries(),
+    ]);
+    const setsPerSession = await Promise.all(
+      allSessions.map(async (s) => [s.id, await listSetsForSession(s.id)] as const),
     );
-    setEntries(withSets.filter((entry) => entry.sets.length > 0));
+    setSessions(allSessions);
+    setSetsBySession(new Map(setsPerSession));
+    setCardio(allCardio);
     setExercises(allExercises);
     setLoading(false);
   }
@@ -36,14 +185,143 @@ export function HistoryPage() {
     void load();
   }, []);
 
-  async function handleDeleteSession(sessionId: string) {
-    const entry = entries.find((e) => e.session.id === sessionId);
-    await Promise.all((entry?.sets ?? []).map((set) => deleteSet(set.id)));
-    await deleteSession(sessionId);
-    setEntries((current) => current.filter((e) => e.session.id !== sessionId));
+  const exerciseById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
+
+  const allItems = useMemo<HistoryItem[]>(() => {
+    const strength: HistoryItem[] = sessions
+      .map((session) => {
+        const sets = setsBySession.get(session.id) ?? [];
+        const exerciseIds = [...new Set(sets.map((s) => s.exerciseId))];
+        const categories = [
+          ...new Set(
+            exerciseIds
+              .map((id) => exerciseById.get(id)?.category)
+              .filter((c): c is string => Boolean(c)),
+          ),
+        ];
+        return {
+          kind: "strength" as const,
+          id: session.id,
+          date: session.date,
+          title: categories.length > 0 ? joinDanish(categories) : "Styrketræning",
+          durationMin: session.durationMin,
+          exerciseIds,
+          sets,
+          session,
+        };
+      })
+      .filter((item) => item.sets.length > 0);
+
+    const cardioItems: HistoryItem[] = cardio.map((entry) => ({
+      kind: "cardio" as const,
+      id: entry.id,
+      date: entry.date,
+      title: entry.activity,
+      durationMin: entry.durationMin,
+      distanceKm: entry.distanceKm,
+      entry,
+    }));
+
+    return [...strength, ...cardioItems].sort((a, b) => b.date.localeCompare(a.date));
+  }, [sessions, setsBySession, cardio, exerciseById]);
+
+  const rangeStart = getRangeStart(range);
+  const filteredItems = useMemo(
+    () =>
+      allItems.filter(
+        (item) =>
+          item.date >= rangeStart && (typeFilter === "all" || item.kind === typeFilter),
+      ),
+    [allItems, rangeStart, typeFilter],
+  );
+
+  const months = useMemo<MonthGroup[]>(() => {
+    // Grupperes uge først, så en uge der går på tværs af to måneder ikke optræder to gange.
+    const byWeek = new Map<string, HistoryItem[]>();
+    for (const item of filteredItems) {
+      const weekKey = getWeekStart(item.date);
+      byWeek.set(weekKey, [...(byWeek.get(weekKey) ?? []), item]);
+    }
+
+    const byMonth = new Map<string, WeekGroup[]>();
+    for (const [weekKey, items] of byWeek) {
+      const week: WeekGroup = {
+        key: weekKey,
+        items,
+        totalMin: items.reduce((sum, i) => sum + (i.durationMin ?? 0), 0),
+      };
+      // Ugen hører til den måned, dens torsdag ligger i (samme regel som ISO-ugenumre).
+      const monthKey = getWeekMonthKey(weekKey);
+      byMonth.set(monthKey, [...(byMonth.get(monthKey) ?? []), week]);
+    }
+
+    return [...byMonth.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([key, weeks]) => {
+        const sortedWeeks = [...weeks].sort((a, b) => b.key.localeCompare(a.key));
+        return {
+          key,
+          count: sortedWeeks.reduce((sum, w) => sum + w.items.length, 0),
+          totalMin: sortedWeeks.reduce((sum, w) => sum + w.totalMin, 0),
+          weeks: sortedWeeks,
+        };
+      });
+  }, [filteredItems]);
+
+  const summary = useMemo(() => {
+    const totalMin = filteredItems.reduce((sum, i) => sum + (i.durationMin ?? 0), 0);
+    const totalSets = filteredItems.reduce(
+      (sum, i) => sum + (i.kind === "strength" ? i.sets.length : 0),
+      0,
+    );
+    const totalKm =
+      Math.round(
+        filteredItems.reduce((sum, i) => sum + (i.kind === "cardio" ? i.distanceKm : 0), 0) * 10,
+      ) / 10;
+    let deltaPercent: number | undefined;
+    if (range !== "always") {
+      const { start, end } = getPreviousRangeBounds(range);
+      const previousCount = allItems.filter(
+        (item) =>
+          item.date >= start &&
+          item.date <= end &&
+          (typeFilter === "all" || item.kind === typeFilter),
+      ).length;
+      if (previousCount > 0) {
+        deltaPercent = Math.round(((filteredItems.length - previousCount) / previousCount) * 100);
+      }
+    }
+    return { count: filteredItems.length, totalMin, totalSets, totalKm, deltaPercent };
+  }, [filteredItems, allItems, range, typeFilter]);
+
+  function toggleMonth(key: string) {
+    setCollapsedMonths((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   }
 
-  const exerciseById = new Map(exercises.map((e) => [e.id, e]));
+  function toggleWeek(key: string) {
+    setExpandedWeeks((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  async function handleDelete(item: HistoryItem) {
+    if (item.kind === "strength") {
+      await Promise.all(item.sets.map((set) => deleteSet(set.id)));
+      await deleteSession(item.id);
+      setSessions((current) => current.filter((s) => s.id !== item.id));
+    } else {
+      await deleteCardioEntry(item.id);
+      setCardio((current) => current.filter((c) => c.id !== item.id));
+    }
+  }
 
   if (loading) {
     return <p className="px-4 pt-6 text-sm text-(--color-text-muted)">Indlæser…</p>;
@@ -52,72 +330,198 @@ export function HistoryPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/historik-footprints.jpg" imagePosition="center 65%" />
-      <h1 className="text-2xl font-bold text-(--color-text)">Historik</h1>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-[28px] font-bold text-(--color-text)">Historik</h1>
+        <p className="text-[13px] text-(--color-text-secondary)">
+          Dine træninger samlet ét sted.
+        </p>
+      </div>
 
-      {entries.length === 0 && (
+      <SegmentedControl
+        options={TYPE_OPTIONS}
+        value={typeFilter}
+        onChange={setTypeFilter}
+        layout="scroll"
+      />
+      <SegmentedControl
+        options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
+        value={range}
+        onChange={setRange}
+        layout="scroll"
+      />
+
+      <div className="flex items-stretch justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <SummaryCell icon={IconDumbbell} value={String(summary.count)} label="Træninger" />
+        <div className="w-px flex-shrink-0 bg-(--color-border)" />
+        <SummaryCell icon={IconClock} value={formatDuration(summary.totalMin)} label="Total tid" />
+        <div className="w-px flex-shrink-0 bg-(--color-border)" />
+        {typeFilter === "cardio" ? (
+          <SummaryCell icon={IconMapPin} value={String(summary.totalKm)} label="Km" />
+        ) : (
+          <SummaryCell icon={IconClipboard} value={String(summary.totalSets)} label="Sæt" />
+        )}
+        {summary.deltaPercent !== undefined && (
+          <>
+            <div className="w-px flex-shrink-0 bg-(--color-border)" />
+            <SummaryCell
+              icon={IconTrendUp}
+              value={`${summary.deltaPercent > 0 ? "+" : ""}${summary.deltaPercent}%`}
+              label="vs. forrige"
+            />
+          </>
+        )}
+      </div>
+
+      {months.length === 0 && (
         <p className="text-sm text-(--color-text-muted)">
-          Du har ingen gennemførte træninger endnu.
+          Ingen træninger i den valgte periode.
         </p>
       )}
 
-      <div className="flex flex-col gap-3">
-        {entries.map(({ session, sets }) => {
-          const expanded = expandedId === session.id;
-          const exerciseIds = [...new Set(sets.map((s) => s.exerciseId))];
-          return (
-            <SwipeToDelete
-              key={session.id}
-              onDelete={() => handleDeleteSession(session.id)}
-              className="rounded-2xl"
+      {months.map((month) => {
+        const collapsed = collapsedMonths.has(month.key);
+        return (
+          <div key={month.key} className="flex flex-col gap-2.5">
+            <button
+              type="button"
+              onClick={() => toggleMonth(month.key)}
+              className="flex items-center justify-between gap-2 pt-1 text-left"
             >
-              <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-                <button
-                  type="button"
-                  onClick={() => setExpandedId(expanded ? null : session.id)}
-                  className="flex items-center justify-between text-left"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-[15px] font-medium text-(--color-text)">
-                      {formatLongDate(parseISODate(session.date))}
-                    </span>
-                    <span className="text-[13px] text-(--color-text-muted)">
-                      {exerciseIds.length} øvelser
-                      {session.durationMin ? ` · ${session.durationMin} min` : ""}
-                      {!session.endedAt ? " · i gang" : ""}
-                    </span>
-                  </div>
-                  <IconChevronDown
-                    className={`h-5 w-5 text-(--color-text-muted) transition-transform ${expanded ? "rotate-180" : ""}`}
-                  />
-                </button>
+              <span className="text-[17px] font-bold text-(--color-text)">
+                {formatMonthTitle(month.key)}
+              </span>
+              <span className="flex items-center gap-2 text-[12.5px] text-(--color-text-muted)">
+                {month.count} træninger · {formatDuration(month.totalMin)}
+                <IconChevronDown
+                  className={`h-4 w-4 transition-transform ${collapsed ? "" : "rotate-180"}`}
+                />
+              </span>
+            </button>
 
-                {expanded && (
-                  <div className="flex flex-col gap-2 border-t border-(--color-border) pt-3">
-                    {exerciseIds.map((exerciseId) => {
-                      const exerciseSets = sets.filter((s) => s.exerciseId === exerciseId);
-                      return (
-                        <div key={exerciseId} className="flex flex-col gap-0.5">
-                          <span className="text-[14px] font-medium text-(--color-text)">
-                            {exerciseById.get(exerciseId)?.name ?? "Ukendt øvelse"}
+            {!collapsed &&
+              month.weeks.map((week) => {
+                const open = expandedWeeks.has(week.key);
+                return (
+                  <div key={week.key} className="flex flex-col gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => toggleWeek(week.key)}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-3.5 text-left card-shadow"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[15px] font-semibold text-(--color-text)">
+                          Uge {getWeekNumber(week.key)}
+                        </span>
+                        <span className="text-[12.5px] text-(--color-text-muted)">
+                          {formatWeekRange(week.key)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex flex-col items-end gap-0.5">
+                          <span className="text-[13px] font-semibold text-(--color-text)">
+                            {week.items.length} træning{week.items.length === 1 ? "" : "er"}
                           </span>
-                          <span className="text-[13px] text-(--color-text-muted)">
-                            {exerciseSets.map((s, i) => (
-                              <span key={s.id}>
-                                {i > 0 && <span className="text-(--color-accent-bright)"> – </span>}
-                                {s.weight} kg × {s.reps}
-                              </span>
-                            ))}
+                          <span className="text-[12px] text-(--color-text-muted)">
+                            {formatDuration(week.totalMin)}
                           </span>
                         </div>
-                      );
-                    })}
+                        <IconChevronDown
+                          className={`h-4 w-4 flex-shrink-0 text-(--color-text-muted) transition-transform ${open ? "rotate-180" : ""}`}
+                        />
+                      </div>
+                    </button>
+
+                    {open && (
+                      <div className="flex flex-col gap-2.5 pl-3">
+                        {week.items.map((item) => {
+                          const itemExpanded = expandedItemId === item.id;
+                          const stats =
+                            item.kind === "strength"
+                              ? [
+                                  ...(item.durationMin !== undefined
+                                    ? [{ icon: IconClock, text: `${item.durationMin} min` }]
+                                    : []),
+                                  { icon: IconList, text: `${item.exerciseIds.length} øvelser` },
+                                  { icon: IconClipboard, text: `${item.sets.length} sæt` },
+                                ]
+                              : [
+                                  { icon: IconClock, text: `${item.durationMin} min` },
+                                  { icon: IconMapPin, text: `${item.distanceKm} km` },
+                                ];
+                          return (
+                            <SwipeToDelete
+                              key={item.id}
+                              onDelete={() => handleDelete(item)}
+                              className="rounded-2xl"
+                            >
+                              <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-3.5 card-shadow">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    item.kind === "strength"
+                                      ? setExpandedItemId(itemExpanded ? null : item.id)
+                                      : undefined
+                                  }
+                                  className="flex items-center gap-3 text-left"
+                                >
+                                  <TypeBadge kind={item.kind} />
+                                  <div className="flex flex-1 flex-col gap-1">
+                                    <span className="text-[12px] text-(--color-text-muted)">
+                                      {formatLongDate(parseISODate(item.date))}
+                                    </span>
+                                    <span className="text-[15px] font-semibold text-(--color-text)">
+                                      {item.title}
+                                    </span>
+                                    <StatLine items={stats} />
+                                  </div>
+                                  {item.kind === "strength" && (
+                                    <IconChevronDown
+                                      className={`h-4 w-4 flex-shrink-0 text-(--color-text-muted) transition-transform ${itemExpanded ? "rotate-180" : ""}`}
+                                    />
+                                  )}
+                                </button>
+
+                                {itemExpanded && item.kind === "strength" && (
+                                  <div className="flex flex-col gap-2 border-t border-(--color-border) pt-3">
+                                    {item.exerciseIds.map((exerciseId) => {
+                                      const exerciseSets = item.sets.filter(
+                                        (s) => s.exerciseId === exerciseId,
+                                      );
+                                      return (
+                                        <div key={exerciseId} className="flex flex-col gap-0.5">
+                                          <span className="text-[14px] font-medium text-(--color-text)">
+                                            {exerciseById.get(exerciseId)?.name ?? "Ukendt øvelse"}
+                                          </span>
+                                          <span className="text-[13px] text-(--color-text-muted)">
+                                            {exerciseSets.map((s, i) => (
+                                              <span key={s.id}>
+                                                {i > 0 && (
+                                                  <span className="text-(--color-accent-bright)">
+                                                    {" "}
+                                                    –{" "}
+                                                  </span>
+                                                )}
+                                                {s.weight} kg × {s.reps}
+                                              </span>
+                                            ))}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            </SwipeToDelete>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </SwipeToDelete>
-          );
-        })}
-      </div>
+                );
+              })}
+          </div>
+        );
+      })}
     </div>
   );
 }

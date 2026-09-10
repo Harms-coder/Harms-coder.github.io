@@ -5,19 +5,12 @@ import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconCheck, IconDumbbell, IconFlame, IconPlay } from "../../components/icons";
 import { startSession } from "../../db/sessions";
-import { DA_WEEKDAYS_SHORT, parseISODate, toISODate } from "../../lib/date";
+import { DA_WEEKDAYS_SHORT, getWeekStart, parseISODate, toISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { WorkoutSession } from "../../types";
 import { GoalTargetEditForm } from "./GoalTargetEditForm";
 
 const MAX_STREAK_LOOKBACK_WEEKS = 208;
-
-function weekStartOf(dateISO: string): string {
-  const d = parseISODate(dateISO);
-  const offset = (d.getDay() + 6) % 7;
-  d.setDate(d.getDate() - offset);
-  return toISODate(d);
-}
 
 /** Antal på-hinanden-følgende uger (inkl. denne, hvis allerede nået) hvor sessions/uge-målet er nået. */
 function computeWeeklyStreak(allSessions: WorkoutSession[], target: number, weekStartISO: string): number {
@@ -25,7 +18,7 @@ function computeWeeklyStreak(allSessions: WorkoutSession[], target: number, week
   const counts = new Map<string, number>();
   for (const s of allSessions) {
     if (!s.endedAt) continue;
-    const key = weekStartOf(s.date);
+    const key = getWeekStart(s.date);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 

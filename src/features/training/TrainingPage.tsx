@@ -9,6 +9,7 @@ import { listRoutines } from "../../db/routines";
 import { deleteSession, endSession, getActiveSession, listSessions, startSession } from "../../db/sessions";
 import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
 import { formatShortDate, getCurrentWeekRange, parseISODate, toISODate, todayISODate } from "../../lib/date";
+import { joinDanish } from "../../lib/format";
 import { computeSessionStreak } from "../../lib/progressBadges";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
@@ -41,13 +42,6 @@ interface IdleData {
   weekSessionCount: number;
   streakDays: number;
   goalRemaining?: number;
-}
-
-function joinDanish(items: string[]): string {
-  if (items.length === 0) return "";
-  if (items.length === 1) return items[0];
-  const lowered = items.map((item, i) => (i === 0 ? item : item.toLowerCase()));
-  return `${lowered.slice(0, -1).join(", ")} og ${lowered[lowered.length - 1]}`;
 }
 
 function relativeDayLabel(dateISO: string, today: string): string {

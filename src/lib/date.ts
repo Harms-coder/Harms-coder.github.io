@@ -42,6 +42,37 @@ export function parseISODate(iso: string): Date {
   return new Date(year, month - 1, day);
 }
 
+/** Mandagen i den uge, datoen ligger i. Bruges til at gruppere pr. uge. */
+export function getWeekStart(iso: string): string {
+  const date = parseISODate(iso);
+  date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+  return toISODate(date);
+}
+
+/** ISO-ugenummer (uge 1 er ugen med årets første torsdag) — det ugenummer danskere regner i. */
+export function getWeekNumber(iso: string): number {
+  const date = parseISODate(iso);
+  // Ryk til torsdagen i samme uge; året for den torsdag er ISO-ugeåret.
+  date.setDate(date.getDate() - ((date.getDay() + 6) % 7) + 3);
+  const firstThursday = new Date(date.getFullYear(), 0, 4);
+  firstThursday.setDate(firstThursday.getDate() - ((firstThursday.getDay() + 6) % 7) + 3);
+  return 1 + Math.round((date.getTime() - firstThursday.getTime()) / (7 * 86_400_000));
+}
+
+/** "2026-09" → "September 2026". */
+export function formatMonthTitle(monthKey: string): string {
+  const [year, month] = monthKey.split("-").map(Number);
+  const name = DA_MONTHS[month - 1];
+  return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${year}`;
+}
+
+/** Kompakt varighed: 194 → "3 t 14 min", 46 → "46 min". */
+export function formatDuration(totalMin: number): string {
+  const hours = Math.floor(totalMin / 60);
+  const minutes = Math.round(totalMin % 60);
+  return hours > 0 ? `${hours} t ${minutes} min` : `${minutes} min`;
+}
+
 /** Returns all dates that make up the full weeks (Man-Søn) covering the given month. */
 export function getMonthGrid(year: number, month: number): Date[] {
   const firstOfMonth = new Date(year, month, 1);
