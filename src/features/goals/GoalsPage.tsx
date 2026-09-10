@@ -118,6 +118,7 @@ export function GoalsPage() {
         <h1 className="text-2xl font-bold text-(--color-text)">Mål</h1>
         <Button
           variant={isAdding ? "secondary" : "primary"}
+          tone="record"
           onClick={() => (isAdding ? resetForm() : setIsAdding(true))}
         >
           {isAdding ? "Annuller" : "+ Nyt mål"}

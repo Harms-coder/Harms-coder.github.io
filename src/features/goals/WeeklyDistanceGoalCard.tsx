@@ -80,7 +80,14 @@ export function WeeklyDistanceGoalCard({
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={72} label="" statusText="" percent={progress.percent} />
+            <GoalProgress
+              variant="circular"
+              size={72}
+              label=""
+              statusText=""
+              percent={progress.percent}
+              color="var(--color-cat-cardio)"
+            />
             <div className="flex flex-col gap-1">
               <span className="text-[20px] font-semibold text-(--color-text)">
                 {current} / {target} km
@@ -110,6 +117,7 @@ export function WeeklyDistanceGoalCard({
 
             <Button
               size="sm"
+              tone="cardio"
               onClick={() => navigate("/cardio", { state: { autoAdd: true } })}
               className="flex flex-shrink-0 items-center gap-1.5"
             >

@@ -202,6 +202,7 @@ export function PlanPage() {
           <h1 className="text-[28px] font-bold text-(--color-text)">Programmer</h1>
           <Button
             variant={isAdding ? "secondary" : "primary"}
+            tone="plan"
             onClick={() => setIsAdding((v) => !v)}
             className="flex-shrink-0"
           >

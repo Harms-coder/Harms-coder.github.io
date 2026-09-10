@@ -1,25 +1,64 @@
 @import "tailwindcss";
 
+/*
+ * Design-tokens. ALT visuelt i appen skal hente farve, radius, skygge og typografi herfra —
+ * ingen hardcodede hex-værdier ude i komponenterne. Vil man skifte look, skiftes der her.
+ */
 @theme {
-  --color-bg: #0b0e0e;
-  --color-bg-elevated: #101414;
-  --color-bg-tertiary: #151a1a;
-  --color-surface: #121717;
-  --color-surface-2: #171c1c;
-  --color-surface-3: #1b2020;
-  --color-border: #2a2f2e;
-  --color-border-accent: rgba(199, 122, 67, 0.46);
-  --color-text: #f3efea;
-  --color-text-secondary: #b9b2aa;
-  --color-text-muted: #7e807d;
-  --color-accent: #c77a43;
-  --color-accent-bright: #e08a4b;
-  --color-accent-glow: #f09a5a;
-  --color-accent-dark: #8d4d2c;
-  --color-danger: #c86655;
-  --color-success: #78b981;
-  --color-shadow: rgba(0, 0, 0, 0.45);
-  --color-glow: rgba(224, 138, 75, 0.25);
+  /* Flader: kølig, dyb antracit frem for varm sort. Trappen går mørkest (bg) til lysest (surface-3). */
+  --color-bg: #06080c;
+  --color-bg-elevated: #0a0d13;
+  --color-bg-tertiary: #10141c;
+  --color-surface: #0e1219;
+  --color-surface-2: #151a23;
+  --color-surface-3: #1c222d;
+
+  /* Kanter: tynde, let lysende hairlines — neutrale, så accentfarven ikke bliver gennemgående. */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  /* Bevaret navn: bruges bredt i komponenterne til "den lidt tydeligere kant". Ikke længere orange. */
+  --color-border-accent: rgba(255, 255, 255, 0.13);
+
+  /* Tekst */
+  --color-text: #eef2f7;
+  --color-text-secondary: #a5b1bf;
+  --color-text-muted: #6b7686;
+
+  /* Accent (orange): forbeholdt primær CTA og vigtige highlights — ikke baggrunde. */
+  --color-accent: #f0842f;
+  --color-accent-bright: #ff9a4d;
+  --color-accent-glow: #ffb371;
+  --color-accent-dark: #b1571a;
+
+  /*
+   * Kategorifarver: bruges konsekvent til at signalere betydning.
+   * strength = styrke/PR, cardio = løb/distance, progress = fremgang/mål nået,
+   * record = 1RM/rekorder, goal = mål og planlægning.
+   */
+  --color-cat-strength: #ff9a4d;
+  --color-cat-cardio: #4a9eff;
+  --color-cat-progress: #2ce08f;
+  --color-cat-record: #b98aff;
+  --color-cat-goal: #35d8e0;
+  --color-cat-plan: #6d7bff;
+  --color-cat-body: #ff6fae;
+  --color-cat-history: #ffc857;
+  --color-cat-library: #8be04e;
+
+  --color-danger: #ff6b6b;
+  --color-success: #24cb85;
+
+  --color-shadow: rgba(0, 0, 0, 0.55);
+  --color-glow: rgba(240, 132, 47, 0.28);
+
+  /* Radius-skala */
+  --radius-card: 1.25rem;
+  --radius-control: 0.875rem;
+  --radius-pill: 999px;
+
+  /* Skygger */
+  --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.55);
+  --shadow-lifted: 0 18px 44px rgba(0, 0, 0, 0.6);
 
   --font-sans:
     "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
@@ -70,20 +109,25 @@ body {
 /* Delt design-system-lag: genanvendes via className i stedet for at blive duplikeret pr. side. */
 .card-shadow {
   /* !important overskriver den parrede `border-(--color-border)`-utility, der stadig står i hvert kalds className
-     (for at holde diffen lille) — så ALLE kort i appen får den samme varme kant ét sted fra, uden at hver fil skal røres. */
+     (for at holde diffen lille) — så ALLE kort i appen får samme kant ét sted fra, uden at hver fil skal røres. */
   border-color: var(--color-border-accent) !important;
-  border-width: 1.5px !important;
-  /* Diagonal lysrefleks, som om lyset falder oppefra-venstre — ligger oven på kortets bg-farve. */
-  background-image: linear-gradient(
-    157deg,
-    rgba(255, 255, 255, 0.055) 0%,
-    rgba(255, 255, 255, 0.014) 32%,
-    rgba(255, 255, 255, 0) 58%
-  );
+  border-width: 1px !important;
+  /*
+   * Glossy overflade: en køligere top-mod-bund gradient plus en diagonal lysstribe, som om
+   * lyset falder oppefra-venstre. Ligger oven på kortets bg-farve.
+   */
+  background-image:
+    linear-gradient(
+      158deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.018) 34%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    linear-gradient(180deg, rgba(120, 150, 190, 0.05) 0%, rgba(0, 0, 0, 0.16) 100%);
   box-shadow:
-    0 10px 28px var(--color-shadow),
-    0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    var(--shadow-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .accent-fill {
@@ -97,10 +141,10 @@ body {
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    0 6px 22px var(--color-glow),
-    0 1px 3px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -10px 14px rgba(0, 0, 0, 0.14);
+    0 8px 28px color-mix(in srgb, var(--color-accent) 48%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -10px 14px rgba(0, 0, 0, 0.16);
 }
 
 /* Glaseret mørk overflade til sekundære knapper/pills — matcher .accent-fill's gennemsigtige, "illuminated" følelse uden farve. */
@@ -122,17 +166,76 @@ body {
     var(--color-surface-3);
 }
 
+/*
+ * Farvet ikon-badge (afrundet kvadrat) til kort-headers og lister.
+ * Farven sættes pr. kategori via --badge-color, så betydningen er konsistent på tværs af appen.
+ */
+.cat-badge {
+  background: color-mix(in srgb, var(--badge-color) 20%, transparent);
+  border-color: color-mix(in srgb, var(--badge-color) 45%, transparent) !important;
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--badge-color) 26%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Tynd farvet progress-bar, der matcher kategorien. */
+.cat-bar {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--badge-color) 65%, transparent) 0%,
+    var(--badge-color) 100%
+  );
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--badge-color) 60%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/*
+ * Fyldt, strålende flade i en kategorifarve — knapper og aktive tilstande.
+ * Samme opskrift som .accent-fill, men farven kommer fra --badge-color, så enhver
+ * kategori kan få sin egen knap uden ny CSS.
+ */
+.cat-fill {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--badge-color) 96%, white 14%) 0%,
+    var(--badge-color) 48%,
+    color-mix(in srgb, var(--badge-color) 78%, black) 100%
+  );
+  border: 1px solid color-mix(in srgb, white 26%, transparent);
+  box-shadow:
+    0 8px 26px color-mix(in srgb, var(--badge-color) 45%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -10px 14px rgba(0, 0, 0, 0.16);
+}
+
+/* Glødende tekst/ikon i kategorifarven — bruges til aktive faner og fremhævede tal. */
+.cat-glow {
+  color: var(--badge-color);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--badge-color) 65%, transparent));
+}
+
 /* Ambient baggrundslag: ligger fast bag alt indhold hele vejen ned, så siden aldrig er ren sort. */
 .app-ambience {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /*
+   * Køligt lys frem for orange: en svag blå tone i toppen og et par dæmpede felter ned gennem
+   * siden. Accentfarven holdes ude af baggrunden, så orange kun optræder på CTA og highlights.
+   */
+  /*
+   * Flere kulørte lyskilder bag indholdet — blå i toppen, lilla til højre, turkis til venstre
+   * og et varmt strejf i bunden. Accenten holdes stadig ude af de store flader.
+   */
   background:
-    radial-gradient(78% 44% at 50% -6%, rgba(224, 138, 75, 0.26) 0%, transparent 72%),
-    radial-gradient(58% 34% at 110% 30%, rgba(199, 122, 67, 0.15) 0%, transparent 70%),
-    radial-gradient(62% 36% at -12% 60%, rgba(224, 138, 75, 0.13) 0%, transparent 70%),
-    radial-gradient(72% 42% at 62% 110%, rgba(199, 122, 67, 0.14) 0%, transparent 72%),
+    radial-gradient(70% 38% at 50% -8%, rgba(74, 158, 255, 0.26) 0%, transparent 70%),
+    radial-gradient(54% 30% at 114% 26%, rgba(185, 138, 255, 0.2) 0%, transparent 68%),
+    radial-gradient(56% 32% at -16% 58%, rgba(53, 216, 224, 0.16) 0%, transparent 68%),
+    radial-gradient(58% 32% at 106% 78%, rgba(44, 224, 143, 0.13) 0%, transparent 68%),
+    radial-gradient(66% 36% at 58% 112%, rgba(255, 154, 77, 0.15) 0%, transparent 70%),
     linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 55%, var(--color-bg) 100%);
 }
 
@@ -147,10 +250,6 @@ body {
 
 /*
  * Blender et hero-billede ned i sidebaggrunden, så tekst forbliver læselig.
- * Slutter i transparent (ikke i --color-bg), så ambient-lagets varme glød skinner
- * igennem i overgangen i stedet for at møde en flad sort kant.
- */
-/*
  * Alle lag skal ende i ren transparent FØR underkanten, ellers giver de et synligt
  * spring i lys eller farvetemperatur lige dér, hvor billedfeltet slutter.
  */
@@ -158,19 +257,19 @@ body {
   background:
     linear-gradient(
       180deg,
-      rgba(11, 14, 14, 0.05) 0%,
-      rgba(11, 14, 14, 0.46) 54%,
-      rgba(11, 14, 14, 0.58) 78%,
-      rgba(11, 14, 14, 0.26) 93%,
-      rgba(11, 14, 14, 0) 100%
+      rgba(6, 8, 12, 0.08) 0%,
+      rgba(6, 8, 12, 0.5) 54%,
+      rgba(6, 8, 12, 0.64) 78%,
+      rgba(6, 8, 12, 0.28) 93%,
+      rgba(6, 8, 12, 0) 100%
     ),
-    /* Svag varm tone, så fotos i forskellige farvetemperaturer hører til samme verden. */
+    /* Svag kølig tone, så fotos i forskellige farvetemperaturer hører til samme verden. */
       linear-gradient(
         180deg,
-        rgba(199, 122, 67, 0.05) 0%,
-        rgba(199, 122, 67, 0.13) 58%,
-        rgba(199, 122, 67, 0.05) 86%,
-        rgba(199, 122, 67, 0) 100%
+        rgba(70, 110, 170, 0.05) 0%,
+        rgba(70, 110, 170, 0.12) 58%,
+        rgba(70, 110, 170, 0.05) 86%,
+        rgba(70, 110, 170, 0) 100%
       );
 }
 

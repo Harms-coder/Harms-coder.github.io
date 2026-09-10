@@ -117,7 +117,7 @@ export function TodayCard() {
           <IconClock className="h-4 w-4" />
           Ca. {estimatedMin} min
         </span>
-        <Button onClick={handleStart}>Start træning</Button>
+        <Button onClick={handleStart} tone="strength">Start træning</Button>
       </div>
     );
   }

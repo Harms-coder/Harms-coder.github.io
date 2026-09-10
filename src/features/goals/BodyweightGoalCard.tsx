@@ -104,7 +104,14 @@ export function BodyweightGoalCard({
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={72} label="" statusText="" percent={progress.percent} />
+            <GoalProgress
+              variant="circular"
+              size={72}
+              label=""
+              statusText=""
+              percent={progress.percent}
+              color="var(--color-cat-body)"
+            />
             <div className="flex flex-col gap-1">
               <span className="text-[20px] font-semibold text-(--color-text)">
                 {current} / {target} kg

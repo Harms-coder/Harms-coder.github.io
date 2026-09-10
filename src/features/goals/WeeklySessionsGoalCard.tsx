@@ -104,7 +104,14 @@ export function WeeklySessionsGoalCard({
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <GoalProgress variant="circular" size={72} label="" statusText="" percent={progress.percent} />
+            <GoalProgress
+              variant="circular"
+              size={72}
+              label=""
+              statusText=""
+              percent={progress.percent}
+              color="var(--color-cat-strength)"
+            />
             <div className="flex flex-col gap-1">
               <span className="text-[20px] font-semibold text-(--color-text)">
                 {current} / {target} træninger
@@ -145,7 +152,7 @@ export function WeeklySessionsGoalCard({
               })}
             </div>
 
-            <Button size="sm" onClick={handleStart} className="flex flex-shrink-0 items-center gap-1.5">
+            <Button size="sm" tone="strength" onClick={handleStart} className="flex flex-shrink-0 items-center gap-1.5">
               <IconPlay className="h-3.5 w-3.5" />
               Start træning
             </Button>

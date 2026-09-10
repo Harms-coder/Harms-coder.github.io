@@ -67,6 +67,7 @@ export function ExercisesPage() {
         </div>
         <Button
           variant={isAdding ? "secondary" : "primary"}
+          tone="library"
           onClick={() => setIsAdding((value) => !value)}
         >
           {isAdding ? "Annuller" : "+ Tilføj"}

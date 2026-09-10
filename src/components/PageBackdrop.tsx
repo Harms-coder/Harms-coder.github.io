@@ -23,7 +23,7 @@ export function PageBackdrop({ image, imagePosition = "center" }: PageBackdropPr
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(11,14,14,0.24) 0%, rgba(11,14,14,0.5) 50%, rgba(11,14,14,0.26) 80%, rgba(11,14,14,0) 100%), linear-gradient(180deg, rgba(199,122,67,0.05) 0%, rgba(199,122,67,0.11) 52%, rgba(199,122,67,0.04) 82%, rgba(199,122,67,0) 100%)",
+            "linear-gradient(180deg, rgba(6,8,12,0.26) 0%, rgba(6,8,12,0.54) 50%, rgba(6,8,12,0.28) 80%, rgba(6,8,12,0) 100%), linear-gradient(180deg, rgba(70,110,170,0.05) 0%, rgba(70,110,170,0.1) 52%, rgba(70,110,170,0.04) 82%, rgba(70,110,170,0) 100%)",
         }}
       />
     </div>

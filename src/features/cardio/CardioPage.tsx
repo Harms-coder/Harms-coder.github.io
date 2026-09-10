@@ -104,6 +104,7 @@ export function CardioPage() {
         action={
           <Button
             variant={isAdding ? "secondary" : "primary"}
+            tone="cardio"
             onClick={() => setIsAdding((v) => !v)}
           >
             {isAdding ? "Annuller" : "+ Tilføj"}

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type CSSProperties } from "react";
 
 interface GoalProgressProps {
   label: string;
@@ -7,6 +7,8 @@ interface GoalProgressProps {
   variant?: "bar" | "circular";
   /** Ringens diameter i px (kun "circular"). */
   size?: number;
+  /** Kategorifarve på ringen/baren, fx var(--color-cat-cardio). Default: accent. */
+  color?: string;
 }
 
 const CIRCLE_RADIUS = 26;
@@ -18,6 +20,7 @@ export function GoalProgress({
   percent,
   variant = "bar",
   size = 64,
+  color = "var(--color-accent)",
 }: GoalProgressProps) {
   const clamped = Math.min(100, Math.max(0, percent));
   const gradientId = useId();
@@ -103,7 +106,10 @@ export function GoalProgress({
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-(--color-surface-2)">
-        <div className="accent-fill h-full rounded-full" style={{ width: `${clamped}%` }} />
+        <div
+          className="cat-bar h-full rounded-full"
+          style={{ width: `${clamped}%`, "--badge-color": color } as CSSProperties}
+        />
       </div>
     </div>
   );
