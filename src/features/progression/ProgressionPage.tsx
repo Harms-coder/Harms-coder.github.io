@@ -20,6 +20,7 @@ import { listExercises } from "../../db/exercises";
 import { listSessions } from "../../db/sessions";
 import { listAllSets } from "../../db/sets";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import { useChartTouch } from "../../lib/chartTouch";
 import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
 import {
   DEFAULT_RANGE,
@@ -61,6 +62,7 @@ function buildDailyStats(sets: SetEntry[]): DailyStat[] {
 }
 
 export function ProgressionPage() {
+  const { handlers, tooltipActive } = useChartTouch();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [allSets, setAllSets] = useState<SetEntry[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
@@ -313,13 +315,17 @@ export function ProgressionPage() {
                     </span>
                   )}
                 </div>
-                <div className="h-48">
+                <div className="h-48" {...handlers}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                       <CartesianGrid stroke="var(--color-border)" vertical={false} />
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
-                      <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                      <Tooltip
+                  active={tooltipActive}
+                  contentStyle={chartTooltipStyle}
+                  labelStyle={{ color: "var(--color-text)" }}
+                />
                       {selectedExercise?.pr1RM !== undefined && (
                         <ReferenceLine
                           y={selectedExercise.pr1RM}
@@ -343,13 +349,17 @@ export function ProgressionPage() {
                 <span className="text-[13px] font-medium text-(--color-text-muted)">
                   Volume pr. træning (kg × reps)
                 </span>
-                <div className="h-48">
+                <div className="h-48" {...handlers}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={filteredDailyStats} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                       <CartesianGrid stroke="var(--color-border)" vertical={false} />
                       <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                       <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={40} />
-                      <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
+                      <Tooltip
+                  active={tooltipActive}
+                  contentStyle={chartTooltipStyle}
+                  labelStyle={{ color: "var(--color-text)" }}
+                />
                       <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>

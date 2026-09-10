@@ -20,6 +20,7 @@ import {
   updateBodyweightEntry,
 } from "../../db/bodyweight";
 import { chartAxisTick, chartTooltipStyle } from "../../lib/chart";
+import { useChartTouch } from "../../lib/chartTouch";
 import { formatShortDate, todayISODate } from "../../lib/date";
 import {
   DEFAULT_RANGE,
@@ -32,6 +33,7 @@ import type { BodyweightEntry } from "../../types";
 import { BodyweightEntryCard } from "./BodyweightEntryCard";
 
 export function BodyweightPage() {
+  const { handlers, tooltipActive } = useChartTouch();
   const [entries, setEntries] = useState<BodyweightEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(todayISODate());
@@ -131,7 +133,6 @@ export function BodyweightPage() {
             options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
             value={range}
             onChange={setRange}
-            layout="scroll"
             tone="body"
           />
 
@@ -156,7 +157,7 @@ export function BodyweightPage() {
             </div>
           </div>
 
-          <div className="h-48">
+          <div className="h-48" {...handlers}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
@@ -175,6 +176,7 @@ export function BodyweightPage() {
                   domain={["dataMin - 1", "dataMax + 1"]}
                 />
                 <Tooltip
+                  active={tooltipActive}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
                 />
