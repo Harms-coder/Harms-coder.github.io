@@ -1,5 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useLocation } from "react-router-dom";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDumbbell,
+  IconRun,
+} from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
@@ -30,6 +36,9 @@ import type {
   WorkoutSession,
 } from "../../types";
 import { DayPlanner } from "./DayPlanner";
+
+/** Kalenderens egen kategorifarve (samme som fanen i bundmenuen). */
+const PLAN_COLOR = "var(--color-cat-plan)";
 
 export function CalendarPage() {
   const location = useLocation();
@@ -148,7 +157,7 @@ export function CalendarPage() {
           aria-label="Forrige måned"
           className="flex h-9 w-9 items-center justify-center rounded-full glass-fill text-(--color-text) active:opacity-70"
         >
-          ‹
+          <IconChevronLeft className="h-4 w-4" />
         </button>
         <span className="text-[17px] font-semibold text-(--color-text)">
           {DA_MONTHS[monthCursor.getMonth()]} {monthCursor.getFullYear()}
@@ -161,7 +170,7 @@ export function CalendarPage() {
           aria-label="Næste måned"
           className="flex h-9 w-9 items-center justify-center rounded-full glass-fill text-(--color-text) active:opacity-70"
         >
-          ›
+          <IconChevronRight className="h-4 w-4" />
         </button>
       </div>
 
@@ -187,32 +196,43 @@ export function CalendarPage() {
               key={iso}
               type="button"
               onClick={() => setSelectedDate(iso)}
+              style={{ "--badge-color": PLAN_COLOR } as CSSProperties}
               className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[14px] ${
                 isSelected
-                  ? "accent-fill text-(--color-text)"
+                  ? "cat-fill font-semibold text-(--color-text)"
                   : isCurrentMonth
                     ? "text-(--color-text)"
                     : "text-(--color-text-muted)"
-              } ${isToday && !isSelected ? "border border-(--color-accent)" : ""}`}
+              } ${isToday && !isSelected ? "cat-badge border font-semibold" : ""}`}
             >
               <span>{date.getDate()}</span>
+              {/* Prikkerne bærer betydning via farve: styrke, cardio og planlagt. */}
               <span className="flex h-1.5 gap-0.5">
                 {hasSession && (
-                  <span
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ backgroundColor: routineColor ?? "var(--color-text-muted)" }}
-                  />
-                )}
-                {hasCardio && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-(--color-text-muted)" />
-                )}
-                {hasPlan && (
                   <span
                     className="h-1.5 w-1.5 rounded-full"
                     style={{
                       backgroundColor: isSelected
                         ? "var(--color-text)"
-                        : (routineColor ?? "var(--color-text-muted)"),
+                        : (routineColor ?? "var(--color-cat-strength)"),
+                    }}
+                  />
+                )}
+                {hasCardio && (
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      backgroundColor: isSelected
+                        ? "var(--color-text)"
+                        : "var(--color-cat-cardio)",
+                    }}
+                  />
+                )}
+                {hasPlan && (
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      backgroundColor: isSelected ? "var(--color-text)" : (routineColor ?? PLAN_COLOR),
                     }}
                   />
                 )}
@@ -229,9 +249,17 @@ export function CalendarPage() {
 
         {setsByExercise.size > 0 && (
           <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
-              Gennemført træning
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className="cat-badge flex h-8 w-8 items-center justify-center rounded-full border"
+                style={{ "--badge-color": "var(--color-cat-strength)" } as CSSProperties}
+              >
+                <IconDumbbell className="h-4 w-4 text-(--color-cat-strength)" />
+              </span>
+              <span className="text-[14px] font-semibold text-(--color-text)">
+                Gennemført træning
+              </span>
+            </div>
             {[...setsByExercise.entries()].map(([exerciseId, exSets]) => (
               <div key={exerciseId} className="flex flex-col gap-0.5">
                 <span className="text-[14px] font-medium text-(--color-text)">
@@ -252,15 +280,25 @@ export function CalendarPage() {
 
         {selectedCardioEntries.length > 0 && (
           <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">Cardio</span>
+            <div className="flex items-center gap-2">
+              <span
+                className="cat-badge flex h-8 w-8 items-center justify-center rounded-full border"
+                style={{ "--badge-color": "var(--color-cat-cardio)" } as CSSProperties}
+              >
+                <IconRun className="h-4 w-4 text-(--color-cat-cardio)" />
+              </span>
+              <span className="text-[14px] font-semibold text-(--color-text)">Cardio</span>
+            </div>
             {selectedCardioEntries.map((entry) => (
               <div key={entry.id} className="flex flex-col gap-0.5">
                 <span className="text-[14px] font-medium text-(--color-text)">
                   {entry.activity}
                 </span>
                 <span className="text-[13px] text-(--color-text-muted)">
-                  {entry.distanceKm} km · {entry.durationMin} min ·{" "}
-                  {formatPace(entry.distanceKm, entry.durationMin)}
+                  <span className="font-medium text-(--color-cat-cardio)">
+                    {entry.distanceKm} km
+                  </span>{" "}
+                  · {entry.durationMin} min · {formatPace(entry.distanceKm, entry.durationMin)}
                 </span>
               </div>
             ))}

@@ -2,8 +2,8 @@ import type { ButtonHTMLAttributes, CSSProperties } from "react";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost";
 type Size = "md" | "sm";
-/** Kategorifarve på primære knapper, så knappen matcher den handling den udfører. */
-type Tone =
+/** Kategorifarve på primære knapper/aktive tilstande, så fladen matcher den handling den hører til. */
+export type Tone =
   | "accent"
   | "strength"
   | "cardio"
@@ -20,7 +20,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: Tone;
 }
 
-const TONE_COLORS: Record<Tone, string> = {
+export const TONE_COLORS: Record<Tone, string> = {
   accent: "var(--color-accent)",
   strength: "var(--color-cat-strength)",
   cardio: "var(--color-cat-cardio)",

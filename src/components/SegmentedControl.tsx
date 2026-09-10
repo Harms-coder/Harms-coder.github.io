@@ -1,3 +1,6 @@
+import type { CSSProperties } from "react";
+import { TONE_COLORS, type Tone } from "./Button";
+
 interface SegmentedControlOption<T extends string> {
   value: T;
   label: string;
@@ -9,14 +12,17 @@ interface SegmentedControlProps<T extends string> {
   onChange: (value: T) => void;
   /** "wrap" (fælles bredde, fx range-faner) eller "scroll" (venstrestillet, horisontalt scrollbar, fx filtre). */
   layout?: "wrap" | "scroll";
+  /** Kategorifarve på det aktive valg, så filtre matcher sidens farve. Default: accent/orange. */
+  tone?: Tone;
 }
 
-/** Genanvendelig "glow"-pille-kontrol til faner/filtre — aktivt valg får varm gradient + glow, resten er dæmpede. */
+/** Genanvendelig "glow"-pille-kontrol til faner/filtre — aktivt valg får gradient + glow i sidens tone, resten er dæmpede. */
 export function SegmentedControl<T extends string>({
   options,
   value,
   onChange,
   layout = "wrap",
+  tone = "accent",
 }: SegmentedControlProps<T>) {
   const containerClass =
     layout === "wrap"
@@ -29,7 +35,7 @@ export function SegmentedControl<T extends string>({
   const inactiveClass = layout === "wrap" ? "bg-transparent" : "glass-fill";
 
   return (
-    <div className={containerClass}>
+    <div className={containerClass} style={{ "--badge-color": TONE_COLORS[tone] } as CSSProperties}>
       {options.map((option) => (
         <button
           key={option.value}
@@ -37,7 +43,7 @@ export function SegmentedControl<T extends string>({
           onClick={() => onChange(option.value)}
           className={`${buttonClass} ${
             value === option.value
-              ? "accent-fill border-transparent text-(--color-text)"
+              ? "cat-fill border-transparent text-(--color-text)"
               : `${inactiveClass} text-(--color-text-muted)`
           }`}
         >

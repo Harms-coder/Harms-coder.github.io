@@ -143,7 +143,7 @@ export function CardioPage() {
               onChange={(e) => setDurationMin(e.target.value)}
             />
           </div>
-          <Button type="submit">Gem løbetur</Button>
+          <Button type="submit" tone="cardio">Gem løbetur</Button>
         </form>
       )}
 
@@ -152,12 +152,28 @@ export function CardioPage() {
         value={activityFilter}
         onChange={setActivityFilter}
         layout="scroll"
+        tone="cardio"
       />
 
       <div className="flex gap-3">
-        <MetricCard icon={IconMapPin} value={`${monthStats.km} km`} label="Denne måned" />
-        <MetricCard icon={IconRun} value={`${monthStats.count}`} label="Løbeture" />
-        <MetricCard icon={IconClock} value={`${monthStats.minutes} min`} label="Total tid" />
+        <MetricCard
+          icon={IconMapPin}
+          value={`${monthStats.km} km`}
+          label="Denne måned"
+          accent="var(--color-cat-cardio)"
+        />
+        <MetricCard
+          icon={IconRun}
+          value={`${monthStats.count}`}
+          label="Løbeture"
+          accent="var(--color-cat-progress)"
+        />
+        <MetricCard
+          icon={IconClock}
+          value={`${monthStats.minutes} min`}
+          label="Total tid"
+          accent="var(--color-cat-goal)"
+        />
       </div>
 
       <span className="text-[13px] font-medium text-(--color-text-muted)">Seneste træninger</span>

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Button } from "../../components/Button";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
+import { IconCalendar } from "../../components/icons";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import type { Exercise, PlannedWorkout, Routine } from "../../types";
 
 interface DayPlannerProps {
@@ -14,6 +16,11 @@ interface DayPlannerProps {
 }
 
 type Mode = "routine" | "custom";
+
+const MODE_OPTIONS: { value: Mode; label: string }[] = [
+  { value: "routine", label: "Program" },
+  { value: "custom", label: "Vælg øvelser" },
+];
 
 export function DayPlanner({
   routines,
@@ -59,7 +66,15 @@ export function DayPlanner({
   if (!isEditing && plan) {
     return (
       <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-        <span className="text-[13px] font-medium text-(--color-text-muted)">Planlagt</span>
+        <div className="flex items-center gap-2">
+          <span
+            className="cat-badge flex h-8 w-8 items-center justify-center rounded-full border"
+            style={{ "--badge-color": "var(--color-cat-plan)" } as CSSProperties}
+          >
+            <IconCalendar className="h-4 w-4 text-(--color-cat-plan)" />
+          </span>
+          <span className="text-[14px] font-semibold text-(--color-text)">Planlagt</span>
+        </div>
         <span className="text-[15px] text-(--color-text)">
           {plan.exerciseIds
             .map((id) => exerciseById.get(id)?.name)
@@ -82,30 +97,7 @@ export function DayPlanner({
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <span className="text-[15px] font-medium text-(--color-text)">Planlæg denne dag</span>
 
-      <div className="flex gap-1 rounded-full border border-(--color-border) bg-(--color-bg-tertiary) p-1">
-        <button
-          type="button"
-          onClick={() => setMode("routine")}
-          className={`min-h-9 flex-1 rounded-full text-[13px] font-medium ${
-            mode === "routine"
-              ? "accent-fill text-(--color-text)"
-              : "bg-transparent text-(--color-text-muted)"
-          }`}
-        >
-          Program
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("custom")}
-          className={`min-h-9 flex-1 rounded-full text-[13px] font-medium ${
-            mode === "custom"
-              ? "accent-fill text-(--color-text)"
-              : "bg-transparent text-(--color-text-muted)"
-          }`}
-        >
-          Vælg øvelser
-        </button>
-      </div>
+      <SegmentedControl options={MODE_OPTIONS} value={mode} onChange={setMode} tone="plan" />
 
       {mode === "routine" ? (
         routines.length === 0 ? (
@@ -119,15 +111,20 @@ export function DayPlanner({
                 key={routine.id}
                 type="button"
                 onClick={() => setSelectedRoutineId(routine.id)}
+                style={
+                  {
+                    "--badge-color": routine.color ?? "var(--color-cat-plan)",
+                  } as CSSProperties
+                }
                 className={`flex min-h-11 items-center gap-2 rounded-xl px-3.5 text-left text-[15px] ${
                   selectedRoutineId === routine.id
-                    ? "bg-(--color-accent)/15 text-(--color-accent)"
+                    ? "cat-badge border font-medium text-(--color-text)"
                     : "glass-fill text-(--color-text)"
                 }`}
               >
                 <span
                   className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                  style={{ backgroundColor: routine.color ?? "var(--color-accent)" }}
+                  style={{ backgroundColor: routine.color ?? "var(--color-cat-plan)" }}
                 />
                 {routine.name}
               </button>
@@ -144,6 +141,7 @@ export function DayPlanner({
 
       <div className="flex gap-2">
         <Button
+          tone="plan"
           onClick={handleSave}
           disabled={mode === "routine" ? !selectedRoutineId : customExerciseIds.length === 0}
         >
