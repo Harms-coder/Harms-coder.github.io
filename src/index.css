@@ -150,23 +150,50 @@ body {
  * Slutter i transparent (ikke i --color-bg), så ambient-lagets varme glød skinner
  * igennem i overgangen i stedet for at møde en flad sort kant.
  */
+/*
+ * Alle lag skal ende i ren transparent FØR underkanten, ellers giver de et synligt
+ * spring i lys eller farvetemperatur lige dér, hvor billedfeltet slutter.
+ */
 .hero-scrim {
   background:
     linear-gradient(
       180deg,
       rgba(11, 14, 14, 0.05) 0%,
-      rgba(11, 14, 14, 0.5) 58%,
-      rgba(11, 14, 14, 0.72) 84%,
+      rgba(11, 14, 14, 0.46) 54%,
+      rgba(11, 14, 14, 0.58) 78%,
+      rgba(11, 14, 14, 0.26) 93%,
       rgba(11, 14, 14, 0) 100%
     ),
     /* Svag varm tone, så fotos i forskellige farvetemperaturer hører til samme verden. */
-      linear-gradient(180deg, rgba(199, 122, 67, 0.06) 0%, rgba(199, 122, 67, 0.16) 100%);
+      linear-gradient(
+        180deg,
+        rgba(199, 122, 67, 0.05) 0%,
+        rgba(199, 122, 67, 0.13) 58%,
+        rgba(199, 122, 67, 0.05) 86%,
+        rgba(199, 122, 67, 0) 100%
+      );
 }
 
-/* Blødt bundfade på hero/backdrop-fotos, så billedet toner ud i ambient-baggrunden. */
+/* Blødt, langt bundfade på hero/backdrop-fotos, så billedet opløses i ambient-baggrunden. */
 .image-fade-bottom {
-  -webkit-mask-image: linear-gradient(180deg, #000 42%, rgba(0, 0, 0, 0.55) 78%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 42%, rgba(0, 0, 0, 0.55) 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 34%,
+    rgba(0, 0, 0, 0.82) 56%,
+    rgba(0, 0, 0, 0.45) 75%,
+    rgba(0, 0, 0, 0.14) 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 34%,
+    rgba(0, 0, 0, 0.82) 56%,
+    rgba(0, 0, 0, 0.45) 75%,
+    rgba(0, 0, 0, 0.14) 90%,
+    transparent 100%
+  );
 }
 
 button,
