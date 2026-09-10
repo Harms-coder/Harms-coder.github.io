@@ -101,15 +101,17 @@ export function WeeklyDistanceGoalCard({
             </div>
           </div>
 
-          {cumulative.some((v) => v > 0) && (
-            <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero height={46} />
-          )}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              {cumulative.some((v) => v > 0) && (
+                <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero height={46} />
+              )}
+            </div>
 
-          <div className="flex justify-end">
             <Button
               size="sm"
               onClick={() => navigate("/cardio", { state: { autoAdd: true } })}
-              className="flex items-center gap-1.5"
+              className="flex flex-shrink-0 items-center gap-1.5"
             >
               <IconPlay className="h-3.5 w-3.5" />
               Start løb

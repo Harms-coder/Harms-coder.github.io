@@ -128,31 +128,31 @@ export function WeeklySessionsGoalCard({
             </div>
           </div>
 
-          <div className="flex gap-1.5">
-            {DA_WEEKDAYS_SHORT.map((day, i) => {
-              const isCompleted = completedDays[i];
-              const isToday = i === todayIndex;
-              return (
-                <div key={day} className="flex flex-col items-center gap-0.5">
-                  <span className="text-[9px] font-medium text-(--color-text-muted)">{day[0]}</span>
-                  <span
-                    className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border ${
-                      isCompleted
-                        ? "accent-fill border-transparent"
-                        : isToday
-                          ? "border-2 border-(--color-accent)"
-                          : "border-(--color-border)"
-                    }`}
-                  >
-                    {isCompleted && <IconCheck className="h-2.5 w-2.5 text-(--color-text)" />}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex gap-1.5">
+              {DA_WEEKDAYS_SHORT.map((day, i) => {
+                const isCompleted = completedDays[i];
+                const isToday = i === todayIndex;
+                return (
+                  <div key={day} className="flex flex-col items-center gap-0.5">
+                    <span className="text-[9px] font-medium text-(--color-text-muted)">{day[0]}</span>
+                    <span
+                      className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border ${
+                        isCompleted
+                          ? "accent-fill border-transparent"
+                          : isToday
+                            ? "border-2 border-(--color-accent)"
+                            : "border-(--color-border)"
+                      }`}
+                    >
+                      {isCompleted && <IconCheck className="h-2.5 w-2.5 text-(--color-text)" />}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
 
-          <div className="flex justify-end">
-            <Button size="sm" onClick={handleStart} className="flex items-center gap-1.5">
+            <Button size="sm" onClick={handleStart} className="flex flex-shrink-0 items-center gap-1.5">
               <IconPlay className="h-3.5 w-3.5" />
               Start træning
             </Button>
