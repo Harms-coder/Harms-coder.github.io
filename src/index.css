@@ -84,6 +84,17 @@ body {
   overscroll-behavior-y: none;
 }
 
+/*
+ * Browserens eget lærred bag siden er hvidt som standard. Når appen fylder hele skærmen
+ * (viewport-fit: cover), stikker det frem i det område iOS selv tegner — fx bag hjemme-
+ * indikatoren forneden. color-scheme: dark gør standarden mørk, og baggrundsfarven her
+ * sikrer at der aldrig er en lys flade bag appen, uanset hvor iOS måtte finde på at vise den.
+ */
+html {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+}
+
 body {
   margin: 0;
   background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 100%) fixed;
