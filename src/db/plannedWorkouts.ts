@@ -1,3 +1,4 @@
+import { parseISODate, toISODate } from "../lib/date";
 import { generateId } from "../lib/id";
 import type { PlannedWorkout } from "../types";
 import { getDb } from "./database";
@@ -33,6 +34,24 @@ export async function setPlannedWorkout(
   };
   await db.put("plannedWorkouts", plan);
   return plan;
+}
+
+/**
+ * Lægger den samme plan på den valgte dag og på samme ugedag de følgende uger.
+ * Planerne skrives som almindelige enkeltdage frem for som en gentagelsesregel, så en
+ * enkelt dag bagefter kan ændres eller fjernes uden at røre de øvrige.
+ */
+export async function setPlannedWorkoutSeries(
+  startDate: string,
+  occurrences: number,
+  input: { routineId?: string; exerciseIds: string[] },
+): Promise<number> {
+  const cursor = parseISODate(startDate);
+  for (let i = 0; i < occurrences; i++) {
+    await setPlannedWorkout(toISODate(cursor), input);
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  return occurrences;
 }
 
 export async function deletePlannedWorkout(id: string): Promise<void> {

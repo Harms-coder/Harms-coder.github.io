@@ -28,6 +28,8 @@ import {
   getRangeStart,
   type RangeKey,
 } from "../../lib/dateRange";
+import { MuscleBalance } from "../../components/MuscleBalance";
+import { buildMuscleBalance } from "../../lib/muscleBalance";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import type { Exercise, SetEntry, WorkoutSession } from "../../types";
@@ -66,6 +68,7 @@ export function ProgressionPage() {
   const [loading, setLoading] = useState(true);
   const [gainsRange, setGainsRange] = useState<RangeKey>(DEFAULT_RANGE);
   const [chartsRange, setChartsRange] = useState<RangeKey>(DEFAULT_RANGE);
+  const [balanceRange, setBalanceRange] = useState<RangeKey>(DEFAULT_RANGE);
 
   useEffect(() => {
     void Promise.all([listExercises(), listAllSets(), listSessions()]).then(
@@ -79,6 +82,12 @@ export function ProgressionPage() {
   }, []);
 
   const setsByExercise = useMemo(() => groupSetsByExercise(allSets), [allSets]);
+  const exerciseById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
+  const muscleBalance = useMemo(
+    () => buildMuscleBalance(allSets, exerciseById, getRangeStart(balanceRange)),
+    [allSets, exerciseById, balanceRange],
+  );
+
   const badges = useMemo(
     () => computeBadges({ exercises, setsByExercise, sessions, goalProgress: [] }),
     [exercises, setsByExercise, sessions],
@@ -186,6 +195,36 @@ export function ProgressionPage() {
         ) : (
           <p className="text-[13px] text-(--color-text-muted)">
             Ingen øvelser med nok historik i denne periode.
+          </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[13px] font-medium text-(--color-text-muted)">
+            Fordeling pr. muskelgruppe
+          </span>
+          {muscleBalance.length > 0 && (
+            <span className="text-[13px] text-(--color-text-muted)">
+              {muscleBalance.reduce((sum, l) => sum + l.sets, 0)} sæt i alt
+            </span>
+          )}
+        </div>
+
+        <SegmentedControl
+          options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
+          value={balanceRange}
+          onChange={setBalanceRange}
+          layout="scroll"
+        />
+
+        {muscleBalance.length > 0 ? (
+          <div className="pt-1">
+            <MuscleBalance loads={muscleBalance} />
+          </div>
+        ) : (
+          <p className="text-[13px] text-(--color-text-muted)">
+            Ingen sæt i denne periode endnu.
           </p>
         )}
       </div>

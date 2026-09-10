@@ -3,15 +3,23 @@ import { Button } from "../../components/Button";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
 import { IconCalendar } from "../../components/icons";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { DA_WEEKDAYS, parseISODate } from "../../lib/date";
 import type { Exercise, PlannedWorkout, Routine } from "../../types";
 
 interface DayPlannerProps {
+  /** Den valgte dag, ISO — bruges til at navngive ugedagen i gentagelses-valget. */
+  date: string;
   routines: Routine[];
   exercises: Exercise[];
   plan?: PlannedWorkout;
   /** Forvalgt program, når man kommer fra "Tilføj til kalender" på Programmer-siden. */
   preselectRoutineId?: string;
-  onSave: (input: { routineId?: string; exerciseIds: string[] }) => Promise<void> | void;
+  onSave: (input: {
+    routineId?: string;
+    exerciseIds: string[];
+    /** Antal uger planen gentages, inkl. den valgte dag. 1 = kun denne dag. */
+    occurrences: number;
+  }) => Promise<void> | void;
   onRemove: () => Promise<void> | void;
 }
 
@@ -22,7 +30,17 @@ const MODE_OPTIONS: { value: Mode; label: string }[] = [
   { value: "custom", label: "Vælg øvelser" },
 ];
 
+type RepeatKey = "1" | "4" | "8" | "12";
+
+const REPEAT_OPTIONS: { value: RepeatKey; label: string }[] = [
+  { value: "1", label: "Kun denne dag" },
+  { value: "4", label: "4 uger" },
+  { value: "8", label: "8 uger" },
+  { value: "12", label: "12 uger" },
+];
+
 export function DayPlanner({
+  date,
   routines,
   exercises,
   plan,
@@ -37,11 +55,13 @@ export function DayPlanner({
   const [selectedRoutineId, setSelectedRoutineId] = useState(
     plan?.routineId ?? (plan ? "" : (preselectRoutineId ?? "")),
   );
+  const [repeat, setRepeat] = useState<RepeatKey>("1");
   const [customExerciseIds, setCustomExerciseIds] = useState<string[]>(
     plan?.routineId ? [] : (plan?.exerciseIds ?? []),
   );
 
   const exerciseById = new Map(exercises.map((e) => [e.id, e]));
+  const weekdayName = DA_WEEKDAYS[parseISODate(date).getDay()];
 
   function toggleCustomExercise(exerciseId: string) {
     setCustomExerciseIds((current) =>
@@ -52,13 +72,14 @@ export function DayPlanner({
   }
 
   async function handleSave() {
+    const occurrences = Number(repeat);
     if (mode === "routine") {
       const routine = routines.find((r) => r.id === selectedRoutineId);
       if (!routine) return;
-      await onSave({ routineId: routine.id, exerciseIds: routine.exerciseIds });
+      await onSave({ routineId: routine.id, exerciseIds: routine.exerciseIds, occurrences });
     } else {
       if (customExerciseIds.length === 0) return;
-      await onSave({ exerciseIds: customExerciseIds });
+      await onSave({ exerciseIds: customExerciseIds, occurrences });
     }
     setIsEditing(false);
   }
@@ -138,6 +159,19 @@ export function DayPlanner({
           onToggle={toggleCustomExercise}
         />
       )}
+
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] font-medium text-(--color-text-muted)">
+          Gentag hver {weekdayName.toLowerCase()}
+        </span>
+        <SegmentedControl options={REPEAT_OPTIONS} value={repeat} onChange={setRepeat} tone="plan" />
+        {repeat !== "1" && (
+          <span className="text-[12px] text-(--color-text-muted)">
+            Lægges på {repeat} {weekdayName.toLowerCase()}e frem. Hver dag kan ændres for sig
+            bagefter.
+          </span>
+        )}
+      </div>
 
       <div className="flex gap-2">
         <Button

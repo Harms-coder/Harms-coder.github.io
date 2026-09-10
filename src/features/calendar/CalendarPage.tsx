@@ -12,7 +12,7 @@ import { listExercises } from "../../db/exercises";
 import {
   deletePlannedWorkout,
   listPlannedWorkoutsInRange,
-  setPlannedWorkout,
+  setPlannedWorkoutSeries,
 } from "../../db/plannedWorkouts";
 import { listRoutines } from "../../db/routines";
 import { listSessionsInRange } from "../../db/sessions";
@@ -105,8 +105,13 @@ export function CalendarPage() {
     setSelectedSets(setsPerSession.flat());
   }
 
-  async function handleSavePlan(input: { routineId?: string; exerciseIds: string[] }) {
-    await setPlannedWorkout(selectedDate, input);
+  async function handleSavePlan(input: {
+    routineId?: string;
+    exerciseIds: string[];
+    occurrences: number;
+  }) {
+    const { occurrences, ...plan } = input;
+    await setPlannedWorkoutSeries(selectedDate, occurrences, plan);
     await loadMonthData();
   }
 
@@ -308,6 +313,7 @@ export function CalendarPage() {
         {monthLoaded && (
           <DayPlanner
             key={selectedDate}
+            date={selectedDate}
             routines={routines}
             exercises={exercises}
             plan={selectedPlan}
