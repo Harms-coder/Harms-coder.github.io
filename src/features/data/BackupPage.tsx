@@ -1,8 +1,14 @@
 import { useRef, useState } from "react";
 import { Button } from "../../components/Button";
-import { IconChevronLeft, IconDownload, IconUpload } from "../../components/icons";
+import { IconChevronLeft, IconDownload, IconTrash, IconUpload } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
-import { countRecords, createBackup, restoreBackup, validateBackup } from "../../db/backup";
+import {
+  clearAllData,
+  countRecords,
+  createBackup,
+  restoreBackup,
+  validateBackup,
+} from "../../db/backup";
 import { Link } from "react-router-dom";
 
 type Status = { kind: "idle" } | { kind: "ok"; text: string } | { kind: "error"; text: string };
@@ -80,6 +86,27 @@ export function BackupPage() {
     }
   }
 
+  async function handleClear() {
+    const first = window.confirm(
+      "Slet ALT i appen? Øvelser, træninger, sæt, cardio, kropsvægt, programmer og mål forsvinder.\n\n" +
+        "Har du ikke gemt en backup, kan det ikke fortrydes.",
+    );
+    if (!first) return;
+    // Andet trin: den slags handling skal ikke kunne ske ved et enkelt fejltryk.
+    if (!window.confirm("Sidste advarsel — alt slettes permanent. Er du helt sikker?")) return;
+
+    setBusy(true);
+    try {
+      await clearAllData();
+      setStatus({ kind: "ok", text: "Alt er slettet. Genindlæser…" });
+      setTimeout(() => window.location.assign("/"), 900);
+    } catch {
+      setStatus({ kind: "error", text: "Kunne ikke slette data." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
@@ -149,6 +176,26 @@ export function BackupPage() {
           disabled={busy}
         >
           Vælg backup-fil
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center gap-2.5">
+          <span
+            className="cat-badge flex h-9 w-9 items-center justify-center rounded-full border"
+            style={{ "--badge-color": "var(--color-danger)" } as React.CSSProperties}
+          >
+            <IconTrash className="h-[18px] w-[18px] text-(--color-danger)" />
+          </span>
+          <span className="text-[15px] font-semibold text-(--color-text)">Slet alle data</span>
+        </div>
+        <p className="text-[13px] text-(--color-text-muted)">
+          Tømmer appen helt. Brug den til at komme af med eksempeldata igen — gem en backup
+          først, hvis der er noget, du vil kunne hente tilbage. De 100 standardøvelser
+          kommer igen af sig selv.
+        </p>
+        <Button variant="danger" onClick={handleClear} disabled={busy}>
+          Slet alle data
         </Button>
       </div>
 

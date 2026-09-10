@@ -571,6 +571,17 @@ async function fillMissingDescriptions(): Promise<void> {
   }
 }
 
+/**
+ * Glemmer at der er seedet, så standardbiblioteket lægges ind igen ved næste åbning.
+ * Bruges når alt slettes: øvelsesbiblioteket er opslagsdata, ikke noget brugeren har
+ * skabt, og en app uden øvelser kan man ikke logge noget i.
+ */
+export function forgetSeedFlags(): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.removeItem(SEED_FLAG_KEY);
+  localStorage.removeItem(DESCRIPTION_FLAG_KEY);
+}
+
 export async function seedDefaultExercisesIfNeeded(): Promise<void> {
   const alreadySeeded =
     typeof localStorage !== "undefined" && Boolean(localStorage.getItem(SEED_FLAG_KEY));

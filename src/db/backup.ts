@@ -1,4 +1,5 @@
 import { DB_VERSION, getDb } from "./database";
+import { forgetSeedFlags } from "./exerciseSeed";
 
 /** Alle stores i databasen. En backup skal indeholde dem alle for at være en fuld kopi. */
 const STORES = [
@@ -103,4 +104,16 @@ export async function restoreBackup(backup: BackupFile): Promise<number> {
 
   await tx.done;
   return restored;
+}
+
+/**
+ * Tømmer alle stores. Modstykket til eksempeldata-siden, som kun kan lægge data oven i.
+ * Én transaktion, så appen aldrig står med halvdelen slettet.
+ */
+export async function clearAllData(): Promise<void> {
+  const db = await getDb();
+  const tx = db.transaction(STORES, "readwrite");
+  await Promise.all([...STORES.map((store) => tx.objectStore(store).clear()), tx.done]);
+  // Ellers ville appen stå helt uden øvelser: seedingen kører kun én gang nogensinde.
+  forgetSeedFlags();
 }
