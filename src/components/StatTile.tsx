@@ -20,8 +20,8 @@ export function StatTile({ label, value, to, icon: Icon, delta, note, className 
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-medium text-(--color-text-muted)">{label}</span>
         {Icon && (
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-(--color-accent-dark)/20">
-            <Icon className="h-3.5 w-3.5 text-(--color-accent-bright)" />
+          <span className="accent-fill flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full">
+            <Icon className="h-[18px] w-[18px] text-(--color-text)" />
           </span>
         )}
       </div>
