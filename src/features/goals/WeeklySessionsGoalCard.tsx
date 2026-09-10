@@ -5,35 +5,11 @@ import { GoalProgress } from "../../components/GoalProgress";
 import { IconCheck, IconDumbbell, IconFlame, IconPlay } from "../../components/icons";
 import { GoalCardHeader } from "./GoalCardHeader";
 import { startSession } from "../../db/sessions";
-import { DA_WEEKDAYS_SHORT, getWeekStart, parseISODate, toISODate } from "../../lib/date";
+import { DA_WEEKDAYS_SHORT, parseISODate, toISODate } from "../../lib/date";
+import { computeWeeklyStreak } from "../../lib/streak";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { WorkoutSession } from "../../types";
 import { GoalTargetEditForm } from "./GoalTargetEditForm";
-
-const MAX_STREAK_LOOKBACK_WEEKS = 208;
-
-/** Antal på-hinanden-følgende uger (inkl. denne, hvis allerede nået) hvor sessions/uge-målet er nået. */
-function computeWeeklyStreak(allSessions: WorkoutSession[], target: number, weekStartISO: string): number {
-  if (target <= 0) return 0;
-  const counts = new Map<string, number>();
-  for (const s of allSessions) {
-    if (!s.endedAt) continue;
-    const key = getWeekStart(s.date);
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-
-  let streak = 0;
-  const cursor = parseISODate(weekStartISO);
-  if ((counts.get(weekStartISO) ?? 0) >= target) streak++;
-  cursor.setDate(cursor.getDate() - 7);
-  for (let i = 0; i < MAX_STREAK_LOOKBACK_WEEKS; i++) {
-    const key = toISODate(cursor);
-    if ((counts.get(key) ?? 0) < target) break;
-    streak++;
-    cursor.setDate(cursor.getDate() - 7);
-  }
-  return streak;
-}
 
 interface WeeklySessionsGoalCardProps {
   progress: GoalProgressData;

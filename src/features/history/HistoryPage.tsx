@@ -23,10 +23,10 @@ import {
   formatDuration,
   formatLongDate,
   formatMonthTitle,
+  getWeekMonthKey,
   getWeekNumber,
   getWeekStart,
   parseISODate,
-  toISODate,
 } from "../../lib/date";
 import {
   DEFAULT_RANGE,
@@ -81,13 +81,6 @@ interface MonthGroup {
   totalMin: number;
   count: number;
   weeks: WeekGroup[];
-}
-
-/** Måneden en uge hører til: den måned ugens torsdag ligger i (samme regel som ISO-ugenumre). */
-function getWeekMonthKey(weekStartISO: string): string {
-  const thursday = parseISODate(weekStartISO);
-  thursday.setDate(thursday.getDate() + 3);
-  return toISODate(thursday).slice(0, 7);
 }
 
 function formatWeekRange(weekStartISO: string): string {

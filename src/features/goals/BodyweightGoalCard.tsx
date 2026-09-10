@@ -3,13 +3,13 @@ import { AxisTrendChart } from "../../components/AxisTrendChart";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconCalendar, IconScale } from "../../components/icons";
 import { GoalCardHeader } from "./GoalCardHeader";
-import { DA_MONTHS, formatMediumDate, parseISODate, toISODate } from "../../lib/date";
+import { DA_MONTHS, formatMediumDate, parseISODate } from "../../lib/date";
+import { computeProjectedGoalDate } from "../../lib/projection";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { BodyweightEntry } from "../../types";
 import { GoalTargetEditForm } from "./GoalTargetEditForm";
 
 const CHART_ENTRY_COUNT = 10;
-const MAX_PROJECTION_DAYS = 3650;
 
 function round1(value: number): number {
   return Math.round(value * 10) / 10;
@@ -29,27 +29,6 @@ function sparseMonthLabels(entries: BodyweightEntry[]): string[] {
     lastMonth = label;
     return label;
   });
-}
-
-/** Lineær fremskrivning ud fra den seneste vægt-trend, af hvornår kropsvægtsmålet nås. undefined hvis der ikke er nok data eller trenden går væk fra målet. */
-function computeProjectedGoalDate(recentAscending: BodyweightEntry[], target: number): string | undefined {
-  if (recentAscending.length < 2) return undefined;
-  const first = recentAscending[0];
-  const last = recentAscending[recentAscending.length - 1];
-  const daysBetween = (parseISODate(last.date).getTime() - parseISODate(first.date).getTime()) / 86_400_000;
-  if (daysBetween <= 0) return undefined;
-
-  const ratePerDay = (last.weight - first.weight) / daysBetween;
-  const remaining = target - last.weight;
-  if (Math.abs(ratePerDay) < 0.001) return undefined;
-  if ((remaining > 0 && ratePerDay <= 0) || (remaining < 0 && ratePerDay >= 0)) return undefined;
-
-  const daysNeeded = remaining / ratePerDay;
-  if (!Number.isFinite(daysNeeded) || daysNeeded <= 0 || daysNeeded > MAX_PROJECTION_DAYS) return undefined;
-
-  const projected = parseISODate(last.date);
-  projected.setDate(projected.getDate() + Math.round(daysNeeded));
-  return toISODate(projected);
 }
 
 interface BodyweightGoalCardProps {

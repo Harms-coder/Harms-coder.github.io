@@ -59,6 +59,16 @@ export function getWeekNumber(iso: string): number {
   return 1 + Math.round((date.getTime() - firstThursday.getTime()) / (7 * 86_400_000));
 }
 
+/**
+ * Måneden en uge hører til: den måned ugens torsdag ligger i (samme regel som ISO-ugenumre).
+ * Uden den ville en uge der går på tværs af to måneder optræde begge steder.
+ */
+export function getWeekMonthKey(weekStartISO: string): string {
+  const thursday = parseISODate(weekStartISO);
+  thursday.setDate(thursday.getDate() + 3);
+  return toISODate(thursday).slice(0, 7);
+}
+
 /** "2026-09" → "September 2026". */
 export function formatMonthTitle(monthKey: string): string {
   const [year, month] = monthKey.split("-").map(Number);
