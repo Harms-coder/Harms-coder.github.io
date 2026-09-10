@@ -31,7 +31,7 @@ export function ExerciseIcon({ exercise, size = 64 }: ExerciseIconProps) {
         <img
           src={`/images/exercises/${slugifyExerciseName(exercise.name)}.png`}
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain p-1"
           onError={() => setPhotoFailed(true)}
         />
       )}

@@ -12,8 +12,11 @@ const THUMB_WIDTH = 96;
  */
 export function ExercisePhotoThumb({
   exercise,
+  width = THUMB_WIDTH,
 }: {
   exercise: Pick<Exercise, "name" | "category">;
+  /** Bredde i px. Listen bruger standardbredden; live-tilstand viser et større billede. */
+  width?: number;
 }) {
   const [photoFailed, setPhotoFailed] = useState(false);
   const Icon = getExerciseIcon(exercise);
@@ -21,7 +24,7 @@ export function ExercisePhotoThumb({
   return (
     <span
       className="flex flex-shrink-0 items-center justify-center bg-(--color-surface-2)"
-      style={{ width: THUMB_WIDTH }}
+      style={{ width }}
     >
       {photoFailed ? (
         <Icon className="h-10 w-10 text-(--color-cat-strength)" />

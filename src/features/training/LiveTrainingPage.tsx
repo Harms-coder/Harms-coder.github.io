@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
+import { ExercisePhotoThumb } from "../exercises/ExercisePhotoThumb";
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -228,19 +229,23 @@ export function LiveTrainingPage() {
 
       {currentExercise ? (
         <>
-          <div className="hero-glow flex flex-col gap-1 rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-cat-strength)">
-              Øvelse {currentIndex + 1} af {exerciseOrder.length}
-              {currentExercise.category ? ` · ${currentExercise.category}` : ""}
-            </span>
-            <span className="text-[22px] font-bold text-(--color-text)">
-              {currentExercise.name}
-            </span>
-            <span className="text-[13px] text-(--color-text-muted)">
-              {setsForCurrent.length === 0
-                ? "Ingen sæt endnu i denne træning"
-                : `${setsForCurrent.length} sæt logget`}
-            </span>
+          <div className="hero-glow flex min-h-32 items-stretch overflow-hidden rounded-2xl border border-(--color-border-accent) card-shadow">
+            {/* Samme flade billedfelt som øvelseslisten, så man kan se stillingen mens man træner. */}
+            <ExercisePhotoThumb exercise={currentExercise} width={124} />
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 p-4">
+              <span className="text-[13px] font-medium text-(--color-cat-strength)">
+                Øvelse {currentIndex + 1} af {exerciseOrder.length}
+                {currentExercise.category ? ` · ${currentExercise.category}` : ""}
+              </span>
+              <span className="text-[22px] font-bold leading-tight text-(--color-text)">
+                {currentExercise.name}
+              </span>
+              <span className="text-[13px] text-(--color-text-muted)">
+                {setsForCurrent.length === 0
+                  ? "Ingen sæt endnu i denne træning"
+                  : `${setsForCurrent.length} sæt logget`}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
