@@ -120,13 +120,13 @@ export function computeBadges(input: {
     badges.push({
       kind: "gain",
       label: `+${gain.deltaKg} kg på ${gain.exerciseName} (30 dage)`,
-      exerciseIds: [gain.exerciseId],
+      linkTo: "/progression",
     });
   }
 
   const streak = computeSessionStreak(input.sessions);
   if (streak >= MIN_STREAK_TO_SHOW) {
-    badges.push({ kind: "streak", label: `${streak} træninger i træk` });
+    badges.push({ kind: "streak", label: `${streak} træninger i træk`, linkTo: "/historik" });
   }
 
   if (isBestMonthSoFar(input.sessions)) {

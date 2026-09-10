@@ -416,10 +416,12 @@ export function IconMore(props: IconProps) {
 export function IconRun(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <circle cx="14" cy="5.5" r="1.6" fill="currentColor" />
-      <path d="M13 7 10 11l3 2-1 6" />
-      <path d="M10 11 6.5 9.5M13.3 9.3l3.7 2.7 3-1" />
-      <path d="M12 13 9 17.5M12 19l3.5-3" />
+      <circle cx="15" cy="5.2" r="1.6" fill="currentColor" />
+      <path d="M14.3 6.6 11 11.5" />
+      <path d="M11 11.5 13.5 14 12.5 19.5" />
+      <path d="M11 11.5 7.5 13.5 5.5 18" />
+      <path d="M12.8 8 16.5 7 18 4.5" />
+      <path d="M12.3 8.3 9 10 7 8.5" />
     </svg>
   );
 }
