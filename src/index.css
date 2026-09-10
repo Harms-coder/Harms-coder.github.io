@@ -114,7 +114,12 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
+  /*
+   * IKKE -webkit-overflow-scrolling: touch. På iOS gør den scroll-containeren til
+   * holdepunkt for position: fixed, så bundmenuen hang fast i containerens bund frem for
+   * skærmens og efterlod en sort stribe under sig. Momentum-scroll er standard siden iOS 13,
+   * så egenskaben giver ingen gevinst længere.
+   */
 }
 
 * {
@@ -185,6 +190,21 @@ h1 {
 .glow-scroller-x {
   padding-inline: 1.125rem;
   margin-inline: -1.125rem;
+}
+
+/*
+ * Sikkerhedsnet: menuens egen baggrund forlænges ned til skærmkanten. Skulle en fremtidig
+ * iOS-version placere den et par pixels for højt, bliver mellemrummet menufarvet frem for sort.
+ */
+.bottom-nav::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: inherit;
+  pointer-events: none;
 }
 
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */
