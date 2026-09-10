@@ -5,13 +5,14 @@ import { IconChevronRight } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listExercises } from "../../db/exercises";
 import { listGoals } from "../../db/goals";
+import { listCardioEntries } from "../../db/cardio";
 import { getPlannedWorkoutForDate, listPlannedWorkoutsInRange } from "../../db/plannedWorkouts";
 import { listRoutines } from "../../db/routines";
 import { deleteSession, endSession, getActiveSession, listSessions, startSession } from "../../db/sessions";
 import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
 import { formatShortDate, getCurrentWeekRange, parseISODate, toISODate, todayISODate } from "../../lib/date";
 import { joinDanish } from "../../lib/format";
-import { computeSessionStreak } from "../../lib/progressBadges";
+import { computeActivityWeekStreak } from "../../lib/streak";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseSessionCard } from "./ExerciseSessionCard";
@@ -41,7 +42,7 @@ interface IdleData {
   nextPlanDate?: string;
   lastSession?: IdleLastSessionInfo;
   weekSessionCount: number;
-  streakDays: number;
+  streakWeeks: number;
   goalRemaining?: number;
 }
 
@@ -70,18 +71,19 @@ export function TrainingPage() {
     const today = todayISODate();
     const { start: weekStart, end: weekEnd } = getCurrentWeekRange();
 
-    const [plannedWorkout, routines, allSessions, goals] = await Promise.all([
+    const [plannedWorkout, routines, allSessions, goals, allCardio] = await Promise.all([
       getPlannedWorkoutForDate(today),
       listRoutines(),
       listSessions(),
       listGoals(),
+      listCardioEntries(),
     ]);
 
     const completedToday = allSessions.some((s) => s.endedAt && s.date === today);
     const weekSessionCount = allSessions.filter(
       (s) => s.endedAt && s.date >= weekStart && s.date <= weekEnd,
     ).length;
-    const streakDays = computeSessionStreak(allSessions);
+    const streakWeeks = computeActivityWeekStreak(allSessions, allCardio, today);
     const sessionsGoal = goals.find((g) => g.type === "sessionsPerWeek");
     const goalRemaining = sessionsGoal ? Math.max(0, sessionsGoal.target - weekSessionCount) : undefined;
 
@@ -129,7 +131,7 @@ export function TrainingPage() {
       };
     }
 
-    setIdleData({ completedToday, plan, nextPlanDate, lastSession, weekSessionCount, streakDays, goalRemaining });
+    setIdleData({ completedToday, plan, nextPlanDate, lastSession, weekSessionCount, streakWeeks, goalRemaining });
   }
 
   async function loadActiveSession() {
@@ -247,7 +249,7 @@ export function TrainingPage() {
         nextPlanDate={idleData.nextPlanDate}
         lastSession={idleData.lastSession}
         weekSessionCount={idleData.weekSessionCount}
-        streakDays={idleData.streakDays}
+        streakWeeks={idleData.streakWeeks}
         goalRemaining={idleData.goalRemaining}
       />
     );

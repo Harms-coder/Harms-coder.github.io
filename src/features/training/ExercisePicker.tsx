@@ -58,10 +58,17 @@ export function ExercisePicker({ exercises, onSelect, onClose }: ExercisePickerP
                   key={exercise.id}
                   type="button"
                   onClick={() => onSelect(exercise)}
-                  className="flex min-h-11 flex-shrink-0 items-center gap-2.5 rounded-xl glass-fill px-3 text-left text-[15px] text-(--color-text) active:opacity-70"
+                  className="flex min-h-14 flex-shrink-0 items-center gap-2.5 rounded-xl glass-fill px-3 py-2 text-left active:opacity-70"
                 >
                   <ExerciseIcon exercise={exercise} size={36} />
-                  {exercise.name}
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-[15px] text-(--color-text)">{exercise.name}</span>
+                    {exercise.description && (
+                      <span className="line-clamp-2 text-[12.5px] leading-snug text-(--color-text-muted)">
+                        {exercise.description}
+                      </span>
+                    )}
+                  </span>
                 </button>
               ))
             )}

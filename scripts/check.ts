@@ -9,8 +9,8 @@ import assert from "node:assert/strict";
 import { getWeekMonthKey, getWeekNumber, getWeekStart } from "../src/lib/date.ts";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/lib/plates.ts";
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
-import { computeWeeklyStreak } from "../src/lib/streak.ts";
-import type { BodyweightEntry, WorkoutSession } from "../src/types/index.ts";
+import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
+import type { BodyweightEntry, CardioEntry, WorkoutSession } from "../src/types/index.ts";
 
 let checks = 0;
 function check(name: string, fn: () => void) {
@@ -102,6 +102,54 @@ check("uafsluttede træninger tæller ikke med", () => {
 
 check("mål på nul giver ingen streak", () => {
   assert.equal(computeWeeklyStreak([session("2026-09-07")], 0, "2026-09-07"), 0);
+});
+
+console.log("Aktivitets-streak i uger");
+
+const run = (date: string): CardioEntry => ({
+  id: "c" + date,
+  date,
+  activity: "Løb",
+  distanceKm: 5,
+  durationMin: 30,
+});
+
+check("styrke og cardio tæller begge som aktivitet", () => {
+  // Uge 37: kun løb. Uge 36: kun styrke. Uge 35: begge dele.
+  const sessions = ["2026-08-31", "2026-08-24"].map(session);
+  const cardio = ["2026-09-09", "2026-08-26"].map(run);
+  assert.equal(computeActivityWeekStreak(sessions, cardio, "2026-09-10"), 3);
+});
+
+check("en uge helt uden aktivitet bryder streaken", () => {
+  // Uge 36 er tom
+  const sessions = ["2026-09-07", "2026-08-24"].map(session);
+  assert.equal(computeActivityWeekStreak(sessions, [], "2026-09-10"), 1);
+});
+
+check("en tom indeværende uge bryder ikke streaken", () => {
+  // Intet endnu i uge 37, men uge 36 og 35 var aktive
+  const sessions = ["2026-08-31", "2026-08-24"].map(session);
+  assert.equal(computeActivityWeekStreak(sessions, [], "2026-09-10"), 2);
+});
+
+check("flere aktiviteter i samme uge tæller som én uge", () => {
+  const sessions = ["2026-09-07", "2026-09-08", "2026-09-09"].map(session);
+  assert.equal(computeActivityWeekStreak(sessions, [run("2026-09-10")], "2026-09-10"), 1);
+});
+
+check("uafsluttede træninger tæller ikke, men løbeture gør", () => {
+  const unfinished: WorkoutSession = {
+    id: "u",
+    date: "2026-09-07",
+    startedAt: "2026-09-07T10:00:00.000Z",
+  };
+  assert.equal(computeActivityWeekStreak([unfinished], [], "2026-09-10"), 0);
+  assert.equal(computeActivityWeekStreak([unfinished], [run("2026-09-07")], "2026-09-10"), 1);
+});
+
+check("ingen aktivitet giver nul", () => {
+  assert.equal(computeActivityWeekStreak([], [], "2026-09-10"), 0);
 });
 
 console.log("Vægt-fremskrivning");

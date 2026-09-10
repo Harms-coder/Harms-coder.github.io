@@ -7,7 +7,9 @@ import {
   IconList,
   IconMapPin,
   IconRun,
+  IconSearch,
   IconTrendUp,
+  IconX,
   type IconComponent,
 } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
@@ -140,6 +142,7 @@ export function HistoryPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [range, setRange] = useState<RangeKey>(DEFAULT_RANGE);
   const [collapsedMonths, setCollapsedMonths] = useState<Set<string>>(new Set());
@@ -208,13 +211,31 @@ export function HistoryPage() {
   }, [sessions, setsBySession, cardio, exerciseById]);
 
   const rangeStart = getRangeStart(range);
+  const trimmedQuery = query.trim().toLowerCase();
+
+  /**
+   * Søgningen dækker både træningens titel (muskelgrupperne / cardio-aktiviteten) og
+   * navnene på de øvelser der indgår — det er dem man leder efter, ikke overskriften.
+   */
+  function matchesQuery(item: HistoryItem): boolean {
+    if (!trimmedQuery) return true;
+    if (item.title.toLowerCase().includes(trimmedQuery)) return true;
+    if (item.kind !== "strength") return false;
+    return item.exerciseIds.some((id) =>
+      (exerciseById.get(id)?.name ?? "").toLowerCase().includes(trimmedQuery),
+    );
+  }
+
   const filteredItems = useMemo(
     () =>
       allItems.filter(
         (item) =>
-          item.date >= rangeStart && (typeFilter === "all" || item.kind === typeFilter),
+          item.date >= rangeStart &&
+          (typeFilter === "all" || item.kind === typeFilter) &&
+          matchesQuery(item),
       ),
-    [allItems, rangeStart, typeFilter],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allItems, rangeStart, typeFilter, trimmedQuery, exerciseById],
   );
 
   const months = useMemo<MonthGroup[]>(() => {
@@ -319,6 +340,26 @@ export function HistoryPage() {
         </p>
       </div>
 
+      <div className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-surface) px-3">
+        <IconSearch className="h-4 w-4 flex-shrink-0 text-(--color-cat-history)" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Søg efter øvelse eller aktivitet…"
+          className="min-h-11 flex-1 bg-transparent text-base text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label="Ryd søgning"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-(--color-text-muted) active:opacity-60"
+          >
+            <IconX className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
       <SegmentedControl
         options={TYPE_OPTIONS}
         value={typeFilter}
@@ -376,7 +417,9 @@ export function HistoryPage() {
 
       {months.length === 0 && (
         <p className="text-sm text-(--color-text-muted)">
-          Ingen træninger i den valgte periode.
+          {trimmedQuery
+            ? `Ingen træninger matcher "${query.trim()}" i den valgte periode.`
+            : "Ingen træninger i den valgte periode."}
         </p>
       )}
 

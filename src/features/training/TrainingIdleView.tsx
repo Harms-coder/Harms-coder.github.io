@@ -75,7 +75,7 @@ interface TrainingIdleViewProps {
   nextPlanDate?: string;
   lastSession?: LastSessionInfo;
   weekSessionCount: number;
-  streakDays: number;
+  streakWeeks: number;
   goalRemaining?: number;
 }
 
@@ -87,7 +87,7 @@ export function TrainingIdleView({
   nextPlanDate,
   lastSession,
   weekSessionCount,
-  streakDays,
+  streakWeeks,
   goalRemaining,
 }: TrainingIdleViewProps) {
   return (
@@ -197,7 +197,9 @@ export function TrainingIdleView({
               <IconFlame className="h-3.5 w-3.5" style={{ color: "var(--color-cat-strength)" }} />
               Streak
             </span>
-            <span className="text-[15px] font-bold text-(--color-text)">{streakDays} dage</span>
+            <span className="text-[15px] font-bold text-(--color-text)">
+              {streakWeeks} {streakWeeks === 1 ? "uge" : "uger"}
+            </span>
           </div>
           <div className="w-px flex-shrink-0 bg-(--color-border)" />
           <div className="flex flex-1 flex-col items-center gap-1">
