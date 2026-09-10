@@ -104,12 +104,19 @@ export function ExerciseDetailPage() {
       <span className="text-[13px] font-medium text-(--color-text-muted)">Kategori (valgfri)</span>
       <CategoryPicker value={category} onChange={setCategory} />
 
-      <TextField
-        label="Beskrivelse (valgfri, én linje)"
-        placeholder="fx Primært target bryst og triceps"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      {/* Textarea frem for input: beskrivelsen skal kunne læses helt, ikke kun redigeres. */}
+      <label className="flex flex-col gap-1.5">
+        <span className="text-[13px] font-medium text-(--color-text-muted)">
+          Beskrivelse (valgfri)
+        </span>
+        <textarea
+          rows={2}
+          placeholder="fx Primært target bryst og triceps"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-cat-library)"
+        />
+      </label>
 
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <span className="text-[13px] font-medium text-(--color-text-muted)">
