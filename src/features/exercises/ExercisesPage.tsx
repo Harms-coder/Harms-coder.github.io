@@ -61,7 +61,7 @@ export function ExercisesPage() {
       <PageBackdrop image="/images/ovelser-weights.jpg" imagePosition="center 40%" />
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="text-[28px] font-bold text-(--color-text)">Øvelser</h1>
+          <h1 className="text-(--color-text)">Øvelser</h1>
           <p className="text-[13px] text-(--color-text-secondary)">
             Byg din styrke. Ét løft ad gangen.
           </p>

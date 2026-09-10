@@ -42,7 +42,7 @@ export function HeroHeader({
         <div className="flex items-end justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1.5">
             <div className="flex items-center justify-between gap-3">
-              <h1 className="text-[30px] font-bold tracking-tight text-(--color-text)">{title}</h1>
+              <h1 className="text-(--color-text)">{title}</h1>
               {action}
             </div>
             <p className="text-[13px] text-(--color-text-secondary)">{subtitle}</p>
@@ -53,7 +53,7 @@ export function HeroHeader({
               {sideNote.map((line) => (
                 <span
                   key={line}
-                  className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)"
+                  className="eyebrow text-(--color-text-secondary)"
                 >
                   {line}
                 </span>

@@ -264,7 +264,7 @@ export function TrainingPage() {
       </button>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-(--color-text)">Træning</h1>
+          <h1 className="text-(--color-text)">Træning</h1>
           <span className="text-[13px] text-(--color-text-muted)">
             Startet{" "}
             {new Date(session.startedAt).toLocaleTimeString("da-DK", {

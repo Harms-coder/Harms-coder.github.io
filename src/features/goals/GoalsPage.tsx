@@ -120,7 +120,7 @@ export function GoalsPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/mal-summit.jpg" imagePosition="center 55%" />
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-(--color-text)">Mål</h1>
+        <h1 className="text-(--color-text)">Mål</h1>
         <Button
           variant={isAdding ? "secondary" : "primary"}
           tone="record"

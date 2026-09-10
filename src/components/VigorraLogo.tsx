@@ -24,7 +24,7 @@ export function VigorraLogo({ className = "" }: VigorraLogoProps) {
         <path d="M18 3 L30 27 H6 Z" fill="url(#vigorraMark)" filter="url(#vigorraGlow)" />
         <path d="M18 3 L18 27" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
       </svg>
-      <span className="text-[17px] font-semibold uppercase tracking-[0.2em] text-(--color-text)">
+      <span className="text-[17px] font-semibold uppercase tracking-(--tracking-wordmark) text-(--color-text)">
         Vigorra
       </span>
     </div>

@@ -30,7 +30,7 @@ export function DemoSeedPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <h1 className="text-2xl font-bold text-(--color-text)">Eksempeldata</h1>
+      <h1 className="text-(--color-text)">Eksempeldata</h1>
       <p className="text-sm text-(--color-text-muted)">
         Tilføjer ca. et års realistisk brugshistorik (træninger med stigende vægt, cardio,
         kropsvægt og et par programmer), så du kan se hvordan appen ser ud efter et års

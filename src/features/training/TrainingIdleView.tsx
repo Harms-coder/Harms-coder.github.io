@@ -94,7 +94,7 @@ export function TrainingIdleView({
     <div className="flex flex-col gap-4 px-4 pt-6 text-left">
       <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
       <div className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold text-(--color-text)">Træning</h1>
+        <h1 className="text-(--color-text)">Træning</h1>
         <p className="text-[13px] text-(--color-text-secondary)">
           Start en træning for at logge sæt, følge tiden og se dine øvelser.
         </p>

@@ -180,7 +180,7 @@ export function PlanPage() {
       <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-[28px] font-bold text-(--color-text)">Programmer</h1>
+          <h1 className="text-(--color-text)">Programmer</h1>
           <Button
             variant={isAdding ? "secondary" : "primary"}
             tone="plan"

@@ -60,6 +60,15 @@
   --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.55);
   --shadow-lifted: 0 18px 44px rgba(0, 0, 0, 0.6);
 
+  /*
+   * Tracking-skala. Store overskrifter strammes let (display-typografi falder fra hinanden
+   * ved default-tracking i den her størrelse), mens de små versal-labels og ordmærket får
+   * luft, så de læses som mærke frem for brødtekst.
+   */
+  --tracking-display: -0.022em;
+  --tracking-eyebrow: 0.18em;
+  --tracking-wordmark: 0.3em;
+
   --font-sans:
     "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
@@ -94,6 +103,28 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/*
+ * Sideoverskrifter: samme størrelse, vægt og tracking på tværs af alle faner, sat ét sted
+ * fra. Titlerne lå før på 24px, 28px og 30px afhængigt af siden.
+ */
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+}
+
+/*
+ * "Eyebrow": den lille versal-label over et tal eller en sektion. Var duplikeret som
+ * text-[9.5px] uppercase tracking-[0.18em] tre steder.
+ */
+.eyebrow {
+  font-size: 0.594rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
 }
 
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */

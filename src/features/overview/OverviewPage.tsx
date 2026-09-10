@@ -259,10 +259,10 @@ export function OverviewPage() {
             skaber store resultater.
           </p>
           <div className="flex flex-shrink-0 flex-col items-end gap-1 pb-1">
-            <span className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)">
+            <span className="eyebrow text-(--color-text-secondary)">
               Fremgang
             </span>
-            <span className="text-[9.5px] font-semibold uppercase leading-tight tracking-[0.18em] text-(--color-text-secondary)">
+            <span className="eyebrow text-(--color-text-secondary)">
               hver dag
             </span>
             <span className="mt-0.5 h-px w-7 bg-(--color-accent)" />

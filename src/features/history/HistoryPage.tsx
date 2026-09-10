@@ -318,7 +318,7 @@ export function HistoryPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/historik-footprints.jpg" imagePosition="center 65%" />
       <div className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold text-(--color-text)">Historik</h1>
+        <h1 className="text-(--color-text)">Historik</h1>
         <p className="text-[13px] text-(--color-text-secondary)">
           Dine træninger samlet ét sted.
         </p>
