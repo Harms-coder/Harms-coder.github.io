@@ -20,8 +20,16 @@ import {
   updateBodyweightEntry,
 } from "../../db/bodyweight";
 import { chartAxisTick, chartLineCursor, chartTooltipStyle } from "../../lib/chart";
+import { groupByMonthAndWeek } from "../../lib/grouping";
+import { IconChevronDown } from "../../components/icons";
 import { useChartTouch } from "../../lib/chartTouch";
-import { formatShortDate, todayISODate } from "../../lib/date";
+import {
+  formatMonthTitle,
+  formatShortDate,
+  formatWeekRange,
+  getWeekNumber,
+  todayISODate,
+} from "../../lib/date";
 import {
   DEFAULT_RANGE,
   RANGE_KEYS,
@@ -34,7 +42,19 @@ import { BodyweightEntryCard } from "./BodyweightEntryCard";
 
 export function BodyweightPage() {
   const { handlers, tooltipActive } = useChartTouch();
+  const [collapsedMonths, setCollapsedMonths] = useState<Set<string>>(new Set());
+  const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set());
+
+  function toggle(setter: typeof setCollapsedMonths, key: string) {
+    setter((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
   const [entries, setEntries] = useState<BodyweightEntry[]>([]);
+  const months = useMemo(() => groupByMonthAndWeek(entries, (entry) => entry.date), [entries]);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(todayISODate());
   const [weight, setWeight] = useState("");
@@ -212,16 +232,82 @@ export function BodyweightPage() {
         </p>
       )}
 
-      <div className="flex flex-col gap-3">
-        {entries.map((entry) => (
-          <BodyweightEntryCard
-            key={entry.id}
-            entry={entry}
-            onUpdate={(changes) => handleUpdate(entry.id, changes)}
-            onDelete={() => handleDelete(entry.id)}
-          />
-        ))}
-      </div>
+      {/* Måned → uge → vejninger, samme opbygning som Historik: uden den bliver listen
+          uendelig lang, når man har vejet sig dagligt i et år. */}
+      {months.map((month) => {
+        const collapsed = collapsedMonths.has(month.key);
+        return (
+          <div key={month.key} className="flex flex-col gap-2.5">
+            <button
+              type="button"
+              onClick={() => toggle(setCollapsedMonths, month.key)}
+              className="flex items-center justify-between gap-2 pt-1 text-left"
+            >
+              <span className="text-[17px] font-bold text-(--color-text)">
+                {formatMonthTitle(month.key)}
+              </span>
+              <span className="flex items-center gap-2 text-[12.5px] text-(--color-text-muted)">
+                {month.count} {month.count === 1 ? "vejning" : "vejninger"}
+                <IconChevronDown
+                  className={`h-4 w-4 transition-transform ${collapsed ? "" : "rotate-180"}`}
+                />
+              </span>
+            </button>
+
+            {!collapsed &&
+              month.weeks.map((week) => {
+                const open = expandedWeeks.has(week.key);
+                const vaegte = week.items.map((e) => e.weight);
+                const gennemsnit =
+                  Math.round((vaegte.reduce((a, b) => a + b, 0) / vaegte.length) * 10) / 10;
+                return (
+                  <div key={week.key} className="flex flex-col gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => toggle(setExpandedWeeks, week.key)}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-left card-shadow"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[15px] font-semibold text-(--color-text)">
+                          Uge {getWeekNumber(week.key)}
+                        </span>
+                        <span className="text-[12.5px] text-(--color-text-muted)">
+                          {formatWeekRange(week.key)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex flex-col items-end gap-0.5">
+                          <span className="text-[13px] font-semibold text-(--color-text)">
+                            {gennemsnit} kg
+                          </span>
+                          <span className="text-[12px] text-(--color-text-muted)">
+                            {week.items.length} {week.items.length === 1 ? "vejning" : "vejninger"}
+                          </span>
+                        </div>
+                        <IconChevronDown
+                          className={`h-4 w-4 flex-shrink-0 text-(--color-text-muted) transition-transform ${open ? "rotate-180" : ""}`}
+                        />
+                      </div>
+                    </button>
+
+                    {open && (
+                      <div className="flex flex-col gap-2.5 pl-3">
+                        {week.items.map((entry) => (
+                          <BodyweightEntryCard
+                            key={entry.id}
+                            entry={entry}
+                            onUpdate={(changes) => handleUpdate(entry.id, changes)}
+                            onDelete={() => handleDelete(entry.id)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        );
+      })}
     </div>
   );
 }

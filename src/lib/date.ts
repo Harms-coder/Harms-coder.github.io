@@ -69,6 +69,17 @@ export function getWeekMonthKey(weekStartISO: string): string {
   return toISODate(thursday).slice(0, 7);
 }
 
+/** "7.–13. sep" eller "31. aug – 6. sep" når ugen går på tværs af to måneder. */
+export function formatWeekRange(weekStartISO: string): string {
+  const start = parseISODate(weekStartISO);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  const short = (d: Date) => DA_MONTHS[d.getMonth()].slice(0, 3);
+  return start.getMonth() === end.getMonth()
+    ? `${start.getDate()}.–${end.getDate()}. ${short(end)}`
+    : `${start.getDate()}. ${short(start)} – ${end.getDate()}. ${short(end)}`;
+}
+
 /** "2026-09" → "September 2026". */
 export function formatMonthTitle(monthKey: string): string {
   const [year, month] = monthKey.split("-").map(Number);

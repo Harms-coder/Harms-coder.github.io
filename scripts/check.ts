@@ -7,6 +7,7 @@
  */
 import assert from "node:assert/strict";
 import { getWeekMonthKey, getWeekNumber, getWeekStart } from "../src/lib/date.ts";
+import { groupByMonthAndWeek } from "../src/lib/grouping.ts";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/lib/plates.ts";
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
 import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
@@ -53,6 +54,33 @@ check("en uge hører til den måned dens torsdag ligger i", () => {
   assert.equal(getWeekMonthKey("2025-04-28"), "2025-05");
   // Og en uge midt i en måned skal stadig lande hvor den plejer
   assert.equal(getWeekMonthKey("2026-09-07"), "2026-09");
+});
+
+check("gruppering i måneder og uger", () => {
+  const rows = [
+    { date: "2026-09-30" }, // onsdag — ugen 28. sep–4. okt, torsdag i oktober
+    { date: "2026-10-01" }, // torsdag i samme uge
+    { date: "2026-09-07" }, // uge 37, klart i september
+    { date: "2026-08-20" },
+  ];
+  const groups = groupByMonthAndWeek(rows, (r) => r.date);
+
+  // Nyeste måned først
+  assert.deepEqual(groups.map((g) => g.key), ["2026-10", "2026-09", "2026-08"]);
+
+  // De to datoer i samme uge havner i ÉN uge, i oktober — ikke spredt over to måneder
+  const oktober = groups[0];
+  assert.equal(oktober.weeks.length, 1);
+  assert.equal(oktober.weeks[0].items.length, 2);
+  assert.equal(oktober.count, 2);
+  assert.equal(oktober.weeks[0].key, "2026-09-28");
+
+  // September indeholder kun uge 37 — ikke ugen der løb ind i oktober
+  assert.deepEqual(groups[1].weeks.map((w) => w.key), ["2026-09-07"]);
+});
+
+check("tom liste giver ingen grupper", () => {
+  assert.deepEqual(groupByMonthAndWeek([], (r: { date: string }) => r.date), []);
 });
 
 console.log("Streak");

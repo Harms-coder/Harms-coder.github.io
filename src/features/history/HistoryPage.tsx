@@ -21,10 +21,10 @@ import { listExercises } from "../../db/exercises";
 import { deleteSession, listSessions } from "../../db/sessions";
 import { deleteSet, listSetsForSession } from "../../db/sets";
 import {
-  DA_MONTHS,
   formatDuration,
   formatLongDate,
   formatMonthTitle,
+  formatWeekRange,
   getWeekMonthKey,
   getWeekNumber,
   getWeekStart,
@@ -85,15 +85,6 @@ interface MonthGroup {
   weeks: WeekGroup[];
 }
 
-function formatWeekRange(weekStartISO: string): string {
-  const start = parseISODate(weekStartISO);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  const short = (d: Date) => DA_MONTHS[d.getMonth()].slice(0, 3);
-  return start.getMonth() === end.getMonth()
-    ? `${start.getDate()}.–${end.getDate()}. ${short(end)}`
-    : `${start.getDate()}. ${short(start)} – ${end.getDate()}. ${short(end)}`;
-}
 
 /** Kategorifarven for en historik-post — styrke og cardio kendes på farven alene. */
 function itemColor(kind: HistoryItem["kind"]): string {
