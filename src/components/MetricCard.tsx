@@ -17,7 +17,7 @@ export function MetricCard({
   accent = "var(--color-cat-strength)",
 }: MetricCardProps) {
   return (
-    <div className="flex min-h-28 flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-3.5 card-shadow">
+    <div className="flex min-h-28 flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <span
         className="cat-badge flex h-9 w-9 items-center justify-center rounded-full border"
         style={{ "--badge-color": accent } as CSSProperties}

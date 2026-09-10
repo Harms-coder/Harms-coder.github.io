@@ -22,7 +22,12 @@
   /* Tekst */
   --color-text: #eef2f7;
   --color-text-secondary: #a5b1bf;
-  --color-text-muted: #6b7686;
+  /*
+   * Muted skal stadig være dæmpet, men læsbar i dagslys på en telefon. Den var #6b7686,
+   * hvilket kun gav 3.5:1 mod surface-3 — under WCAG AA's 4.5:1 for brødtekst. Denne
+   * værdi giver mindst 5.0:1 mod alle fire flader.
+   */
+  --color-text-muted: #8792a3;
 
   /* Accent (orange): forbeholdt primær CTA og vigtige highlights — ikke baggrunde. */
   --color-accent: #f0842f;
@@ -137,7 +142,14 @@ h1 {
   display: none;
 }
 
-/* Delt design-system-lag: genanvendes via className i stedet for at blive duplikeret pr. side. */
+/*
+ * Delt design-system-lag: genanvendes via className i stedet for at blive duplikeret pr. side.
+ *
+ * Kort-opskriften er: `rounded-2xl border bg-(--color-surface) p-4 card-shadow`.
+ * .card-shadow sætter kant og skygge ét sted fra, så de aldrig kan drive fra hinanden;
+ * radius og padding skrives på kaldet. Kort med et billede helt ud til kanten udelader
+ * p-4 og lægger den indvendige padding på tekstkolonnen i stedet.
+ */
 .card-shadow {
   /* !important overskriver den parrede `border-(--color-border)`-utility, der stadig står i hvert kalds className
      (for at holde diffen lille) — så ALLE kort i appen får samme kant ét sted fra, uden at hver fil skal røres. */

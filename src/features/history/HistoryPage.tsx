@@ -413,7 +413,7 @@ export function HistoryPage() {
                     <button
                       type="button"
                       onClick={() => toggleWeek(week.key)}
-                      className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-3.5 text-left card-shadow"
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-left card-shadow"
                     >
                       <div className="flex flex-col gap-0.5">
                         <span className="text-[15px] font-semibold text-(--color-text)">
@@ -461,7 +461,7 @@ export function HistoryPage() {
                               onDelete={() => handleDelete(item)}
                               className="rounded-2xl"
                             >
-                              <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-3.5 card-shadow">
+                              <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
                                 <button
                                   type="button"
                                   onClick={() =>
