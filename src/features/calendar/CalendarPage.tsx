@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
@@ -31,6 +32,8 @@ import type {
 import { DayPlanner } from "./DayPlanner";
 
 export function CalendarPage() {
+  const location = useLocation();
+  const preselectRoutineId = (location.state as { routineId?: string } | null)?.routineId;
   const today = new Date();
   const [monthCursor, setMonthCursor] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
@@ -270,6 +273,7 @@ export function CalendarPage() {
             routines={routines}
             exercises={exercises}
             plan={selectedPlan}
+            preselectRoutineId={preselectRoutineId}
             onSave={handleSavePlan}
             onRemove={handleRemovePlan}
           />

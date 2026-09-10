@@ -106,7 +106,16 @@ export function formatMediumDate(date: Date): string {
   return `${date.getDate()}. ${DA_MONTHS[date.getMonth()].slice(0, 3)} ${date.getFullYear()}`;
 }
 
+export const DA_WEEKDAYS = [
+  "søndag",
+  "mandag",
+  "tirsdag",
+  "onsdag",
+  "torsdag",
+  "fredag",
+  "lørdag",
+];
+
 export function formatLongDate(date: Date): string {
-  const weekdays = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
-  return `${weekdays[date.getDay()]} d. ${date.getDate()}. ${DA_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+  return `${DA_WEEKDAYS[date.getDay()]} d. ${date.getDate()}. ${DA_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }

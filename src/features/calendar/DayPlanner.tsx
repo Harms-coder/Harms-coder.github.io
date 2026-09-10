@@ -7,16 +7,29 @@ interface DayPlannerProps {
   routines: Routine[];
   exercises: Exercise[];
   plan?: PlannedWorkout;
+  /** Forvalgt program, når man kommer fra "Tilføj til kalender" på Programmer-siden. */
+  preselectRoutineId?: string;
   onSave: (input: { routineId?: string; exerciseIds: string[] }) => Promise<void> | void;
   onRemove: () => Promise<void> | void;
 }
 
 type Mode = "routine" | "custom";
 
-export function DayPlanner({ routines, exercises, plan, onSave, onRemove }: DayPlannerProps) {
+export function DayPlanner({
+  routines,
+  exercises,
+  plan,
+  preselectRoutineId,
+  onSave,
+  onRemove,
+}: DayPlannerProps) {
   const [isEditing, setIsEditing] = useState(!plan);
-  const [mode, setMode] = useState<Mode>(plan?.routineId ? "routine" : "custom");
-  const [selectedRoutineId, setSelectedRoutineId] = useState(plan?.routineId ?? "");
+  const [mode, setMode] = useState<Mode>(
+    plan?.routineId || (!plan && preselectRoutineId) ? "routine" : "custom",
+  );
+  const [selectedRoutineId, setSelectedRoutineId] = useState(
+    plan?.routineId ?? (plan ? "" : (preselectRoutineId ?? "")),
+  );
   const [customExerciseIds, setCustomExerciseIds] = useState<string[]>(
     plan?.routineId ? [] : (plan?.exerciseIds ?? []),
   );

@@ -39,7 +39,7 @@ export async function createRoutine(input: {
 
 export async function updateRoutine(
   id: string,
-  changes: Partial<Pick<Routine, "name" | "exerciseIds" | "color">>,
+  changes: Partial<Pick<Routine, "name" | "exerciseIds" | "color" | "favorite">>,
 ): Promise<Routine> {
   const db = await getDb();
   const existing = await db.get("routines", id);

@@ -493,6 +493,26 @@ export function IconTarget(props: IconProps) {
   );
 }
 
+/** Kalender med streg over — "ikke planlagt". */
+export function IconCalendarOff(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+      <path d="M4.5 20.5 19.5 5" strokeWidth={2} />
+    </svg>
+  );
+}
+
+/** Sendes fill="currentColor" for udfyldt (favorit) — ellers står den som kontur. */
+export function IconStar(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.6l2.6 5.28 5.83.85-4.22 4.11.996 5.8L12 16.9l-5.21 2.74.996-5.8-4.22-4.11 5.83-.85Z" />
+    </svg>
+  );
+}
+
 export function IconLightbulb(props: IconProps) {
   return (
     <svg {...base(props)}>

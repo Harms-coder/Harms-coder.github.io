@@ -56,6 +56,8 @@ export interface Routine {
   name: string;
   exerciseIds: string[];
   color?: string;
+  /** Markeret som favorit af brugeren. IndexedDB er skemaløst, så feltet kræver ingen migration. */
+  favorite?: boolean;
   createdAt: string;
 }
 

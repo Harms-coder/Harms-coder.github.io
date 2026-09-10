@@ -1,20 +1,51 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { CardActions } from "../../components/CardActions";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
 import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { TextField } from "../../components/TextField";
+import {
+  IconCalendar,
+  IconClock,
+  IconDumbbell,
+  IconStar,
+  type IconComponent,
+} from "../../components/icons";
 import { ROUTINE_COLORS } from "../../db/routines";
+import { estimateWorkoutMinutes } from "../../lib/estimate";
+import { joinDanish } from "../../lib/format";
 import type { Exercise, Routine } from "../../types";
+
+export interface RoutineStatus {
+  text: string;
+  icon: IconComponent;
+  /** "planned" farves grønt, resten dæmpet. */
+  tone: "planned" | "muted";
+}
 
 interface RoutineCardProps {
   routine: Routine;
   exercises: Exercise[];
-  onUpdate: (changes: { name: string; exerciseIds: string[]; color?: string }) => Promise<void> | void;
+  status: RoutineStatus;
+  onUpdate: (changes: {
+    name: string;
+    exerciseIds: string[];
+    color?: string;
+  }) => Promise<void> | void;
+  onToggleFavorite: () => Promise<void> | void;
   onDelete: () => Promise<void> | void;
 }
 
-export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineCardProps) {
+export function RoutineCard({
+  routine,
+  exercises,
+  status,
+  onUpdate,
+  onToggleFavorite,
+  onDelete,
+}: RoutineCardProps) {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(routine.name);
   const [exerciseIds, setExerciseIds] = useState(routine.exerciseIds);
@@ -67,24 +98,79 @@ export function RoutineCard({ routine, exercises, onUpdate, onDelete }: RoutineC
     );
   }
 
+  const exerciseNames = routine.exerciseIds
+    .map((id) => exerciseById.get(id)?.name)
+    .filter((n): n is string => Boolean(n));
+  const StatusIcon = status.icon;
+
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <div className="flex items-center justify-between">
-        <span className="flex items-center gap-2 text-[15px] font-medium text-(--color-text)">
+    <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <span className="flex min-w-0 items-center gap-2.5">
           <span
-            className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+            className="h-3 w-3 flex-shrink-0 rounded-full"
             style={{ backgroundColor: routine.color ?? "var(--color-accent)" }}
           />
-          {routine.name}
+          <span className="truncate text-[16px] font-bold text-(--color-text)">{routine.name}</span>
         </span>
-        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
+        <div className="flex flex-shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={() => void onToggleFavorite()}
+            aria-label={routine.favorite ? "Fjern som favorit" : "Marker som favorit"}
+            className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-60"
+          >
+            <IconStar
+              className={`h-[18px] w-[18px] ${
+                routine.favorite
+                  ? "text-(--color-accent-glow)"
+                  : "text-(--color-text-muted)"
+              }`}
+              fill={routine.favorite ? "currentColor" : "none"}
+            />
+          </button>
+          <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
+        </div>
       </div>
-      <span className="text-[13px] text-(--color-text-muted)">
-        {routine.exerciseIds
-          .map((id) => exerciseById.get(id)?.name)
-          .filter(Boolean)
-          .join(", ")}
-      </span>
+
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
+          <IconDumbbell className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+          {routine.exerciseIds.length} øvelser
+        </span>
+        <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />
+        <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
+          <IconClock className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+          ca. {estimateWorkoutMinutes(routine.exerciseIds.length)} min
+        </span>
+        <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />
+        <span
+          className={`flex items-center gap-1.5 text-[13px] ${
+            status.tone === "planned"
+              ? "text-(--color-success)"
+              : "text-(--color-text-muted)"
+          }`}
+        >
+          <StatusIcon className="h-3.5 w-3.5 flex-shrink-0" />
+          {status.text}
+        </span>
+      </div>
+
+      {exerciseNames.length > 0 && (
+        <span className="text-[13px] leading-snug text-(--color-text-muted)">
+          {joinDanish(exerciseNames)}
+        </span>
+      )}
+
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => navigate("/kalender", { state: { routineId: routine.id } })}
+        className="flex items-center gap-1.5 self-start"
+      >
+        <IconCalendar className="h-3.5 w-3.5" />
+        Tilføj til kalender
+      </Button>
     </div>
   );
 }
