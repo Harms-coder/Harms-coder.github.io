@@ -193,19 +193,22 @@ h1 {
 }
 
 /*
- * iOS med apple-mobile-web-app-status-bar-style: black-translucent flytter websiden OP
- * under statuslinjen uden at gøre viewporten tilsvarende højere. Målt på en iPhone:
- * window.innerHeight = 894, screen.height = 956, safe-area-inset-top = 62 — altså slutter
- * viewporten præcis 62 px (toppens safe-area) før skærmkanten, og en menu i bunden af
- * viewporten efterlader en sort stribe.
- *
- * Vi skubber menuen det stykke ned igen. Kun i standalone: i Safari med adresselinje er
- * viewporten korrekt, og det samme greb ville skubbe menuen ud over skærmkanten.
+ * Afstanden mellem viewportens bund og skærmens kant. Sættes fra JavaScript, fordi den
+ * kun kan MÅLES: iOS' black-translucent flytter websiden op under statuslinjen uden at
+ * gøre viewporten højere, og hvor meget der mangler, kan ikke udledes af CSS alene.
+ * 0 som standard, så alt andet end den installerede app er upåvirket.
  */
-@media (display-mode: standalone) {
-  .bottom-nav {
-    bottom: calc(-1 * env(safe-area-inset-top, 0px));
-  }
+:root {
+  --viewport-gap: 0px;
+}
+
+/*
+ * Bemærk: ingen bottom-0-utility på elementet. Tailwinds utilities vinder over reglerne
+ * her (samme grund til at .card-shadow bruger !important), så en utility ville tie denne
+ * forskydning ihjel — hvilket den gjorde i første forsøg.
+ */
+.bottom-nav {
+  bottom: calc(-1 * var(--viewport-gap));
 }
 
 /*

@@ -1,3 +1,4 @@
+import { useViewportGap } from "./lib/viewportGap";
 import { lazy, Suspense, type ReactNode } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
@@ -45,6 +46,7 @@ function LazyPage({ children }: { children: ReactNode }) {
 }
 
 function App() {
+  useViewportGap();
   const location = useLocation();
   const hideBottomNav = location.pathname === "/traening/live";
 
