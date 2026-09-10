@@ -50,7 +50,7 @@ function App() {
   return (
     <div className={`relative min-h-full ${hideBottomNav ? "" : "pb-24"}`}>
       <div className="app-ambience" />
-      <div className="relative z-10">
+      <div className="safe-top relative z-10">
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/traening" element={<TrainingPage />} />

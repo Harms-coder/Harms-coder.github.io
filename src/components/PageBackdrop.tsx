@@ -11,7 +11,7 @@ interface PageBackdropProps {
 export function PageBackdrop({ image, imagePosition = "center" }: PageBackdropProps) {
   // Uden w-full: auto-bredde + negativ margin giver præcis fuld skærmbredde (100% + 2rem).
   return (
-    <div className="relative -mx-4 -mt-6 h-32 overflow-hidden">
+    <div className="backdrop-bleed relative -mx-4 overflow-hidden">
       <img
         src={image}
         alt=""

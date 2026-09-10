@@ -26,7 +26,7 @@ export function HeroHeader({
   sideNote,
 }: HeroHeaderProps) {
   return (
-    <div className="relative -mx-4 -mt-6 h-72 overflow-hidden">
+    <div className="hero-bleed relative -mx-4 overflow-hidden">
       <img
         src={image}
         alt=""

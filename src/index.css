@@ -111,6 +111,29 @@ body {
 }
 
 /*
+ * iOS-statuslinjen ligger oven på indholdet (black-translucent), så sidernes indhold
+ * skubbes ned under den. Uden dette ville overskrifter ligge bag uret.
+ */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/*
+ * Hero-billeder trækker sig op igennem .safe-top igen og vokser tilsvarende i højde,
+ * så fotoet fylder hele vejen op bag statuslinjen uden at blive lavere.
+ * -1.5rem svarer til sidernes pt-6, som billedet i forvejen ophæver.
+ */
+.backdrop-bleed {
+  height: calc(8rem + env(safe-area-inset-top, 0px));
+  margin-top: calc(-1.5rem - env(safe-area-inset-top, 0px));
+}
+
+.hero-bleed {
+  height: calc(18rem + env(safe-area-inset-top, 0px));
+  margin-top: calc(-1.5rem - env(safe-area-inset-top, 0px));
+}
+
+/*
  * Sideoverskrifter: samme størrelse, vægt og tracking på tværs af alle faner, sat ét sted
  * fra. Titlerne lå før på 24px, 28px og 30px afhængigt af siden.
  */
