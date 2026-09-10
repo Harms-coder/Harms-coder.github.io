@@ -415,13 +415,13 @@ export function IconMore(props: IconProps) {
 
 export function IconRun(props: IconProps) {
   return (
-    <svg {...base(props)}>
-      <circle cx="14.8" cy="5" r="2.3" fill="currentColor" />
-      <path d="M14.1 7 11.2 11.3" strokeWidth={3.8} />
-      <path d="M11.2 11.3 13.4 13.6 12.6 19.3" strokeWidth={3.8} />
-      <path d="M11.2 11.3 8 13 6.2 17.6" strokeWidth={3.8} />
-      <path d="M12.9 8.3 16.2 7.3 17.6 5" strokeWidth={3.2} />
-      <path d="M12.5 8.6 9.6 10.1 7.8 8.8" strokeWidth={3.2} />
+    <svg {...base(props)} fill="currentColor" stroke="none">
+      <circle cx="15.8" cy="4.3" r="2.1" />
+      <path d="M14.3 6.2 11.2 12.2 15.5 10.3 12.8 7.2Z" />
+      <path d="M15.5 10.3 13.8 15.8 12.4 15.2 14.5 10Z" />
+      <path d="M11.9 10.8 5.2 17.9 4 17 10.6 10.3Z" />
+      <path d="M14.6 6 18.5 9.5 17.4 10.7 13.6 6.9Z" />
+      <path d="M13 6.3 9.3 9 11.3 11.8 13.9 7.1Z" />
     </svg>
   );
 }
