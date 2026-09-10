@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../../lib/plates";
 import type { SetType } from "../../types";
 
 const WEIGHT_DELTAS_DOWN = [-5, -2.5];
@@ -16,10 +17,17 @@ const SET_TYPE_LABELS: Record<SetType, string> = {
 interface SetInputFormProps {
   initialWeight?: number;
   initialReps?: number;
+  /** Navnet bruges til at afgøre om skiveberegningen giver mening for øvelsen. */
+  exerciseName?: string;
   onSave: (values: { weight: number; reps: number; setType: SetType }) => void;
 }
 
-export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFormProps) {
+export function SetInputForm({
+  initialWeight,
+  initialReps,
+  exerciseName,
+  onSave,
+}: SetInputFormProps) {
   const [weight, setWeight] = useState(initialWeight?.toString() ?? "");
   const [reps, setReps] = useState(initialReps?.toString() ?? "");
   const [setType, setSetType] = useState<SetType>("normal");
@@ -29,6 +37,9 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
     const next = Math.max(0, Math.round((current + delta) * 100) / 100);
     setWeight(next.toString());
   }
+
+  const platePlan =
+    exerciseName && isBarbellExercise(exerciseName) ? platesPerSide(Number(weight)) : undefined;
 
   function handleSave() {
     const weightValue = Number(weight);
@@ -89,6 +100,20 @@ export function SetInputForm({ initialWeight, initialReps, onSave }: SetInputFor
           ))}
         </div>
       </div>
+
+      {platePlan && (
+        <span className="text-[12.5px] text-(--color-text-muted)">
+          {platePlan.perSide.length === 0
+            ? `Tom stang (${BAR_KG} kg)`
+            : `Stang ${BAR_KG} kg + ${formatPlates(platePlan.perSide)} pr. side`}
+          {platePlan.leftoverKg > 0 && (
+            <span className="text-(--color-text-secondary)">
+              {" "}
+              · {platePlan.leftoverKg.toString().replace(".", ",")} kg går ikke op
+            </span>
+          )}
+        </span>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <span className="text-[13px] font-medium text-(--color-text-muted)">Reps</span>

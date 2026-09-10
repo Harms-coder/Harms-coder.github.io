@@ -491,6 +491,11 @@ export function HistoryPage() {
 
                                 {itemExpanded && item.kind === "strength" && (
                                   <div className="flex flex-col gap-2 border-t border-(--color-border) pt-3">
+                                    {item.session.notes && (
+                                      <p className="rounded-xl bg-(--color-surface-2) px-3 py-2 text-[13px] leading-snug text-(--color-text-secondary)">
+                                        {item.session.notes}
+                                      </p>
+                                    )}
                                     {item.exerciseIds.map((exerciseId) => {
                                       const exerciseSets = item.sets.filter(
                                         (s) => s.exerciseId === exerciseId,

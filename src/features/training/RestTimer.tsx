@@ -14,14 +14,44 @@ function formatRemaining(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+/**
+ * Kort bip via WebAudio frem for en lydfil — ingen asset at hente, og ingen forsinkelse
+ * første gang. AudioContext oprettes ved tryk på timeren, fordi browsere kun tillader lyd
+ * efter en brugerhandling; oprettes den først når timeren rammer nul, er den blokeret.
+ */
+function playBeep(ctx: AudioContext) {
+  const gain = ctx.createGain();
+  gain.connect(ctx.destination);
+  for (const [index, startOffset] of [0, 0.28].entries()) {
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = index === 0 ? 880 : 1180;
+    osc.connect(gain);
+    const t = ctx.currentTime + startOffset;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    osc.start(t);
+    osc.stop(t + 0.24);
+  }
+}
+
 export function RestTimer({ autoStartSignal }: RestTimerProps) {
   const [lastPreset, setLastPreset] = useState(120);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const [justFinished, setJustFinished] = useState(false);
   const lastHandledSignal = useRef(autoStartSignal);
+  const audioRef = useRef<AudioContext | null>(null);
 
   function start(seconds: number) {
+    // Oprettes/genoptages her, mens vi stadig er inde i brugerens tryk.
+    try {
+      audioRef.current ??= new AudioContext();
+      void audioRef.current.resume();
+    } catch {
+      audioRef.current = null;
+    }
     setLastPreset(seconds);
     setEndTime(Date.now() + seconds * 1000);
     setJustFinished(false);
@@ -50,6 +80,15 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
     if (remainingSec === 0) {
       setEndTime(null);
       setJustFinished(true);
+      if (audioRef.current) {
+        try {
+          playBeep(audioRef.current);
+        } catch {
+          // Lyd er en bekvemmelighed — en blokeret AudioContext må ikke vælte timeren.
+        }
+      }
+      // Virker ikke på iOS, men koster intet at forsøge der hvor det gør.
+      navigator.vibrate?.([180, 90, 180]);
       const timeout = setTimeout(() => setJustFinished(false), 4000);
       return () => clearTimeout(timeout);
     }

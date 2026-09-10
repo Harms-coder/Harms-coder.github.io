@@ -12,7 +12,12 @@ import {
 } from "../../components/icons";
 import { getPlannedWorkoutForDate } from "../../db/plannedWorkouts";
 import { listExercises } from "../../db/exercises";
-import { deleteSession, endSession, getActiveSession } from "../../db/sessions";
+import {
+  deleteSession,
+  endSession,
+  getActiveSession,
+  updateSessionNotes,
+} from "../../db/sessions";
 import { deleteSet, listSetsForExercise, listSetsForSession } from "../../db/sets";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
@@ -44,6 +49,7 @@ export function LiveTrainingPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [priorSets, setPriorSets] = useState<Record<string, SetEntry | undefined>>({});
   const [showExercisePicker, setShowExercisePicker] = useState(false);
+  const [notes, setNotes] = useState("");
   const [restAutoSignal, setRestAutoSignal] = useState(0);
 
   const [nowTick, setNowTick] = useState(Date.now());
@@ -61,6 +67,7 @@ export function LiveTrainingPage() {
         return;
       }
       setSession(activeSession);
+      setNotes(activeSession.notes ?? "");
 
       const [plan, sessionSets] = await Promise.all([
         getPlannedWorkoutForDate(activeSession.date),
@@ -297,12 +304,27 @@ export function LiveTrainingPage() {
 
           <SetInputForm
             key={`${currentExerciseId}-${priorSet ? "seeded" : "empty"}`}
+            exerciseName={currentExercise.name}
             initialWeight={lastInSession?.weight ?? priorSet?.weight}
             initialReps={lastInSession?.reps ?? priorSet?.reps}
             onSave={handleAddSet}
           />
 
           <RestTimer autoStartSignal={restAutoSignal} />
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[13px] font-medium text-(--color-text-muted)">
+              Note til træningen
+            </span>
+            <textarea
+              rows={2}
+              value={notes}
+              placeholder="fx Følte mig stærk, skulderen strammede lidt"
+              onChange={(e) => setNotes(e.target.value)}
+              onBlur={() => session && void updateSessionNotes(session.id, notes)}
+              className="resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-cat-strength)"
+            />
+          </label>
 
           <div className="flex gap-2">
             <Button

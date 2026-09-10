@@ -35,6 +35,19 @@ export async function startSession(): Promise<WorkoutSession> {
   return session;
 }
 
+export async function updateSessionNotes(
+  id: string,
+  notes: string,
+): Promise<WorkoutSession | undefined> {
+  const db = await getDb();
+  const existing = await db.get("workoutSessions", id);
+  if (!existing) return undefined;
+  const trimmed = notes.trim();
+  const updated: WorkoutSession = { ...existing, notes: trimmed || undefined };
+  await db.put("workoutSessions", updated);
+  return updated;
+}
+
 export async function deleteSession(id: string): Promise<void> {
   const db = await getDb();
   await db.delete("workoutSessions", id);
