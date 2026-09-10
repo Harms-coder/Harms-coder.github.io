@@ -30,7 +30,15 @@ export async function createExercise(input: {
 type ExerciseUpdate = Partial<
   Pick<
     Exercise,
-    "name" | "category" | "description" | "prWeight" | "prReps" | "prDate" | "pr1RM" | "pr1RMDate"
+    | "name"
+    | "category"
+    | "description"
+    | "prWeight"
+    | "prReps"
+    | "prDate"
+    | "pr1RM"
+    | "pr1RMDate"
+    | "favorite"
   >
 >;
 

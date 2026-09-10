@@ -1,14 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { CardActions } from "../../components/CardActions";
+import { IconStar } from "../../components/icons";
 import type { Exercise } from "../../types";
 import { ExercisePhotoThumb } from "./ExercisePhotoThumb";
 
 interface ExerciseCardProps {
   exercise: Exercise;
+  onToggleFavorite: () => Promise<void> | void;
   onDelete: () => Promise<void> | void;
 }
 
-export function ExerciseCard({ exercise, onDelete }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, onToggleFavorite, onDelete }: ExerciseCardProps) {
   const navigate = useNavigate();
 
   function handleDelete() {
@@ -46,7 +48,20 @@ export function ExerciseCard({ exercise, onDelete }: ExerciseCardProps) {
           )}
         </div>
       </Link>
-      <div className="flex items-center pr-3">
+      <div className="flex items-center gap-0.5 pr-3">
+        <button
+          type="button"
+          onClick={() => void onToggleFavorite()}
+          aria-label={exercise.favorite ? "Fjern som favorit" : "Marker som favorit"}
+          className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-60"
+        >
+          <IconStar
+            className={`h-[18px] w-[18px] ${
+              exercise.favorite ? "text-(--color-cat-history)" : "text-(--color-text-muted)"
+            }`}
+            fill={exercise.favorite ? "currentColor" : "none"}
+          />
+        </button>
         <CardActions onEdit={() => navigate(`/oevelser/${exercise.id}`)} onDelete={handleDelete} />
       </div>
     </div>

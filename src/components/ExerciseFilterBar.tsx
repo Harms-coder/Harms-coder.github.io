@@ -1,11 +1,15 @@
 import { EXERCISE_CATEGORIES } from "../db/exerciseSeed";
+import { FAVORITES_FILTER } from "../lib/exerciseFilter";
 import { IconSearch } from "./icons";
 import { SegmentedControl } from "./SegmentedControl";
 
 /** Sentinel for "ingen kategori valgt" — EXERCISE_CATEGORIES indeholder ikke "Alle". */
 const ALL = "Alle";
 
-const CATEGORY_OPTIONS = [ALL, ...EXERCISE_CATEGORIES].map((c) => ({ value: c, label: c }));
+const CATEGORY_OPTIONS = [ALL, FAVORITES_FILTER, ...EXERCISE_CATEGORIES].map((c) => ({
+  value: c,
+  label: c,
+}));
 
 interface ExerciseFilterBarProps {
   query: string;

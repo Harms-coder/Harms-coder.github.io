@@ -6,8 +6,8 @@ import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
 import { IconChevronRight } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { TextField } from "../../components/TextField";
-import { createExercise, deleteExercise, listExercises } from "../../db/exercises";
-import { filterExercises } from "../../lib/exerciseFilter";
+import { createExercise, deleteExercise, listExercises, updateExercise } from "../../db/exercises";
+import { FAVORITES_FILTER, filterExercises } from "../../lib/exerciseFilter";
 import type { Exercise } from "../../types";
 import { ExerciseCard } from "./ExerciseCard";
 
@@ -45,6 +45,11 @@ export function ExercisesPage() {
 
   async function handleDelete(id: string) {
     await deleteExercise(id);
+    await refresh();
+  }
+
+  async function handleToggleFavorite(exercise: Exercise) {
+    await updateExercise(exercise.id, { favorite: !exercise.favorite });
     await refresh();
   }
 
@@ -130,11 +135,20 @@ export function ExercisesPage() {
         />
       )}
 
+      {exercises.length > 0 && filtered.length === 0 && (
+        <p className="text-sm text-(--color-text-muted)">
+          {category === FAVORITES_FILTER
+            ? "Ingen favoritter endnu. Tryk på stjernen på en øvelse for at samle dem her."
+            : "Ingen øvelser matcher din søgning."}
+        </p>
+      )}
+
       <div className="flex flex-col gap-3">
         {filtered.map((exercise) => (
           <ExerciseCard
             key={exercise.id}
             exercise={exercise}
+            onToggleFavorite={() => handleToggleFavorite(exercise)}
             onDelete={() => handleDelete(exercise.id)}
           />
         ))}

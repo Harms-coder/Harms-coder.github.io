@@ -11,6 +11,8 @@ export interface Exercise {
   /** 1RM-PR, indtastet manuelt af brugeren (ikke beregnet). */
   pr1RM?: number;
   pr1RMDate?: string;
+  /** Markeret som favorit i øvelsesbiblioteket. */
+  favorite?: boolean;
   createdAt: string;
 }
 
