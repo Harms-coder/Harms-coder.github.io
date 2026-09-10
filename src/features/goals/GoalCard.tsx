@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
+import { IconTrophy } from "../../components/icons";
 import { GOAL_TYPE_LABELS } from "../../db/goals";
+import { GoalCardHeader } from "./GoalCardHeader";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import { GoalTargetEditForm } from "./GoalTargetEditForm";
 
@@ -29,12 +30,13 @@ export function GoalCard({ progress, onUpdate, onDelete }: GoalCardProps) {
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-[13px] font-medium text-(--color-text-muted)">
-          {GOAL_TYPE_LABELS[goal.type]}
-        </span>
-        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
-      </div>
+      <GoalCardHeader
+        icon={IconTrophy}
+        title={GOAL_TYPE_LABELS[goal.type]}
+        color="var(--color-cat-record)"
+        onEdit={() => setIsEditing(true)}
+        onDelete={handleDelete}
+      />
 
       {isEditing ? (
         <GoalTargetEditForm
@@ -50,6 +52,7 @@ export function GoalCard({ progress, onUpdate, onDelete }: GoalCardProps) {
             label={progress.label}
             statusText={progress.statusText}
             percent={progress.percent}
+            color="var(--color-cat-record)"
           />
           {goal.exerciseId && (
             <span className="flex-1 text-[15px] font-medium text-(--color-text)">

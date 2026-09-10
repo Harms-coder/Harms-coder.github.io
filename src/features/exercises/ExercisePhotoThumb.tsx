@@ -24,7 +24,7 @@ export function ExercisePhotoThumb({
       style={{ width: THUMB_WIDTH }}
     >
       {photoFailed ? (
-        <Icon className="h-10 w-10 text-(--color-accent-glow)" />
+        <Icon className="h-10 w-10 text-(--color-cat-strength)" />
       ) : (
         <img
           src={`/images/exercises/${slugifyExerciseName(exercise.name)}.png`}

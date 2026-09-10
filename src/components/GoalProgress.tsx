@@ -23,6 +23,9 @@ export function GoalProgress({
   color = "var(--color-accent)",
 }: GoalProgressProps) {
   const clamped = Math.min(100, Math.max(0, percent));
+  // Ringens gradient udledes af color, så den følger kategorifarven i stedet for altid at være orange.
+  const light = `color-mix(in srgb, ${color} 82%, white)`;
+  const dark = `color-mix(in srgb, ${color} 72%, black)`;
   const gradientId = useId();
   const glowFilterId = `${gradientId}-glow`;
 
@@ -37,9 +40,9 @@ export function GoalProgress({
           <svg viewBox="0 0 64 64" className="-rotate-90" style={{ width: size, height: size }}>
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="var(--color-accent-glow)" />
-                <stop offset="48%" stopColor="var(--color-accent-bright)" />
-                <stop offset="100%" stopColor="var(--color-accent-dark)" />
+                <stop offset="0%" stopColor={light} />
+                <stop offset="48%" stopColor={color} />
+                <stop offset="100%" stopColor={dark} />
               </linearGradient>
               {/* Samme dobbelt-lags blur+glød-teknik som VigorraLogo, så ringen føles lige så "illuminated" som .accent-fill. */}
               <filter id={glowFilterId} x="-60%" y="-60%" width="220%" height="220%">

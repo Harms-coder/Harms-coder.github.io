@@ -24,7 +24,7 @@ export function ExerciseIcon({ exercise, size = 64 }: ExerciseIconProps) {
     >
       {photoFailed ? (
         <Icon
-          className="text-(--color-accent-glow)"
+          className="text-(--color-cat-strength)"
           style={{ width: size * 0.82, height: size * 0.82 }}
         />
       ) : (

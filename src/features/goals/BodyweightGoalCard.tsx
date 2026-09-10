@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { AxisTrendChart } from "../../components/AxisTrendChart";
-import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
-import { IconCalendar, IconTarget } from "../../components/icons";
+import { IconCalendar, IconScale } from "../../components/icons";
+import { GoalCardHeader } from "./GoalCardHeader";
 import { DA_MONTHS, formatMediumDate, parseISODate, toISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { BodyweightEntry } from "../../types";
@@ -86,13 +86,13 @@ export function BodyweightGoalCard({
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <IconTarget className="h-5 w-5 text-(--color-text-secondary)" />
-          <span className="text-[15px] font-semibold text-(--color-text)">Mål-kropsvægt</span>
-        </div>
-        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
-      </div>
+      <GoalCardHeader
+        icon={IconScale}
+        title="Mål-kropsvægt"
+        color="var(--color-cat-body)"
+        onEdit={() => setIsEditing(true)}
+        onDelete={handleDelete}
+      />
 
       {isEditing ? (
         <GoalTargetEditForm
@@ -120,7 +120,7 @@ export function BodyweightGoalCard({
                 {achieved ? "Mål nået" : `${remaining} kg tilbage`}
               </span>
               {projectedDate && (
-                <span className="flex items-center gap-1.5 text-[13px] font-medium text-(--color-accent-bright)">
+                <span className="flex items-center gap-1.5 text-[13px] font-medium text-(--color-cat-body)">
                   <IconCalendar className="h-3.5 w-3.5" />
                   Forventet mål: {formatMediumDate(parseISODate(projectedDate))}
                 </span>
@@ -134,6 +134,7 @@ export function BodyweightGoalCard({
               labels={sparseMonthLabels(recentAscending)}
               projection={projectedDate ? { value: target, label: monthAbbrev(projectedDate) } : undefined}
               height={46}
+              color="var(--color-cat-body)"
             />
           )}
         </>

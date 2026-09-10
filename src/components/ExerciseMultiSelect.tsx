@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { filterExercises } from "../lib/exerciseFilter";
 import type { Exercise } from "../types";
 import { ExerciseFilterBar } from "./ExerciseFilterBar";
@@ -50,9 +50,10 @@ export function ExerciseMultiSelect({
                 key={exercise.id}
                 type="button"
                 onClick={() => onToggle(exercise.id)}
+                style={{ "--badge-color": "var(--color-cat-library)" } as CSSProperties}
                 className={`flex min-h-11 flex-shrink-0 items-center justify-between rounded-xl px-3.5 text-left text-[15px] ${
                   isSelected
-                    ? "bg-(--color-accent)/15 text-(--color-accent)"
+                    ? "cat-badge border font-medium text-(--color-cat-library)"
                     : "glass-fill text-(--color-text)"
                 }`}
               >

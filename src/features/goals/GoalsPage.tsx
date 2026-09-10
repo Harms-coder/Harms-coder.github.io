@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../components/Button";
-import { GoalTypePicker } from "../../components/GoalTypePicker";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { TextField } from "../../components/TextField";
 import { listBodyweightEntries } from "../../db/bodyweight";
 import { listCardioEntriesInRange } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
-import { createGoal, deleteGoal, listGoals, updateGoal } from "../../db/goals";
+import { GOAL_TYPE_LABELS, createGoal, deleteGoal, listGoals, updateGoal } from "../../db/goals";
 import { listSessions, listSessionsInRange } from "../../db/sessions";
 import { computeGoalProgress } from "../../lib/goalProgress";
 import { getCurrentWeekRange } from "../../lib/date";
@@ -19,6 +19,11 @@ import { WeeklyDistanceGoalCard } from "./WeeklyDistanceGoalCard";
 import { WeeklySessionsGoalCard } from "./WeeklySessionsGoalCard";
 
 const EXERCISE_GOAL_TYPES: GoalType[] = ["exerciseWeight", "exercise1RM"];
+
+const GOAL_TYPE_OPTIONS = (Object.keys(GOAL_TYPE_LABELS) as GoalType[]).map((type) => ({
+  value: type,
+  label: GOAL_TYPE_LABELS[type],
+}));
 
 export function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -131,7 +136,13 @@ export function GoalsPage() {
       {isAdding && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <span className="text-[13px] font-medium text-(--color-text-muted)">Type</span>
-          <GoalTypePicker value={newType} onChange={setNewType} />
+          <SegmentedControl
+            options={GOAL_TYPE_OPTIONS}
+            value={newType}
+            onChange={setNewType}
+            layout="scroll"
+            tone="record"
+          />
 
           {needsExercise &&
             (showExercisePicker ? (
@@ -157,6 +168,7 @@ export function GoalsPage() {
             onChange={(e) => setNewTarget(e.target.value)}
           />
           <Button
+            tone="record"
             onClick={handleAdd}
             disabled={!newTarget.trim() || (needsExercise && !newExerciseId)}
           >

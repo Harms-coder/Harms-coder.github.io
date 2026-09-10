@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 interface AxisTrendChartProps {
   values: number[];
   /** x-akse-label pr. punkt; "" springes visuelt over (bruges til at undgå gentagne labels). */
@@ -7,6 +9,8 @@ interface AxisTrendChartProps {
   /** Y-aksen starter altid ved 0 (fx km-mål). Udelades for værdier hvor 0 er urealistisk, fx kropsvægt. */
   includeZero?: boolean;
   height?: number;
+  /** Kategorifarve på linje, punkter og fladefyld. Default: accent. */
+  color?: string;
 }
 
 const WIDTH = 280;
@@ -28,7 +32,10 @@ export function AxisTrendChart({
   projection,
   includeZero = false,
   height = 60,
+  color = "var(--color-accent-bright)",
 }: AxisTrendChartProps) {
+  // Eget id pr. graf — ellers deler to grafer på samme side den samme gradient-definition.
+  const fillId = useId();
   if (values.length < 2) return null;
 
   const allValues = projection ? [...values, projection.value] : values;
@@ -52,9 +59,9 @@ export function AxisTrendChart({
   return (
     <svg viewBox={`0 0 ${WIDTH} ${totalHeight}`} width="100%" height={totalHeight}>
       <defs>
-        <linearGradient id="axisTrendFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--color-accent-bright)" stopOpacity={0.28} />
-          <stop offset="100%" stopColor="var(--color-accent-bright)" stopOpacity={0} />
+        <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+          <stop offset="100%" stopColor={color} stopOpacity={0} />
         </linearGradient>
       </defs>
 
@@ -81,17 +88,17 @@ export function AxisTrendChart({
           </g>
         ))}
 
-        <path d={areaPath} fill="url(#axisTrendFill)" stroke="none" />
+        <path d={areaPath} fill={`url(#${fillId})`} stroke="none" />
         <polyline
           points={points}
           fill="none"
-          stroke="var(--color-accent-bright)"
+          stroke={color}
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         {values.map((v, i) => (
-          <circle key={i} cx={toX(i)} cy={toY(v)} r={2.4} fill="var(--color-accent-bright)" />
+          <circle key={i} cx={toX(i)} cy={toY(v)} r={2.4} fill={color} />
         ))}
 
         {projection && (
@@ -101,7 +108,7 @@ export function AxisTrendChart({
               y1={toY(values[values.length - 1])}
               x2={toX(values.length)}
               y2={toY(projection.value)}
-              stroke="var(--color-accent-bright)"
+              stroke={color}
               strokeWidth={2}
               strokeLinecap="round"
               strokeDasharray="3 4"
@@ -111,7 +118,7 @@ export function AxisTrendChart({
               cy={toY(projection.value)}
               r={3.5}
               fill="var(--color-surface)"
-              stroke="var(--color-accent-bright)"
+              stroke={color}
               strokeWidth={2}
             />
           </>

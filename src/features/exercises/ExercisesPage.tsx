@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { CategoryPicker } from "../../components/CategoryPicker";
 import { ExerciseFilterBar } from "../../components/ExerciseFilterBar";
+import { IconChevronRight } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { TextField } from "../../components/TextField";
 import { createExercise, deleteExercise, listExercises } from "../../db/exercises";
@@ -90,7 +91,9 @@ export function ExercisesPage() {
             Kategori (valgfri)
           </span>
           <CategoryPicker value={newCategory} onChange={setNewCategory} />
-          <Button type="submit">Gem øvelse</Button>
+          <Button type="submit" tone="library">
+            Gem øvelse
+          </Button>
         </form>
       )}
 
@@ -110,9 +113,10 @@ export function ExercisesPage() {
           <button
             type="button"
             onClick={() => setShowingFiltered(false)}
-            className="text-[13px] font-medium text-(--color-accent)"
+            className="flex items-center gap-1 text-[13px] font-medium text-(--color-cat-library)"
           >
-            Vis alle →
+            Vis alle
+            <IconChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
       )}

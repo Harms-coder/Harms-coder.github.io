@@ -28,17 +28,19 @@ export function ExerciseCard({ exercise, onDelete }: ExerciseCardProps) {
             {exercise.name}
           </span>
           {exercise.category && (
-            <span className="text-[13px] text-(--color-text-muted)">{exercise.category}</span>
+            <span className="w-fit rounded-full bg-(--color-cat-library)/12 px-2 py-0.5 text-[12px] font-medium text-(--color-cat-library)">
+              {exercise.category}
+            </span>
           )}
           {hasPr && (
-            <span className="text-[13px] font-medium text-(--color-accent-glow)">
+            <span className="text-[13px] font-medium text-(--color-cat-strength)">
               Tungeste sæt: {exercise.prWeight !== undefined ? `${exercise.prWeight} kg` : ""}
               {exercise.prWeight !== undefined && exercise.prReps !== undefined ? " × " : ""}
               {exercise.prReps !== undefined ? `${exercise.prReps}` : ""}
             </span>
           )}
           {exercise.pr1RM !== undefined && (
-            <span className="text-[13px] font-medium text-(--color-text-secondary)">
+            <span className="text-[13px] font-medium text-(--color-cat-record)">
               1RM: {exercise.pr1RM} kg
             </span>
           )}

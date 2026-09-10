@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { IconChevronRight, IconTrophy } from "../../components/icons";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 
@@ -39,7 +40,10 @@ export function WeekSummaryCard({ progressList }: WeekSummaryCardProps) {
 
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <span className="accent-fill flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full">
+      <span
+        className="cat-fill flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
+        style={{ "--badge-color": "var(--color-cat-record)" } as CSSProperties}
+      >
         <IconTrophy className="h-5 w-5 text-(--color-text)" />
       </span>
       <div className="flex flex-1 flex-col gap-0.5">

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
-import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconCheck, IconDumbbell, IconFlame, IconPlay } from "../../components/icons";
+import { GoalCardHeader } from "./GoalCardHeader";
 import { startSession } from "../../db/sessions";
 import { DA_WEEKDAYS_SHORT, getWeekStart, parseISODate, toISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
@@ -86,13 +86,13 @@ export function WeeklySessionsGoalCard({
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <IconDumbbell className="h-5 w-5 text-(--color-text-secondary)" />
-          <span className="text-[15px] font-semibold text-(--color-text)">Træninger pr. uge</span>
-        </div>
-        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
-      </div>
+      <GoalCardHeader
+        icon={IconDumbbell}
+        title="Træninger pr. uge"
+        color="var(--color-cat-strength)"
+        onEdit={() => setIsEditing(true)}
+        onDelete={handleDelete}
+      />
 
       {isEditing ? (
         <GoalTargetEditForm
@@ -120,7 +120,7 @@ export function WeeklySessionsGoalCard({
                 {achieved ? "Mål nået" : `${remaining} træning${remaining === 1 ? "" : "er"} tilbage`}
               </span>
               {streak > 0 && (
-                <span className="flex items-center gap-1 text-[13px] font-medium text-(--color-accent-bright)">
+                <span className="flex items-center gap-1 text-[13px] font-medium text-(--color-cat-strength)">
                   <IconFlame className="h-3.5 w-3.5" />
                   {streak} ugers streak
                 </span>
@@ -137,11 +137,14 @@ export function WeeklySessionsGoalCard({
                   <div key={day} className="flex flex-col items-center gap-0.5">
                     <span className="text-[9px] font-medium text-(--color-text-muted)">{day[0]}</span>
                     <span
+                      style={
+                        { "--badge-color": "var(--color-cat-strength)" } as CSSProperties
+                      }
                       className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border ${
                         isCompleted
-                          ? "accent-fill border-transparent"
+                          ? "cat-fill border-transparent"
                           : isToday
-                            ? "border-2 border-(--color-accent)"
+                            ? "border-2 border-(--color-cat-strength)"
                             : "border-(--color-border)"
                       }`}
                     >

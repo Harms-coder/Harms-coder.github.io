@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxisTrendChart } from "../../components/AxisTrendChart";
 import { Button } from "../../components/Button";
-import { CardActions } from "../../components/CardActions";
 import { GoalProgress } from "../../components/GoalProgress";
 import { IconPlay, IconRun } from "../../components/icons";
+import { GoalCardHeader } from "./GoalCardHeader";
 import { DA_WEEKDAYS_SHORT, parseISODate } from "../../lib/date";
 import type { GoalProgress as GoalProgressData } from "../../lib/goalProgress";
 import type { CardioEntry } from "../../types";
@@ -62,13 +62,13 @@ export function WeeklyDistanceGoalCard({
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <IconRun className="h-5 w-5 text-(--color-text-secondary)" />
-          <span className="text-[15px] font-semibold text-(--color-text)">Km pr. uge</span>
-        </div>
-        <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
-      </div>
+      <GoalCardHeader
+        icon={IconRun}
+        title="Km pr. uge"
+        color="var(--color-cat-cardio)"
+        onEdit={() => setIsEditing(true)}
+        onDelete={handleDelete}
+      />
 
       {isEditing ? (
         <GoalTargetEditForm
@@ -111,7 +111,13 @@ export function WeeklyDistanceGoalCard({
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
               {cumulative.some((v) => v > 0) && (
-                <AxisTrendChart values={cumulative} labels={DA_WEEKDAYS_SHORT} includeZero height={46} />
+                <AxisTrendChart
+                  values={cumulative}
+                  labels={DA_WEEKDAYS_SHORT}
+                  includeZero
+                  height={46}
+                  color="var(--color-cat-cardio)"
+                />
               )}
             </div>
 
