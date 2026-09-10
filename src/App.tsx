@@ -47,7 +47,9 @@ function App() {
   const hideBottomNav = location.pathname === "/traening/live";
 
   return (
-    <div className={`min-h-full bg-(--color-bg) ${hideBottomNav ? "" : "pb-24"}`}>
+    <div className={`relative min-h-full ${hideBottomNav ? "" : "pb-24"}`}>
+      <div className="app-ambience" />
+      <div className="relative z-10">
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/traening" element={<TrainingPage />} />
@@ -93,6 +95,7 @@ function App() {
         />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
+      </div>
       {!hideBottomNav && <BottomNav />}
     </div>
   );

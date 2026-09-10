@@ -27,7 +27,7 @@ export function HeroHeader({
       <img
         src={image}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover"
+        className="image-fade-bottom absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: imagePosition }}
       />
       <div className="hero-scrim absolute inset-0" />

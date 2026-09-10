@@ -73,6 +73,13 @@ body {
      (for at holde diffen lille) — så ALLE kort i appen får den samme varme kant ét sted fra, uden at hver fil skal røres. */
   border-color: var(--color-border-accent) !important;
   border-width: 1.5px !important;
+  /* Diagonal lysrefleks, som om lyset falder oppefra-venstre — ligger oven på kortets bg-farve. */
+  background-image: linear-gradient(
+    157deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.014) 32%,
+    rgba(255, 255, 255, 0) 58%
+  );
   box-shadow:
     0 10px 28px var(--color-shadow),
     0 1px 0 rgba(255, 255, 255, 0.05),
@@ -115,14 +122,51 @@ body {
     var(--color-surface-3);
 }
 
-/* Blender et hero-billede/-scene naturligt ned i den mørke sidebaggrund, så tekst forbliver læselig. */
+/* Ambient baggrundslag: ligger fast bag alt indhold hele vejen ned, så siden aldrig er ren sort. */
+.app-ambience {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(78% 44% at 50% -6%, rgba(224, 138, 75, 0.26) 0%, transparent 72%),
+    radial-gradient(58% 34% at 110% 30%, rgba(199, 122, 67, 0.15) 0%, transparent 70%),
+    radial-gradient(62% 36% at -12% 60%, rgba(224, 138, 75, 0.13) 0%, transparent 70%),
+    radial-gradient(72% 42% at 62% 110%, rgba(199, 122, 67, 0.14) 0%, transparent 72%),
+    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 55%, var(--color-bg) 100%);
+}
+
+/* Fin filmisk kornstruktur oven på ambient-laget — tager det "flade" ud af de store gradienter. */
+.app-ambience::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/*
+ * Blender et hero-billede ned i sidebaggrunden, så tekst forbliver læselig.
+ * Slutter i transparent (ikke i --color-bg), så ambient-lagets varme glød skinner
+ * igennem i overgangen i stedet for at møde en flad sort kant.
+ */
 .hero-scrim {
-  background: linear-gradient(
-    180deg,
-    rgba(11, 14, 14, 0.1) 0%,
-    rgba(11, 14, 14, 0.6) 62%,
-    var(--color-bg) 100%
-  );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(11, 14, 14, 0.05) 0%,
+      rgba(11, 14, 14, 0.5) 58%,
+      rgba(11, 14, 14, 0.72) 84%,
+      rgba(11, 14, 14, 0) 100%
+    ),
+    /* Svag varm tone, så fotos i forskellige farvetemperaturer hører til samme verden. */
+      linear-gradient(180deg, rgba(199, 122, 67, 0.06) 0%, rgba(199, 122, 67, 0.16) 100%);
+}
+
+/* Blødt bundfade på hero/backdrop-fotos, så billedet toner ud i ambient-baggrunden. */
+.image-fade-bottom {
+  -webkit-mask-image: linear-gradient(180deg, #000 42%, rgba(0, 0, 0, 0.55) 78%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 42%, rgba(0, 0, 0, 0.55) 78%, transparent 100%);
 }
 
 button,
