@@ -179,8 +179,12 @@ export function LiveTrainingPage() {
     return (
       <div className="flex flex-col items-center gap-3 px-4 pt-16 text-center">
         <p className="text-sm text-(--color-text-muted)">Ingen aktiv træning.</p>
-        <Link to="/traening" className="text-(--color-accent)">
-          Gå til Træning →
+        <Link
+          to="/traening"
+          className="flex items-center gap-1 text-(--color-cat-strength)"
+        >
+          Gå til Træning
+          <IconChevronRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     );
@@ -203,7 +207,7 @@ export function LiveTrainingPage() {
           className="flex items-center gap-2 rounded-full glass-fill px-4 py-2 text-[18px] font-semibold tabular-nums text-(--color-text)"
         >
           {isPaused ? (
-            <IconPlay className="h-4 w-4 text-(--color-accent-bright)" />
+            <IconPlay className="h-4 w-4 text-(--color-cat-strength)" />
           ) : (
             <IconPause className="h-4 w-4 text-(--color-text-muted)" />
           )}
@@ -225,7 +229,7 @@ export function LiveTrainingPage() {
       {currentExercise ? (
         <>
           <div className="hero-glow flex flex-col gap-1 rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
-            <span className="text-[13px] font-medium text-(--color-accent-bright)">
+            <span className="text-[13px] font-medium text-(--color-cat-strength)">
               Øvelse {currentIndex + 1} af {exerciseOrder.length}
               {currentExercise.category ? ` · ${currentExercise.category}` : ""}
             </span>
@@ -275,7 +279,7 @@ export function LiveTrainingPage() {
                   >
                     Sæt {index + 1}: {set.weight} kg × {set.reps}
                     {isPr && (
-                      <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-accent-glow)">
+                      <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-cat-strength)">
                         <IconTrophy className="h-3.5 w-3.5" />
                         PR
                       </span>

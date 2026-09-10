@@ -36,7 +36,7 @@ export function ExercisePicker({ exercises, onSelect, onClose }: ExercisePickerP
       {exercises.length === 0 ? (
         <p className="text-sm text-(--color-text-muted)">
           Du har ingen øvelser endnu.{" "}
-          <Link to="/oevelser" className="text-(--color-accent)">
+          <Link to="/oevelser" className="text-(--color-cat-library)">
             Opret en øvelse
           </Link>{" "}
           for at komme i gang.

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
-import { IconClock } from "../../components/icons";
+import { IconChevronRight, IconClock } from "../../components/icons";
 import { listExercises } from "../../db/exercises";
 import { getPlannedWorkoutForDate, listPlannedWorkoutsInRange } from "../../db/plannedWorkouts";
 import { getActiveSession, listSessionsInRange, startSession } from "../../db/sessions";
@@ -95,8 +95,13 @@ export function TodayCard() {
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <span className="text-[13px] font-medium text-(--color-success)">Fuldført i dag</span>
         <span className="text-[15px] font-medium text-(--color-text)">Godt klaret! Du har trænet i dag.</span>
-        <Button variant="ghost" onClick={handleStart} className="self-start px-0">
-          Start en ekstra træning →
+        <Button
+          variant="ghost"
+          onClick={handleStart}
+          className="flex items-center gap-1 self-start px-0"
+        >
+          Start en ekstra træning
+          <IconChevronRight className="h-3.5 w-3.5" />
         </Button>
       </div>
     );

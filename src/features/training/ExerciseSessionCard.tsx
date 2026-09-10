@@ -69,7 +69,7 @@ export function ExerciseSessionCard({
                     </span>
                   )}
                   {isPr && (
-                    <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-accent-glow)">
+                    <span className="flex items-center gap-1 text-[12px] font-medium text-(--color-cat-strength)">
                       <IconTrophy className="h-3.5 w-3.5" />
                       PR
                     </span>

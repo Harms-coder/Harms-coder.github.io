@@ -63,7 +63,7 @@ export function MinutesPage() {
                 <XAxis dataKey="label" tick={chartAxisTick} axisLine={false} tickLine={false} />
                 <YAxis tick={chartAxisTick} axisLine={false} tickLine={false} width={32} />
                 <Tooltip contentStyle={chartTooltipStyle} labelStyle={{ color: "var(--color-text)" }} />
-                <Bar dataKey="minutes" fill="var(--color-accent-bright)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="minutes" fill="var(--color-cat-goal)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -114,7 +114,7 @@ export function BodyweightPage() {
             onChange={(e) => setWeight(e.target.value)}
           />
         </div>
-        <Button type="submit">Gem</Button>
+        <Button type="submit" tone="body">Gem</Button>
       </form>
 
       {entries.length > 1 && (
@@ -126,6 +126,7 @@ export function BodyweightPage() {
             value={range}
             onChange={setRange}
             layout="scroll"
+            tone="body"
           />
 
           {!(chartData.length > 1 && stats) ? (
@@ -154,8 +155,8 @@ export function BodyweightPage() {
               <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="weightFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-accent-bright)" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="var(--color-accent-bright)" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--color-cat-body)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--color-cat-body)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
@@ -180,10 +181,10 @@ export function BodyweightPage() {
                 <Area
                   type="monotone"
                   dataKey="weight"
-                  stroke="var(--color-accent-bright)"
+                  stroke="var(--color-cat-body)"
                   strokeWidth={2}
                   fill="url(#weightFill)"
-                  dot={{ r: 3, fill: "var(--color-accent-bright)" }}
+                  dot={{ r: 3, fill: "var(--color-cat-body)" }}
                   activeDot={{ r: 5 }}
                 />
               </AreaChart>

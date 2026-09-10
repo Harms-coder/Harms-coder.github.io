@@ -66,7 +66,7 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
 
       {isRunning ? (
         <div className="flex items-center justify-between">
-          <span className="text-[32px] font-bold tabular-nums text-(--color-accent-bright)">
+          <span className="text-[32px] font-bold tabular-nums text-(--color-cat-strength)">
             {formatRemaining(remainingSec)}
           </span>
           <button

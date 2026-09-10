@@ -159,7 +159,7 @@ export function ProgressionPage() {
           {avgGainPercent !== undefined && (
             <span
               className={`text-[15px] font-semibold ${
-                avgGainPercent >= 0 ? "text-(--color-accent-glow)" : "text-(--color-text-muted)"
+                avgGainPercent >= 0 ? "text-(--color-cat-progress)" : "text-(--color-text-muted)"
               }`}
             >
               {avgGainPercent > 0 ? "+" : ""}
@@ -207,10 +207,10 @@ export function ProgressionPage() {
             {selectedExercise.prWeight !== undefined && (
               <div className="accent-glow-ring flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
                 <span className="flex items-center gap-1.5 text-[12px] font-medium text-(--color-text-muted)">
-                  <IconTrophy className="h-3.5 w-3.5 text-(--color-accent-bright)" />
+                  <IconTrophy className="h-3.5 w-3.5 text-(--color-cat-record)" />
                   Tungeste sæt
                 </span>
-                <span className="text-[17px] font-semibold text-(--color-accent-glow)">
+                <span className="text-[17px] font-semibold text-(--color-cat-record)">
                   {selectedExercise.prWeight} kg × {selectedExercise.prReps}
                 </span>
                 {selectedExercise.prDate && (
@@ -223,10 +223,10 @@ export function ProgressionPage() {
             {selectedExercise.pr1RM !== undefined && (
               <div className="accent-glow-ring flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
                 <span className="flex items-center gap-1.5 text-[12px] font-medium text-(--color-text-muted)">
-                  <IconTrophy className="h-3.5 w-3.5 text-(--color-accent-bright)" />
+                  <IconTrophy className="h-3.5 w-3.5 text-(--color-cat-record)" />
                   1RM
                 </span>
-                <span className="text-[17px] font-semibold text-(--color-accent-glow)">
+                <span className="text-[17px] font-semibold text-(--color-cat-record)">
                   {selectedExercise.pr1RM} kg
                 </span>
                 {selectedExercise.pr1RMDate && (

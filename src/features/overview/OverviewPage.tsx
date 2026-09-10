@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { HeroHeader } from "../../components/HeroHeader";
-import { IconClock, IconDumbbell, IconMapPin, IconRun } from "../../components/icons";
+import {
+  IconChevronRight,
+  IconClock,
+  IconDumbbell,
+  IconMapPin,
+  IconRun,
+} from "../../components/icons";
 import { ProgressBadge } from "../../components/ProgressBadge";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
@@ -225,8 +231,12 @@ export function OverviewPage() {
         <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <div className="flex items-center justify-between">
             <span className="text-[16px] font-bold text-(--color-text)">Ugens mål</span>
-            <Link to="/mal" className="text-[12.5px] font-medium text-(--color-accent)">
-              Alle mål →
+            <Link
+              to="/mal"
+              className="flex items-center gap-1 text-[12.5px] font-medium text-(--color-cat-record)"
+            >
+              Alle mål
+              <IconChevronRight className="h-3 w-3" />
             </Link>
           </div>
           <p className="text-[13px] text-(--color-text-muted)">
@@ -373,8 +383,12 @@ export function OverviewPage() {
             </p>
           )}
 
-          <Link to="/progression" className="text-[13px] font-medium text-(--color-accent)">
-            Se alle øvelser →
+          <Link
+            to="/progression"
+            className="flex items-center gap-1 text-[13px] font-medium text-(--color-cat-progress)"
+          >
+            Se alle øvelser
+            <IconChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       )}

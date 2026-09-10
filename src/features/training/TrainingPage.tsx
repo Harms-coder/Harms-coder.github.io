@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
+import { IconChevronRight } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { listExercises } from "../../db/exercises";
 import { listGoals } from "../../db/goals";
@@ -280,9 +281,10 @@ export function TrainingPage() {
 
       <Link
         to="/traening/live"
-        className="rounded-2xl border border-(--color-border-accent) bg-(--color-surface-2) px-4 py-3 text-center text-[14px] font-medium text-(--color-accent-bright) active:opacity-80"
+        className="flex items-center justify-center gap-1 rounded-2xl border border-(--color-border-accent) bg-(--color-surface-2) px-4 py-3 text-center text-[14px] font-medium text-(--color-cat-strength) active:opacity-80"
       >
-        Skift til live-tilstand →
+        Skift til live-tilstand
+        <IconChevronRight className="h-3.5 w-3.5" />
       </Link>
 
       {exerciseOrder.map((exerciseId) => {

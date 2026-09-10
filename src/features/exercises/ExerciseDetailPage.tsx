@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { CategoryPicker } from "../../components/CategoryPicker";
-import { IconChevronLeft } from "../../components/icons";
+import { IconCheck, IconChevronLeft } from "../../components/icons";
 import { TextField } from "../../components/TextField";
 import { deleteExercise, getExercise, updateExercise } from "../../db/exercises";
 import type { Exercise } from "../../types";
@@ -71,8 +71,12 @@ export function ExerciseDetailPage() {
     return (
       <div className="flex flex-col gap-3 px-4 pt-6">
         <p className="text-sm text-(--color-text-muted)">Øvelsen blev ikke fundet.</p>
-        <Link to="/oevelser" className="text-(--color-accent)">
-          ← Tilbage til øvelser
+        <Link
+          to="/oevelser"
+          className="flex items-center gap-1 text-(--color-cat-library)"
+        >
+          <IconChevronLeft className="h-3.5 w-3.5" />
+          Tilbage til øvelser
         </Link>
       </div>
     );
@@ -136,8 +140,14 @@ export function ExerciseDetailPage() {
         />
       </div>
 
-      <Button onClick={handleSave} disabled={!name.trim()}>
-        {saved ? "Gemt ✓" : "Gem"}
+      <Button
+        onClick={handleSave}
+        disabled={!name.trim()}
+        tone="library"
+        className="flex items-center justify-center gap-1.5"
+      >
+        {saved && <IconCheck className="h-4 w-4" />}
+        {saved ? "Gemt" : "Gem"}
       </Button>
 
       <Button variant="danger" onClick={handleDelete}>

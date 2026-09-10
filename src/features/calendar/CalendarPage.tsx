@@ -268,7 +268,7 @@ export function CalendarPage() {
                 <span className="text-[13px] text-(--color-text-muted)">
                   {exSets.map((set, i) => (
                     <span key={set.id}>
-                      {i > 0 && <span className="text-(--color-accent-bright)"> – </span>}
+                      {i > 0 && <span className="text-(--color-cat-strength)"> – </span>}
                       {set.weight} kg × {set.reps}
                     </span>
                   ))}
