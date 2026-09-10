@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
-import { HeroHeader } from "../../components/HeroHeader";
+import { PageBackdrop } from "../../components/PageBackdrop";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import {
   IconActivity,
@@ -88,15 +88,13 @@ export function TrainingIdleView({
 }: TrainingIdleViewProps) {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6 text-left">
-      <HeroHeader
-        title="Træning"
-        subtitle="Start en træning for at logge sæt, følge tiden og se dine øvelser."
-        image="/images/traening-gym.jpg"
-        imagePosition="center 55%"
-        bottomPadding="pb-6"
-        height="h-56"
-        imageBlur
-      />
+      <PageBackdrop image="/images/traening-gym.jpg" imagePosition="center 55%" />
+      <div className="flex flex-col gap-1">
+        <h1 className="text-[28px] font-bold text-(--color-text)">Træning</h1>
+        <p className="text-[13px] text-(--color-text-secondary)">
+          Start en træning for at logge sæt, følge tiden og se dine øvelser.
+        </p>
+      </div>
       <Button onClick={onStart} className="self-center">
         Start træning
       </Button>
