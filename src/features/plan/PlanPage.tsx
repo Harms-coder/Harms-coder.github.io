@@ -70,7 +70,7 @@ export function PlanPage() {
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-(--color-text)">Min Plan</h1>
+        <h1 className="text-2xl font-bold text-(--color-text)">Min Plan</h1>
         <Button
           variant={isAdding ? "secondary" : "primary"}
           onClick={() => setIsAdding((v) => !v)}

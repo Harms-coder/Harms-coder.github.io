@@ -44,7 +44,7 @@ export function DistancePage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <h1 className="text-2xl font-semibold text-(--color-text)">Kilometer løbet</h1>
+      <h1 className="text-2xl font-bold text-(--color-text)">Kilometer løbet</h1>
 
       <div className="flex gap-1 rounded-full border border-(--color-border) bg-(--color-bg-tertiary) p-1">
         <button

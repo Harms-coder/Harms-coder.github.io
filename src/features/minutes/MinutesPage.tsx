@@ -45,7 +45,7 @@ export function MinutesPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <h1 className="text-2xl font-semibold text-(--color-text)">Træningsminutter</h1>
+      <h1 className="text-2xl font-bold text-(--color-text)">Træningsminutter</h1>
 
       {chartData.length === 0 ? (
         <p className="text-sm text-(--color-text-muted)">

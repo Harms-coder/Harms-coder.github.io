@@ -134,7 +134,7 @@ export function CalendarPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/kalender-trail.jpg" imagePosition="center 30%" />
-      <h1 className="text-2xl font-semibold text-(--color-text)">Kalender</h1>
+      <h1 className="text-2xl font-bold text-(--color-text)">Kalender</h1>
 
       <div className="flex items-center justify-between">
         <button

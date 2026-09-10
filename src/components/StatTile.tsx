@@ -25,7 +25,7 @@ export function StatTile({ label, value, to, icon: Icon, delta, note, className 
           </span>
         )}
       </div>
-      <span className="text-[22px] font-semibold text-(--color-text)">{value}</span>
+      <span className="text-[22px] font-bold text-(--color-text)">{value}</span>
       {delta !== undefined && (
         <span
           className={`flex items-center gap-0.5 text-[12px] font-semibold ${

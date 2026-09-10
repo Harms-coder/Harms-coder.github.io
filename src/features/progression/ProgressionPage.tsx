@@ -119,7 +119,7 @@ export function ProgressionPage() {
     return (
       <div className="flex flex-col gap-2 px-4 pt-6">
         <PageBackdrop image="/images/progression-peak.jpg" imagePosition="center 40%" />
-        <h1 className="text-2xl font-semibold text-(--color-text)">Progression</h1>
+        <h1 className="text-2xl font-bold text-(--color-text)">Progression</h1>
         <p className="text-sm text-(--color-text-muted)">
           Opret øvelser og log nogle sæt for at se din udvikling her.
         </p>

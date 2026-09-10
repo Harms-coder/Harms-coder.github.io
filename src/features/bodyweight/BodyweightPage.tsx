@@ -86,7 +86,7 @@ export function BodyweightPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/kropsvaegt-sunset.jpg" imagePosition="center 45%" />
-      <h1 className="text-2xl font-semibold text-(--color-text)">Kropsvægt</h1>
+      <h1 className="text-2xl font-bold text-(--color-text)">Kropsvægt</h1>
 
       <form
         onSubmit={handleAdd}

@@ -52,7 +52,7 @@ export function HistoryPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/historik-footprints.jpg" imagePosition="center 65%" />
-      <h1 className="text-2xl font-semibold text-(--color-text)">Historik</h1>
+      <h1 className="text-2xl font-bold text-(--color-text)">Historik</h1>
 
       {entries.length === 0 && (
         <p className="text-sm text-(--color-text-muted)">
