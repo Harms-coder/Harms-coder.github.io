@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   IconChevronLeft,
@@ -43,10 +43,24 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { buildMonthStats } from "../../lib/calendarStats";
 import { getWeekStart } from "../../lib/date";
 import { startSession } from "../../db/sessions";
+import { computeActivityWeekStreak } from "../../lib/streak";
 import { CalendarMonthStats } from "./CalendarMonthStats";
 import { DayDetails } from "./DayDetails";
 import { DayPlanner } from "./DayPlanner";
+import { UpcomingWorkouts } from "./UpcomingWorkouts";
+import { WeekStatusCard } from "./WeekStatusCard";
 import { WeekView } from "./WeekView";
+
+/** Vandret bevægelse i px før et swipe tæller som et månedsskift. Lavere gav utilsigtede skift under scroll. */
+const SWIPE_THRESHOLD = 55;
+
+/**
+ * Kort vibration ved tryk på en dato. Understøttes ikke af iOS Safari, men koster intet
+ * at forsøge der hvor det virker, og fejler stille hvor det ikke gør.
+ */
+function tapFeedback() {
+  navigator.vibrate?.(8);
+}
 
 /** Kalenderens egen kategorifarve (samme som fanen i bundmenuen). */
 const PLAN_COLOR = "var(--color-cat-plan)";
@@ -69,6 +83,7 @@ export function CalendarPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [view, setView] = useState<"month" | "week">("month");
   const [editingPlan, setEditingPlan] = useState(false);
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
   const [monthLoaded, setMonthLoaded] = useState(false);
   const navigate = useNavigate();
 
@@ -185,6 +200,26 @@ export function CalendarPage() {
     [monthKey, sessions, cardioEntries, plans, exercises],
   );
   const weekStart = getWeekStart(selectedDate);
+  const streakWeeks = useMemo(
+    () => computeActivityWeekStreak(sessions, cardioEntries, todayISODate()),
+    [sessions, cardioEntries],
+  );
+
+  function shiftMonth(delta: number) {
+    setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() + delta, 1));
+  }
+
+  function handleTouchEnd(event: React.TouchEvent) {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    // Kun vandrette bevægelser — ellers ville almindelig scroll skifte måned.
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    shiftMonth(dx < 0 ? 1 : -1);
+  }
   const selectedBodyweight = bodyweight.find((b) => b.date === selectedDate);
   const sessionsGoal = goals.find((g) => g.type === "sessionsPerWeek");
   const goalRemaining = useMemo(() => {
@@ -247,7 +282,13 @@ export function CalendarPage() {
       </div>
 
       {view === "month" ? (
-        <>
+        <div
+          className="flex flex-col gap-4"
+          onTouchStart={(e) =>
+            (swipeStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY })
+          }
+          onTouchEnd={handleTouchEnd}
+        >
         <div className="grid grid-cols-7 gap-1 text-center text-[12px] text-(--color-text-muted)">
           {DA_WEEKDAYS_SHORT.map((label) => (
             <span key={label}>{label}</span>
@@ -270,7 +311,10 @@ export function CalendarPage() {
               <button
                 key={iso}
                 type="button"
-                onClick={() => setSelectedDate(iso)}
+                onClick={() => {
+                tapFeedback();
+                setSelectedDate(iso);
+              }}
                 style={{ "--badge-color": PLAN_COLOR } as CSSProperties}
                 className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[14px] transition-transform duration-150 ${
                   isSelected
@@ -316,7 +360,7 @@ export function CalendarPage() {
             );
           })}
         </div>
-        </>
+        </div>
       ) : (
         <WeekView
           weekStart={weekStart}
@@ -350,6 +394,23 @@ export function CalendarPage() {
           onMove={handleMove}
           onDelete={handleRemovePlan}
           onStatus={handleStatus}
+        />
+
+        <WeekStatusCard
+          weekStart={weekStart}
+          sessions={sessions}
+          cardio={cardioEntries}
+          plans={plans}
+          streakWeeks={streakWeeks}
+          weeklyTarget={sessionsGoal?.target}
+        />
+
+        <UpcomingWorkouts
+          plans={plans}
+          today={todayISODate()}
+          routineById={routineById}
+          exerciseById={exerciseById}
+          onSelect={setSelectedDate}
         />
 
         {monthLoaded && (!selectedPlan || editingPlan) && (
