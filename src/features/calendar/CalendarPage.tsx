@@ -235,7 +235,7 @@ export function CalendarPage() {
                   {exerciseById.get(exerciseId)?.name ?? "Ukendt øvelse"}
                 </span>
                 <span className="text-[13px] text-(--color-text-muted)">
-                  {exSets.map((set) => `${set.weight}×${set.reps}`).join(", ")}
+                  {exSets.map((set) => `${set.weight} kg × ${set.reps}`).join(", ")}
                 </span>
               </div>
             ))}

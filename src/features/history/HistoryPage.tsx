@@ -101,7 +101,7 @@ export function HistoryPage() {
                             {exerciseById.get(exerciseId)?.name ?? "Ukendt øvelse"}
                           </span>
                           <span className="text-[13px] text-(--color-text-muted)">
-                            {exerciseSets.map((s) => `${s.weight}×${s.reps}`).join(", ")}
+                            {exerciseSets.map((s) => `${s.weight} kg × ${s.reps}`).join(", ")}
                           </span>
                         </div>
                       );

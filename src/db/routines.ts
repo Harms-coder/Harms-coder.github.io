@@ -2,15 +2,16 @@ import { generateId } from "../lib/id";
 import type { Routine } from "../types";
 import { getDb } from "./database";
 
+/** Bevidst højmættede/lyse, så en 6px kalender-prik stadig kan skelnes fra de andre og fra accent-orange. */
 export const ROUTINE_COLORS = [
-  "#4E9F6E",
-  "#4A85C4",
-  "#5B6FD6",
-  "#8B6FC4",
-  "#C4638F",
-  "#D1A23E",
-  "#3F9E96",
-  "#C7784A",
+  "#34D399",
+  "#22D3EE",
+  "#3B82F6",
+  "#8B5CF6",
+  "#D946EF",
+  "#F43F5E",
+  "#FBBF24",
+  "#A3E635",
 ] as const;
 
 export async function listRoutines(): Promise<Routine[]> {
