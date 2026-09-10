@@ -12,6 +12,7 @@ export type Tone =
   | "goal"
   | "plan"
   | "body"
+  | "history"
   | "library";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -29,6 +30,7 @@ export const TONE_COLORS: Record<Tone, string> = {
   goal: "var(--color-cat-goal)",
   plan: "var(--color-cat-plan)",
   body: "var(--color-cat-body)",
+  history: "var(--color-cat-history)",
   library: "var(--color-cat-library)",
 };
 

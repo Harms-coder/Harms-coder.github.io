@@ -20,7 +20,7 @@ import type { Exercise, Routine } from "../../types";
 export interface RoutineStatus {
   text: string;
   icon: IconComponent;
-  /** "planned" farves grønt, resten dæmpet. */
+  /** "planned" farves i fremgangs-grøn, resten dæmpet. */
   tone: "planned" | "muted";
 }
 
@@ -89,7 +89,9 @@ export function RoutineCard({
         </span>
         <RoutineColorPicker value={color} onChange={setColor} />
         <div className="flex gap-2">
-          <Button onClick={handleSave}>Gem</Button>
+          <Button tone="plan" onClick={handleSave}>
+            Gem
+          </Button>
           <Button variant="secondary" onClick={() => setIsEditing(false)}>
             Annuller
           </Button>
@@ -109,7 +111,7 @@ export function RoutineCard({
         <span className="flex min-w-0 items-center gap-2.5">
           <span
             className="h-3 w-3 flex-shrink-0 rounded-full"
-            style={{ backgroundColor: routine.color ?? "var(--color-accent)" }}
+            style={{ backgroundColor: routine.color ?? "var(--color-cat-plan)" }}
           />
           <span className="truncate text-[16px] font-bold text-(--color-text)">{routine.name}</span>
         </span>
@@ -123,7 +125,7 @@ export function RoutineCard({
             <IconStar
               className={`h-[18px] w-[18px] ${
                 routine.favorite
-                  ? "text-(--color-accent-glow)"
+                  ? "text-(--color-cat-history)"
                   : "text-(--color-text-muted)"
               }`}
               fill={routine.favorite ? "currentColor" : "none"}
@@ -135,19 +137,19 @@ export function RoutineCard({
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
-          <IconDumbbell className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+          <IconDumbbell className="h-3.5 w-3.5 flex-shrink-0 text-(--color-cat-library)" />
           {routine.exerciseIds.length} øvelser
         </span>
         <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />
         <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
-          <IconClock className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+          <IconClock className="h-3.5 w-3.5 flex-shrink-0 text-(--color-cat-goal)" />
           ca. {estimateWorkoutMinutes(routine.exerciseIds.length)} min
         </span>
         <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />
         <span
           className={`flex items-center gap-1.5 text-[13px] ${
             status.tone === "planned"
-              ? "text-(--color-success)"
+              ? "text-(--color-cat-progress)"
               : "text-(--color-text-muted)"
           }`}
         >
@@ -165,6 +167,7 @@ export function RoutineCard({
       <Button
         variant="secondary"
         size="sm"
+        tone="plan"
         onClick={() => navigate("/kalender", { state: { routineId: routine.id } })}
         className="flex items-center gap-1.5 self-start"
       >

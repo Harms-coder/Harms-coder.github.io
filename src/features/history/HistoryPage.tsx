@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import {
   IconChevronDown,
   IconClipboard,
@@ -12,6 +12,7 @@ import {
 } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { SummaryRow } from "../../components/SummaryRow";
 import { SwipeToDelete } from "../../components/SwipeToDelete";
 import { deleteCardioEntry, listCardioEntries } from "../../db/cardio";
 import { listExercises } from "../../db/exercises";
@@ -98,56 +99,42 @@ function formatWeekRange(weekStartISO: string): string {
     : `${start.getDate()}. ${short(start)} – ${end.getDate()}. ${short(end)}`;
 }
 
+/** Kategorifarven for en historik-post — styrke og cardio kendes på farven alene. */
+function itemColor(kind: HistoryItem["kind"]): string {
+  return kind === "strength" ? "var(--color-cat-strength)" : "var(--color-cat-cardio)";
+}
+
 function TypeBadge({ kind }: { kind: HistoryItem["kind"] }) {
-  const isStrength = kind === "strength";
-  const Icon = isStrength ? IconDumbbell : IconRun;
+  const Icon = kind === "strength" ? IconDumbbell : IconRun;
+  const color = itemColor(kind);
   return (
     <span
-      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl ${
-        isStrength ? "bg-(--color-accent-dark)/20" : "bg-(--color-success)/15"
-      }`}
+      className="cat-badge flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border"
+      style={{ "--badge-color": color } as CSSProperties}
     >
-      <Icon
-        className={`h-5 w-5 ${isStrength ? "text-(--color-accent-bright)" : "text-(--color-success)"}`}
-      />
+      <Icon className="h-5 w-5" style={{ color }} />
     </span>
   );
 }
 
-function StatLine({ items }: { items: { icon: IconComponent; text: string }[] }) {
+function StatLine({
+  items,
+  color,
+}: {
+  items: { icon: IconComponent; text: string }[];
+  color: string;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
       {items.map((item, i) => (
         <div key={i} className="flex items-center gap-2.5">
           {i > 0 && <span className="h-3 w-px flex-shrink-0 bg-(--color-border)" />}
           <span className="flex items-center gap-1.5 text-[12.5px] text-(--color-text-muted)">
-            <item.icon className="h-3.5 w-3.5 flex-shrink-0 text-(--color-accent-bright)" />
+            <item.icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color }} />
             {item.text}
           </span>
         </div>
       ))}
-    </div>
-  );
-}
-
-function SummaryCell({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: IconComponent;
-  value: string;
-  label: string;
-}) {
-  return (
-    <div className="flex flex-1 flex-col items-center gap-1 px-1">
-      <Icon className="h-4 w-4 text-(--color-accent-bright)" />
-      <span className="text-center text-[14px] font-bold leading-tight text-(--color-text)">
-        {value}
-      </span>
-      <span className="text-center text-[10.5px] leading-tight text-(--color-text-muted)">
-        {label}
-      </span>
     </div>
   );
 }
@@ -342,35 +329,55 @@ export function HistoryPage() {
         value={typeFilter}
         onChange={setTypeFilter}
         layout="scroll"
+        tone="history"
       />
       <SegmentedControl
         options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
         value={range}
         onChange={setRange}
         layout="scroll"
+        tone="history"
       />
 
-      <div className="flex items-stretch justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-        <SummaryCell icon={IconDumbbell} value={String(summary.count)} label="Træninger" />
-        <div className="w-px flex-shrink-0 bg-(--color-border)" />
-        <SummaryCell icon={IconClock} value={formatDuration(summary.totalMin)} label="Total tid" />
-        <div className="w-px flex-shrink-0 bg-(--color-border)" />
-        {typeFilter === "cardio" ? (
-          <SummaryCell icon={IconMapPin} value={String(summary.totalKm)} label="Km" />
-        ) : (
-          <SummaryCell icon={IconClipboard} value={String(summary.totalSets)} label="Sæt" />
-        )}
-        {summary.deltaPercent !== undefined && (
-          <>
-            <div className="w-px flex-shrink-0 bg-(--color-border)" />
-            <SummaryCell
-              icon={IconTrendUp}
-              value={`${summary.deltaPercent > 0 ? "+" : ""}${summary.deltaPercent}%`}
-              label="vs. forrige"
-            />
-          </>
-        )}
-      </div>
+      <SummaryRow
+        cells={[
+          {
+            icon: IconDumbbell,
+            value: String(summary.count),
+            label: "Træninger",
+            color: "var(--color-cat-strength)",
+          },
+          {
+            icon: IconClock,
+            value: formatDuration(summary.totalMin),
+            label: "Total tid",
+            color: "var(--color-cat-history)",
+          },
+          typeFilter === "cardio"
+            ? {
+                icon: IconMapPin,
+                value: String(summary.totalKm),
+                label: "Km",
+                color: "var(--color-cat-cardio)",
+              }
+            : {
+                icon: IconClipboard,
+                value: String(summary.totalSets),
+                label: "Sæt",
+                color: "var(--color-cat-record)",
+              },
+          ...(summary.deltaPercent !== undefined
+            ? [
+                {
+                  icon: IconTrendUp,
+                  value: `${summary.deltaPercent > 0 ? "+" : ""}${summary.deltaPercent}%`,
+                  label: "vs. forrige",
+                  color: "var(--color-cat-progress)",
+                },
+              ]
+            : []),
+        ]}
+      />
 
       {months.length === 0 && (
         <p className="text-sm text-(--color-text-muted)">
@@ -472,7 +479,7 @@ export function HistoryPage() {
                                     <span className="text-[15px] font-semibold text-(--color-text)">
                                       {item.title}
                                     </span>
-                                    <StatLine items={stats} />
+                                    <StatLine items={stats} color={itemColor(item.kind)} />
                                   </div>
                                   {item.kind === "strength" && (
                                     <IconChevronDown
@@ -496,7 +503,7 @@ export function HistoryPage() {
                                             {exerciseSets.map((s, i) => (
                                               <span key={s.id}>
                                                 {i > 0 && (
-                                                  <span className="text-(--color-accent-bright)">
+                                                  <span className="text-(--color-cat-strength)">
                                                     {" "}
                                                     –{" "}
                                                   </span>

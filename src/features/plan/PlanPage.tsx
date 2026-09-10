@@ -4,6 +4,7 @@ import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { SegmentedControl } from "../../components/SegmentedControl";
+import { SummaryRow } from "../../components/SummaryRow";
 import { TextField } from "../../components/TextField";
 import {
   IconCalendar,
@@ -71,26 +72,6 @@ function buildStatus(plansForRoutine: PlannedWorkout[], today: string): RoutineS
   }
 
   return { text: "Ikke planlagt", icon: IconCalendarOff, tone: "muted" };
-}
-
-function SummaryCell({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: typeof IconDumbbell;
-  value: string;
-  label: string;
-}) {
-  return (
-    <div className="flex flex-1 flex-col items-center gap-1 px-1">
-      <Icon className="h-4 w-4 text-(--color-accent-bright)" />
-      <span className="text-[15px] font-bold leading-tight text-(--color-text)">{value}</span>
-      <span className="text-center text-[10.5px] leading-tight text-(--color-text-muted)">
-        {label}
-      </span>
-    </div>
-  );
 }
 
 export function PlanPage() {
@@ -233,7 +214,11 @@ export function PlanPage() {
             Farve (vises i kalenderen)
           </span>
           <RoutineColorPicker value={newColor} onChange={setNewColor} />
-          <Button onClick={handleAdd} disabled={!newName.trim() || newExerciseIds.length === 0}>
+          <Button
+            tone="plan"
+            onClick={handleAdd}
+            disabled={!newName.trim() || newExerciseIds.length === 0}
+          >
             Gem program
           </Button>
         </div>
@@ -254,29 +239,37 @@ export function PlanPage() {
             value={filter}
             onChange={setFilter}
             layout="scroll"
+            tone="plan"
           />
 
-          <div className="flex items-stretch justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-            <SummaryCell
-              icon={IconDumbbell}
-              value={String(summary.programCount)}
-              label="programmer"
-            />
-            <div className="w-px flex-shrink-0 bg-(--color-border)" />
-            <SummaryCell icon={IconList} value={String(summary.exerciseCount)} label="øvelser" />
-            <div className="w-px flex-shrink-0 bg-(--color-border)" />
-            <SummaryCell
-              icon={IconCalendar}
-              value={String(summary.plannedThisWeek)}
-              label="planlagt denne uge"
-            />
-            <div className="w-px flex-shrink-0 bg-(--color-border)" />
-            <SummaryCell
-              icon={IconStar}
-              value={String(summary.favoriteCount)}
-              label={summary.favoriteCount === 1 ? "favorit" : "favoritter"}
-            />
-          </div>
+          <SummaryRow
+            cells={[
+              {
+                icon: IconDumbbell,
+                value: String(summary.programCount),
+                label: "programmer",
+                color: "var(--color-cat-plan)",
+              },
+              {
+                icon: IconList,
+                value: String(summary.exerciseCount),
+                label: "øvelser",
+                color: "var(--color-cat-library)",
+              },
+              {
+                icon: IconCalendar,
+                value: String(summary.plannedThisWeek),
+                label: "planlagt denne uge",
+                color: "var(--color-cat-goal)",
+              },
+              {
+                icon: IconStar,
+                value: String(summary.favoriteCount),
+                label: summary.favoriteCount === 1 ? "favorit" : "favoritter",
+                color: "var(--color-cat-history)",
+              },
+            ]}
+          />
         </>
       )}
 
