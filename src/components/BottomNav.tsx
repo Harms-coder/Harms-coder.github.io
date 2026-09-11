@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ComponentType, type CSSProperties } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type MouseEvent } from "react";
+import { flushSync } from "react-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   IconActivity,
   IconCalendar,
@@ -13,43 +14,75 @@ import {
   IconTrendUp,
 } from "./icons";
 
+/** Den lille bevægelse ikonet laver, når fanen vælges — keyframes i index.css (.nav-icon-*). */
+type IconAnim = "bounce" | "spin" | "draw" | "rise" | "sweep";
+
 interface NavItem {
   to: string;
   label: string;
   Icon: ComponentType<{ className?: string }>;
   /** Hvert punkt har sin egen farve, så fanerne kan kendes fra hinanden på farven alene. */
   color: string;
+  anim: IconAnim;
 }
 
 const navItems: NavItem[] = [
-  { to: "/", label: "Oversigt", Icon: IconHome, color: "var(--color-cat-goal)" },
-  { to: "/traening", label: "Træning", Icon: IconDumbbell, color: "var(--color-cat-strength)" },
-  { to: "/cardio", label: "Cardio", Icon: IconActivity, color: "var(--color-cat-cardio)" },
-  { to: "/progression", label: "Progression", Icon: IconTrendUp, color: "var(--color-cat-progress)" },
-  { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)" },
-  { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)" },
-  { to: "/kalender", label: "Kalender", Icon: IconCalendar, color: "var(--color-cat-plan)" },
-  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)" },
-  { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)" },
-  { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)" },
+  { to: "/", label: "Oversigt", Icon: IconHome, color: "var(--color-cat-goal)", anim: "bounce" },
+  { to: "/traening", label: "Træning", Icon: IconDumbbell, color: "var(--color-cat-strength)", anim: "spin" },
+  { to: "/cardio", label: "Cardio", Icon: IconActivity, color: "var(--color-cat-cardio)", anim: "draw" },
+  { to: "/progression", label: "Progression", Icon: IconTrendUp, color: "var(--color-cat-progress)", anim: "rise" },
+  { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)", anim: "bounce" },
+  { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)", anim: "bounce" },
+  { to: "/kalender", label: "Kalender", Icon: IconCalendar, color: "var(--color-cat-plan)", anim: "bounce" },
+  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)", anim: "bounce" },
+  { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)", anim: "bounce" },
+  { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)", anim: "sweep" },
 ];
 
 function NavItemLink({ item }: { item: NavItem }) {
+  const navigate = useNavigate();
+
+  /*
+   * Navigér inde i en View Transition: kun den aktive fane har view-transition-name: nav-pill,
+   * så browseren animerer selv pillen fra den gamle fane til den nye (se index.css).
+   * React Routers egen viewTransition-prop virker kun med data-routers, ikke <BrowserRouter>.
+   */
+  function onClick(e: MouseEvent<HTMLAnchorElement>) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      navigate(item.to);
+      return;
+    }
+    document.startViewTransition(() => flushSync(() => navigate(item.to)));
+  }
+
   return (
     <NavLink
       to={item.to}
       end={item.to === "/"}
+      onClick={onClick}
       style={{ "--badge-color": item.color } as CSSProperties}
       className={({ isActive }) =>
-        `flex min-w-16 flex-shrink-0 flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[11px] font-medium transition-colors ${
-          isActive
-            ? "cat-badge cat-glow border"
-            : "border border-transparent text-(--color-text-muted) active:text-(--color-text)"
+        `relative flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
+          isActive ? "cat-glow" : "text-(--color-text-muted) active:text-(--color-text)"
         }`
       }
     >
-      <item.Icon className="h-5 w-5" />
-      <span className="whitespace-nowrap">{item.label}</span>
+      {({ isActive }) => (
+        <>
+          {/* Pillen er sit eget element, så det kun er den — ikke ikon og tekst — der glider med. */}
+          {isActive && (
+            <span
+              aria-hidden="true"
+              className="cat-badge absolute inset-0 rounded-xl border"
+              style={{ viewTransitionName: "nav-pill" }}
+            />
+          )}
+          <item.Icon className={`relative h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`} />
+          <span className="relative whitespace-nowrap">{item.label}</span>
+        </>
+      )}
     </NavLink>
   );
 }

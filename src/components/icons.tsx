@@ -38,7 +38,8 @@ export function IconDumbbell(props: IconProps) {
 export function IconActivity(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <path d="M2.5 12h4l2-7 4 14 3-10 1.5 3h4.5" />
+      {/* pathLength=1 lader bundmenuen tegne linjen med stroke-dashoffset uden at kende længden. */}
+      <path d="M2.5 12h4l2-7 4 14 3-10 1.5 3h4.5" pathLength={1} />
     </svg>
   );
 }
