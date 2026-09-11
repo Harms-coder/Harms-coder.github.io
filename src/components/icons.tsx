@@ -78,12 +78,16 @@ export function IconCalendar(props: IconProps) {
   );
 }
 
-/** Kalender med dagens dato på bladet — til bundmenuen, hvor bladet "rives af" ved tryk. */
+/**
+ * Kalender med dagens dato på bladet — til bundmenuen. Bladet (rammens nederste del + tallet) ligger
+ * to gange oven på hinanden: det øverste (className="leaf", usynligt i ro) rives af ved tryk, mens det
+ * næste med samme dato ligger klar nedenunder.
+ */
 export function IconCalendarToday(props: IconProps) {
-  return (
-    <svg {...base(props)}>
-      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
-      <path d="M3.5 10h17M8 3v4M16 3v4" />
+  const day = new Date().getDate();
+  const leaf = (
+    <>
+      <path d="M3.5 10v8.5a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V10" />
       <text
         x="12"
         y="15.6"
@@ -94,8 +98,17 @@ export function IconCalendarToday(props: IconProps) {
         fill="currentColor"
         stroke="none"
       >
-        {new Date().getDate()}
+        {day}
       </text>
+    </>
+  );
+  return (
+    <svg {...base(props)}>
+      <path d="M3.5 10V7a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v3M3.5 10h17M8 3v4M16 3v4" />
+      <g>{leaf}</g>
+      <g className="leaf" opacity={0}>
+        {leaf}
+      </g>
     </svg>
   );
 }

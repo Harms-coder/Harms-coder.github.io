@@ -250,10 +250,14 @@ h1 {
   animation-delay: 220ms;
 }
 
-/* Kalenderbladet (datoen) rives af og et nyt ligger klar. */
-.nav-icon-tear text {
-  transform-origin: 50% 60%;
-  animation: nav-tear 700ms ease-in-out;
+/* Kalenderbladet rives af: løftes fra bunden, vrides og flyver op mod højre. Det næste blad ligger klar. */
+.nav-icon-tear {
+  overflow: visible;
+}
+
+.nav-icon-tear .leaf {
+  transform-origin: 3.5px 10px;
+  animation: nav-tear 650ms ease-in both;
 }
 
 /* Tekstlinjerne på programmet skrives én ad gangen. */
@@ -349,38 +353,17 @@ h1 {
 }
 
 @keyframes nav-tear {
-  from,
-  to {
-    transform: none;
-    opacity: 1;
-  }
-  40% {
-    transform: translate(5px, -8px) rotate(14deg);
-    opacity: 0;
-  }
-  41% {
-    transform: translateY(2px) scale(0.6);
-    opacity: 0;
-  }
-  70% {
-    transform: none;
-    opacity: 1;
-  }
-}
-
-/* Fra nul (viseren peger mod buens venstre ende, −129°) op til hvilestillingen med et lille efterslæng. */
-@keyframes nav-swing {
   from {
-    transform: rotate(-129deg);
+    transform: none;
+    opacity: 1;
   }
-  62% {
-    transform: rotate(11deg);
-  }
-  82% {
-    transform: rotate(-4deg);
+  30% {
+    transform: translate(0.5px, -1.5px) rotate(-5deg);
+    opacity: 1;
   }
   to {
-    transform: none;
+    transform: translate(10px, -16px) rotate(-30deg);
+    opacity: 0;
   }
 }
 
