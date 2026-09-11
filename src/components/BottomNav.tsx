@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type MouseEvent } from "react";
-import { flushSync } from "react-dom";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentType, type CSSProperties, type MouseEvent } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   IconActivity,
   IconCalendar,
@@ -39,22 +38,11 @@ const navItems: NavItem[] = [
   { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)", anim: "sweep" },
 ];
 
-function NavItemLink({ item }: { item: NavItem }) {
-  const navigate = useNavigate();
-
-  /*
-   * Navigér inde i en View Transition: kun den aktive fane har view-transition-name: nav-pill,
-   * så browseren animerer selv pillen fra den gamle fane til den nye (se index.css).
-   * React Routers egen viewTransition-prop virker kun med data-routers, ikke <BrowserRouter>.
-   */
+function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string) => void }) {
   function onClick(e: MouseEvent<HTMLAnchorElement>) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      navigate(item.to);
-      return;
-    }
-    document.startViewTransition(() => flushSync(() => navigate(item.to)));
+    onSelect(item.to);
   }
 
   return (
@@ -95,9 +83,46 @@ interface Thumb {
   left: number;
 }
 
+/**
+ * Navigerer inde i en View Transition, så browseren selv animerer den aktive pille (den eneste
+ * med view-transition-name) fra den gamle fane til den nye. React Router v7 pakker navigationen i
+ * React.startTransition, så DOM'en er IKKE opdateret, når navigate() returnerer — derfor venter
+ * callbacket på et promise, der først opfyldes når den nye rute er committet (layout-effekten
+ * herunder). Uden det tager Safari "efter"-billedet for tidligt og opgiver transitionen.
+ * React Routers egen viewTransition-prop virker kun med data-routers, ikke <BrowserRouter>.
+ */
+function useNavigateWithTransition() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const committedRef = useRef<(() => void) | null>(null);
+
+  useLayoutEffect(() => {
+    committedRef.current?.();
+    committedRef.current = null;
+  }, [location]);
+
+  return (to: string) => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (to === location.pathname || !document.startViewTransition || reduced) {
+      navigate(to);
+      return;
+    }
+    document.startViewTransition(
+      () =>
+        new Promise<void>((resolve) => {
+          committedRef.current = resolve;
+          // ponytail: sikkerhedsnet — hænger React (fx en langsom lazy-side), fryser siden ikke.
+          setTimeout(resolve, 500);
+          navigate(to);
+        }),
+    );
+  };
+}
+
 export function BottomNav() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<Thumb>({ width: 0, left: 0 });
+  const select = useNavigateWithTransition();
 
   /*
    * Menuen kan scrolles vandret, men den indbyggede scrollbar er skjult (.no-scrollbar),
@@ -151,7 +176,7 @@ export function BottomNav() {
     >
       <div className="flex items-stretch pt-2 pl-2">
         {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}
-        <NavItemLink item={homeItem} />
+        <NavItemLink item={homeItem} onSelect={select} />
         <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
         <div
           ref={scrollerRef}
@@ -160,7 +185,7 @@ export function BottomNav() {
           {scrollableItems.map((item, i) => (
             <div key={item.to} className="flex items-center gap-1">
               {i > 0 && <span className="h-6 w-px flex-shrink-0 bg-(--color-border)" />}
-              <NavItemLink item={item} />
+              <NavItemLink item={item} onSelect={select} />
             </div>
           ))}
         </div>
