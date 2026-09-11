@@ -176,9 +176,9 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)/95 backdrop-blur-md"
       /*
        * Rulleteksten bor i den luft, der før var polstring: safe-area + 8 px er blevet til
-       * 4 px + 16 px tekst + (safe-area − 12 px). Samme totalhøjde på telefonen, så menuen flytter sig ikke.
+       * 4 px + 20 px tekst + (safe-area − 16 px). Samme totalhøjde på telefonen, så menuen flytter sig ikke.
        */
-      style={{ paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 0.75rem))" }}
+      style={{ paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 1rem))" }}
     >
       <div className="flex items-stretch pt-2 pl-2">
         {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}

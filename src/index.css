@@ -325,9 +325,9 @@ h1 {
   animation: ticker linear infinite;
 }
 
-/* Samme afstand efter begge kopier, så -50 % lander præcis dér, hvor kopi to begynder. */
-.ticker-track > span {
-  padding-right: 3rem;
+/* Kun luft mellem citaterne — også efter det sidste, så -50 % lander præcis dér, hvor kopi to begynder. */
+.ticker-copy > span {
+  margin-right: 4rem;
 }
 
 @keyframes ticker {
