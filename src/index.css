@@ -127,8 +127,8 @@ body {
 }
 
 /*
- * iOS-statuslinjen ligger oven på indholdet (black-translucent), så sidernes indhold
- * skubbes ned under den. Uden dette ville overskrifter ligge bag uret.
+ * Plads til en statuslinje, der ligger oven på indholdet. På iOS er insetten 0 (websiden
+ * starter under uret, se index.html); reglen er der for platforme, der melder en inset.
  */
 .safe-top {
   padding-top: env(safe-area-inset-top, 0px);
@@ -190,28 +190,6 @@ h1 {
 .glow-scroller-x {
   padding-inline: 1.125rem;
   margin-inline: -1.125rem;
-}
-
-/*
- * Bemærk: ingen bottom-0-utility på elementet — Tailwinds utilities vinder over reglerne her.
- */
-.bottom-nav {
-  bottom: 0;
-}
-
-/*
- * Sikkerhedsnet: menuens egen baggrund forlænges ned til skærmkanten. Skulle en fremtidig
- * iOS-version placere den et par pixels for højt, bliver mellemrummet menufarvet frem for sort.
- */
-.bottom-nav::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: inherit;
-  pointer-events: none;
 }
 
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */

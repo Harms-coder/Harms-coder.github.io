@@ -113,7 +113,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="bottom-nav fixed inset-x-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)/95 backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)/95 backdrop-blur-md"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.5rem)" }}
     >
       <div className="flex items-stretch pt-2 pl-2">

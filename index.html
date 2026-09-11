@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0e0e" />
+    <meta name="theme-color" content="#06080c" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,15 +15,15 @@
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <!--
-      "black" giver en mørk statuslinje der falder i ét med appen. "default" gav en hvid
-      bjælke i toppen.
-
-      IKKE "black-translucent": den lader ganske vist billederne fortsætte op bag uret, men
-      iOS giver så websiden en viewport der er lavere end skærmen (målt: 894 mod 956), og de
-      manglende pixels ligger UDEN FOR websiden. Alt fastgjort til bunden efterlader derfor
-      en stribe, som ingen CSS kan dække.
+      Bevidst INGEN apple-mobile-web-app-status-bar-style. Målt på telefonen 2026-09-11 med fem
+      varianter installeret side om side:
+        - black-translucent (+ viewport-fit=cover): iOS flytter websiden op under uret uden at
+          gøre den højere → 62 px sort stribe under bundmenuen, som ingen CSS kan nå.
+        - black: ugennemsigtig sort statuslinje.
+        - ingen meta: websiden starter under uret og når skærmens underkant med safe-area i
+          bunden, og iOS maler selv statuslinjen som en forlængelse af sidens overkant.
+      Værdien læses kun ved installation: ændres den, skal genvejen slettes og lægges på igen.
     -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Træning" />
     <title>Træningsapp</title>
   </head>

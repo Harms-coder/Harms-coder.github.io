@@ -4,7 +4,6 @@ import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { BackupPage } from "./features/data/BackupPage";
-import { DiagPage } from "./features/diag/DiagPage";
 import { DemoSeedPage } from "./features/demo/DemoSeedPage";
 import { ExerciseDetailPage } from "./features/exercises/ExerciseDetailPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
@@ -49,7 +48,7 @@ function App() {
   const hideBottomNav = location.pathname === "/traening/live";
 
   return (
-    <div className={`relative min-h-full ${hideBottomNav ? "" : "pb-24"}`}>
+    <div className={`relative min-h-full ${hideBottomNav ? "" : "pb-[calc(6rem+env(safe-area-inset-bottom,0px))]"}`}>
       <div className="app-ambience" />
       <div className="safe-top relative z-10">
       <Routes>
@@ -96,7 +95,6 @@ function App() {
           }
         />
         <Route path="/backup" element={<BackupPage />} />
-        <Route path="/diag" element={<DiagPage />} />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
       </div>
