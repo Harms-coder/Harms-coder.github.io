@@ -193,22 +193,10 @@ h1 {
 }
 
 /*
- * Afstanden mellem viewportens bund og skærmens kant. Sættes fra JavaScript, fordi den
- * kun kan MÅLES: iOS' black-translucent flytter websiden op under statuslinjen uden at
- * gøre viewporten højere, og hvor meget der mangler, kan ikke udledes af CSS alene.
- * 0 som standard, så alt andet end den installerede app er upåvirket.
- */
-:root {
-  --viewport-gap: 0px;
-}
-
-/*
- * Bemærk: ingen bottom-0-utility på elementet. Tailwinds utilities vinder over reglerne
- * her (samme grund til at .card-shadow bruger !important), så en utility ville tie denne
- * forskydning ihjel — hvilket den gjorde i første forsøg.
+ * Bemærk: ingen bottom-0-utility på elementet — Tailwinds utilities vinder over reglerne her.
  */
 .bottom-nav {
-  bottom: calc(-1 * var(--viewport-gap));
+  bottom: 0;
 }
 
 /*

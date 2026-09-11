@@ -41,10 +41,8 @@ export function DiagPanel() {
         ["standalone", String((window.navigator as { standalone?: boolean }).standalone ?? "?")],
         ["display-mode: standalone", String(window.matchMedia("(display-mode: standalone)").matches)],
         ["skærm minus viewport", `${window.screen.height - window.innerHeight}px`],
-        [
-          "--viewport-gap (i brug)",
-          getComputedStyle(document.documentElement).getPropertyValue("--viewport-gap").trim() || "(ingen)",
-        ],
+        ["window.screenY", `${window.screenY}px`],
+        ["window.outerHeight", `${window.outerHeight}px`],
         ["devicePixelRatio", String(window.devicePixelRatio)],
       ]);
     }
