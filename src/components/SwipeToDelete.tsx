@@ -2,6 +2,9 @@ import { useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { IconTrash } from "./icons";
 
 const DELETE_WIDTH = 96;
+/* Luft mellem kortet og sletknappen, så begge står som hver sin afrundede brik. */
+const GAP = 8;
+const OPEN_OFFSET = DELETE_WIDTH + GAP;
 const TAP_THRESHOLD = 4;
 
 interface SwipeToDeleteProps {
@@ -32,7 +35,7 @@ export function SwipeToDelete({ onDelete, children, className = "" }: SwipeToDel
     if (!draggingRef.current) return;
     const delta = e.clientX - startXRef.current;
     if (Math.abs(delta) > TAP_THRESHOLD) movedRef.current = true;
-    setOffset(Math.min(0, Math.max(-DELETE_WIDTH, startOffsetRef.current + delta)));
+    setOffset(Math.min(0, Math.max(-OPEN_OFFSET, startOffsetRef.current + delta)));
   }
 
   function handlePointerUp() {
@@ -44,7 +47,7 @@ export function SwipeToDelete({ onDelete, children, className = "" }: SwipeToDel
       // Et rigtigt træk skete — klikket der naturligt ville fyre bagefter (samme start-/slutelement)
       // skal ikke nå indholdet, ellers åbner/lukker man fx en historik-række samtidig med at swipe'et.
       suppressClickRef.current = true;
-      setOffset((current) => (current < -DELETE_WIDTH / 2 ? -DELETE_WIDTH : 0));
+      setOffset((current) => (current < -OPEN_OFFSET / 2 ? -OPEN_OFFSET : 0));
       return;
     }
 
@@ -75,7 +78,7 @@ export function SwipeToDelete({ onDelete, children, className = "" }: SwipeToDel
         }}
         aria-label="Slet"
         style={{ width: DELETE_WIDTH }}
-        className="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-1 bg-(--color-danger) text-white active:opacity-80"
+        className="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-1 rounded-2xl bg-(--color-danger) text-white active:opacity-80"
       >
         <IconTrash className="h-4 w-4" />
         <span className="text-[12px] font-medium">Slet</span>
