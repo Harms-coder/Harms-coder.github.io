@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { HeroHeader } from "../../components/HeroHeader";
+import { RollingText } from "../../components/RollingText";
 import {
   IconChevronRight,
   IconClock,
@@ -30,6 +31,7 @@ import {
 } from "../../lib/date";
 import { RANGE_KEYS, RANGE_LABELS, getPreviousRangeBounds, getRangeStart, type RangeKey } from "../../lib/dateRange";
 import { computeGoalProgress } from "../../lib/goalProgress";
+import { QUOTES, quoteIndexForToday } from "../../lib/quotes";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import { getWeightComparison } from "../../lib/weightComparisons";
@@ -64,6 +66,12 @@ export function OverviewPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [weekSessions, setWeekSessions] = useState<WorkoutSession[]>([]);
   const [weekCardio, setWeekCardio] = useState<CardioEntry[]>([]);
+  // Motivation-boksen starter på dagens citat og bladrer selv videre, mens siden er åben.
+  const [quoteIndex, setQuoteIndex] = useState(quoteIndexForToday);
+  useEffect(() => {
+    const id = setInterval(() => setQuoteIndex((i) => (i + 1) % QUOTES.length), 9000);
+    return () => clearInterval(id);
+  }, []);
   const [allSessions, setAllSessions] = useState<WorkoutSession[]>([]);
 
   async function load() {
@@ -251,7 +259,10 @@ export function OverviewPage() {
         onChange={setRange}
       />
 
-      <div className="relative flex min-h-36 flex-col justify-end gap-1 overflow-hidden rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
+      <Link
+        to="/motivation"
+        className="relative flex min-h-36 flex-col justify-end gap-1 overflow-hidden rounded-2xl border border-(--color-border-accent) p-4 card-shadow active:opacity-80"
+      >
         <img
           src="/images/dashboard-mountains.jpg"
           alt=""
@@ -259,15 +270,15 @@ export function OverviewPage() {
           style={{ objectPosition: "center 70%" }}
         />
         <div className="hero-scrim absolute inset-0" />
-        <span className="relative text-[13px] font-medium text-(--color-accent-bright)">
+        <span className="relative flex items-center gap-1 text-[13px] font-medium text-(--color-accent-bright)">
           Motivation
+          <IconChevronRight className="h-3.5 w-3.5" />
         </span>
         <div className="relative flex items-end justify-between gap-3">
-          <p className="text-[20px] font-semibold leading-snug text-(--color-text)">
-            Små skridt
-            <br />
-            skaber store resultater.
-          </p>
+          <RollingText
+            text={QUOTES[quoteIndex]}
+            className="min-w-0 flex-1 text-[20px] font-semibold leading-snug text-(--color-text)"
+          />
           <div className="flex flex-shrink-0 flex-col items-end gap-1 pb-1">
             <span className="eyebrow text-(--color-text-secondary)">
               Fremgang
@@ -278,7 +289,7 @@ export function OverviewPage() {
             <span className="mt-0.5 h-px w-7 bg-(--color-accent)" />
           </div>
         </div>
-      </div>
+      </Link>
 
       <div className="grid grid-cols-2 gap-3">
         <StatTile

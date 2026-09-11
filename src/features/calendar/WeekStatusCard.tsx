@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { IconCheck, IconDumbbell, IconFlame, IconRun, IconTarget } from "../../components/icons";
-import { DA_WEEKDAYS_SHORT, getWeekNumber, parseISODate, toISODate } from "../../lib/date";
-import { quoteForWeek } from "../../lib/quotes";
+import { DA_WEEKDAYS_SHORT, parseISODate, toISODate } from "../../lib/date";
+import { quoteOfTheDay } from "../../lib/quotes";
 import type { CardioEntry, PlannedWorkout, WorkoutSession } from "../../types";
 
 function MiniStat({
@@ -139,7 +139,7 @@ export function WeekStatusCard({
       </div>
 
       <p className="border-t border-(--color-border) pt-3 text-[13px] italic leading-snug text-(--color-text-secondary)">
-        “{quoteForWeek(getWeekNumber(weekStart))}” — Vigorra
+        “{quoteOfTheDay()}” — Vigorra
       </p>
     </div>
   );

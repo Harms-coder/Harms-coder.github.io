@@ -9,6 +9,7 @@ import { ExerciseDetailPage } from "./features/exercises/ExerciseDetailPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
 import { GoalsPage } from "./features/goals/GoalsPage";
 import { HistoryPage } from "./features/history/HistoryPage";
+import { MotivationPage } from "./features/motivation/MotivationPage";
 import { OverviewPage } from "./features/overview/OverviewPage";
 import { PlanPage } from "./features/plan/PlanPage";
 import { LiveTrainingPage } from "./features/training/LiveTrainingPage";
@@ -53,6 +54,7 @@ function App() {
       <div className="safe-top relative z-10">
       <Routes>
         <Route path="/" element={<OverviewPage />} />
+        <Route path="/motivation" element={<MotivationPage />} />
         <Route path="/traening" element={<TrainingPage />} />
         <Route path="/traening/live" element={<LiveTrainingPage />} />
         <Route path="/cardio" element={<CardioPage />} />
