@@ -15,6 +15,7 @@ import { Sparkline } from "../../components/Sparkline";
 import { StatTile } from "../../components/StatTile";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { ComparisonIllustration } from "./ComparisonIllustration";
+import { COMPARISON_PHOTOS } from "./comparisonPhotos";
 import { WeeklyGoalsCard } from "./WeeklyGoalsCard";
 import { listBodyweightEntries } from "../../db/bodyweight";
 import { listCardioEntriesInRange } from "../../db/cardio";
@@ -34,7 +35,7 @@ import { computeGoalProgress } from "../../lib/goalProgress";
 import { dayNumber } from "../../lib/quotes";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
-import { getWeightComparison } from "../../lib/weightComparisons";
+import { getWeightComparison, type ComparisonKind } from "../../lib/weightComparisons";
 import type {
   BodyweightEntry,
   CardioEntry,
@@ -53,6 +54,8 @@ function percentChange(current: number, previous: number): number | undefined {
   if (previous <= 0) return undefined;
   return Math.round(((current - previous) / previous) * 100);
 }
+
+const PHOTOGRAPHED_KINDS = new Set(Object.keys(COMPARISON_PHOTOS) as ComparisonKind[]);
 
 export function OverviewPage() {
   const [range, setRange] = useState<RangeKey>("week");
@@ -182,7 +185,7 @@ export function OverviewPage() {
   const cardioKmDelta = percentChange(totalCardioKm, prevTotalCardioKm);
   const kgLiftedDelta = percentChange(totalKgLifted, prevTotalKgLifted);
   const weightComparison = useMemo(
-    () => getWeightComparison(totalKgLifted),
+    () => getWeightComparison(totalKgLifted, PHOTOGRAPHED_KINDS),
     [totalKgLifted],
   );
 

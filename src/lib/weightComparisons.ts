@@ -50,32 +50,39 @@ const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
 ];
 
 const MIN_MULTIPLE = 0.6;
-const MAX_MULTIPLE = 30;
+const MAX_MULTIPLE = 300;
 
 /**
  * Vælger en tilfældig, "passende" sammenligning for en given totalvægt (kg) —
  * fx "Det svarer til ca. 4 elefanter". Vælges tilfældigt blandt de referencer der
- * giver et overskueligt antal (0,6-30x), så det varierer i stedet for altid at
- * vise det samme for samme vægtklasse.
+ * giver et overskueligt antal (0,6-300x), så det varierer i stedet for altid at
+ * vise det samme for samme vægtklasse. Ting, der har et rigtigt billede (preferred),
+ * foretrækkes, så billederne faktisk bliver set.
  */
-export function getWeightComparison(totalKg: number): WeightComparison | undefined {
+export function getWeightComparison(
+  totalKg: number,
+  preferred: ReadonlySet<ComparisonKind> = new Set(),
+): WeightComparison | undefined {
   if (!Number.isFinite(totalKg) || totalKg < 40) return undefined;
 
   const inRange = WEIGHT_COMPARISONS.filter((item) => {
     const multiple = totalKg / item.kg;
     return multiple >= MIN_MULTIPLE && multiple <= MAX_MULTIPLE;
   });
+  const withPhoto = inRange.filter((item) => preferred.has(item.kind));
 
   const candidates =
-    inRange.length > 0
-      ? inRange
-      : [
-          WEIGHT_COMPARISONS.reduce((best, item) =>
-            Math.abs(Math.log(totalKg / item.kg)) < Math.abs(Math.log(totalKg / best.kg))
-              ? item
-              : best,
-          ),
-        ];
+    withPhoto.length > 0
+      ? withPhoto
+      : inRange.length > 0
+        ? inRange
+        : [
+            WEIGHT_COMPARISONS.reduce((best, item) =>
+              Math.abs(Math.log(totalKg / item.kg)) < Math.abs(Math.log(totalKg / best.kg))
+                ? item
+                : best,
+            ),
+          ];
 
   const chosen = candidates[Math.floor(Math.random() * candidates.length)];
   const multiple = Math.round(totalKg / chosen.kg);
