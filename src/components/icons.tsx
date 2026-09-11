@@ -44,11 +44,13 @@ export function IconActivity(props: IconProps) {
   );
 }
 
+/* Sidste streg (shaft) og pilehoved (head) er hver sin path, så bundmenuen kan forlænge pilen i dens egen retning. */
 export function IconTrendUp(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <path d="M3 17 9 11l4 4 8-9" />
-      <path d="M15 6h6v6" />
+      <path d="M3 17 9 11l4 4" />
+      <path className="shaft" d="M13 15 21 6" />
+      <path className="head" d="M15 6h6v6" />
     </svg>
   );
 }

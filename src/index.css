@@ -220,9 +220,21 @@ h1 {
   animation: nav-spin 650ms cubic-bezier(0.3, 1.3, 0.5, 1);
 }
 
-/* Pilen flyver videre i sin egen retning, ud af rammen, og kommer tilbage fra modsatte hjørne. */
+/*
+ * Pilen forlænges i sin egen retning: fodpunktet bliver stående, den sidste streg strækkes ud fra
+ * det (skalering om (13,15) langs stregens egen retning), og hovedet følger med ud over kanten.
+ */
 .nav-icon-fly {
-  animation: nav-fly 750ms ease-in-out;
+  overflow: visible;
+}
+
+.nav-icon-fly .shaft {
+  transform-origin: 13px 15px;
+  animation: nav-shaft 800ms ease-in-out;
+}
+
+.nav-icon-fly .head {
+  animation: nav-head 800ms ease-in-out;
 }
 
 /* Listens tre linjer hopper én ad gangen. */
@@ -254,7 +266,7 @@ h1 {
   animation-delay: 320ms;
 }
 
-/* Vægtens viser svinger ud, når man træder op, og falder til ro. Drejer om navet (12, 15.5). */
+/* Vægtens viser kører fra nul op til sin stilling, når man træder op. Drejer om navet (12, 15.5). */
 .nav-icon-swing .needle {
   transform-origin: 12px 15.5px;
   animation: nav-swing 900ms ease-out;
@@ -305,23 +317,24 @@ h1 {
   }
 }
 
-@keyframes nav-fly {
+@keyframes nav-shaft {
   from,
   to {
     transform: none;
-    opacity: 1;
   }
-  /* Samme retning som pilen peger (op mod højre, som en kurve der stiger) — ud af rammen og ind igen nedefra-venstre. */
   45% {
-    transform: translate(24px, -27px);
-    opacity: 1;
+    transform: scale(1.75);
   }
-  50% {
-    transform: translate(-24px, 27px);
-    opacity: 0;
+}
+
+/* Samme forskydning som stregens spids: 0,75 × (8, −9). */
+@keyframes nav-head {
+  from,
+  to {
+    transform: none;
   }
-  55% {
-    opacity: 1;
+  45% {
+    transform: translate(6px, -6.75px);
   }
 }
 
@@ -355,19 +368,19 @@ h1 {
   }
 }
 
+/* Fra nul (viseren peger mod buens venstre ende, −129°) op til hvilestillingen med et lille efterslæng. */
 @keyframes nav-swing {
-  from,
+  from {
+    transform: rotate(-129deg);
+  }
+  62% {
+    transform: rotate(11deg);
+  }
+  82% {
+    transform: rotate(-4deg);
+  }
   to {
     transform: none;
-  }
-  30% {
-    transform: rotate(48deg);
-  }
-  55% {
-    transform: rotate(-18deg);
-  }
-  75% {
-    transform: rotate(8deg);
   }
 }
 
