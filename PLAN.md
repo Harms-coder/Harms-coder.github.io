@@ -28,9 +28,10 @@ Sig "vis mig planen" for at få status.
 - [ ] **8 · Del et træningskort som billede** — kort i appens design, delt via delingsarket. *~30 min.*
 - [ ] **9 · Fremgangsfotos + kropsmål** — talje, arme osv. ved siden af kropsvægten; fotos gemmes i
       appens database og kommer med i backuppen. *~40 min.*
+- [ ] **14 · CSV-eksport** — regnearksfil, én række pr. sæt (dato, øvelse, kg, gentagelser, type), til
+      Excel/Numbers eller en træner. *~10 min.*
 
 ## Fravalgt (kan tages op igen)
 
 - 3 · Opvarmningsberegner (40/60/80 %-sæt med skiver).
 - 4 · Anstrengelse pr. sæt (RPE) → forslag om +2,5 kg næste gang.
-- 14 · CSV-eksport (regnearksfil, én række pr. sæt) — ikke afgjort endnu.
