@@ -16,7 +16,7 @@ import {
 } from "./icons";
 
 /** Den lille bevægelse ikonet laver, når fanen vælges — keyframes i index.css (.nav-icon-*). */
-type IconAnim = "bounce" | "spin" | "draw" | "fly" | "sweep" | "hoplines" | "tear" | "write" | "pop";
+type IconAnim = "bounce" | "spin" | "draw" | "fly" | "sweep" | "hoplines" | "tear" | "write" | "pop" | "swing";
 
 interface NavItem {
   to: string;
@@ -35,7 +35,7 @@ const navItems: NavItem[] = [
   { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)", anim: "pop" },
   { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)", anim: "hoplines" },
   { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, color: "var(--color-cat-plan)", anim: "tear" },
-  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)", anim: "bounce" },
+  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)", anim: "swing" },
   { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)", anim: "write" },
   { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)", anim: "sweep" },
 ];

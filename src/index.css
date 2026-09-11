@@ -254,6 +254,12 @@ h1 {
   animation-delay: 320ms;
 }
 
+/* Vægtens viser svinger ud, når man træder op, og falder til ro. Drejer om navet (12, 15.5). */
+.nav-icon-swing .needle {
+  transform-origin: 12px 15.5px;
+  animation: nav-swing 900ms ease-out;
+}
+
 /* Målskivens ringe popper én ad gangen indefra og ud. */
 .nav-icon-pop circle {
   transform-origin: 50% 50%;
@@ -346,6 +352,22 @@ h1 {
   70% {
     transform: none;
     opacity: 1;
+  }
+}
+
+@keyframes nav-swing {
+  from,
+  to {
+    transform: none;
+  }
+  30% {
+    transform: rotate(48deg);
+  }
+  55% {
+    transform: rotate(-18deg);
+  }
+  75% {
+    transform: rotate(8deg);
   }
 }
 

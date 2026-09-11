@@ -107,12 +107,15 @@ export function IconClock(props: IconProps) {
   );
 }
 
+/* Badevægt som speedometer: bue, viser (className="needle", så bundmenuen kan lade den svinge) og fod. */
 export function IconScale(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
-      <circle cx="12" cy="12.5" r="3.6" />
-      <path d="M12 12.5 14.2 10.2" />
+      <path d="M5 15.5a7 7 0 0 1 14 0" />
+      <path d="M7.2 10.4l-.8-.9M12 8.1V7M16.8 10.4l.8-.9" strokeWidth={1.6} />
+      <path className="needle" d="M12 15.5l3.4-4.2" strokeWidth={2.2} />
+      <circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none" />
+      <path d="M4 19.5h16" strokeWidth={2.4} />
     </svg>
   );
 }
