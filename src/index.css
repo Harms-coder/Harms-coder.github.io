@@ -313,6 +313,29 @@ h1 {
   }
 }
 
+/* Rulletekst under bundmenuen (QuoteTicker). Kanterne tones ud, så teksten glider ind og ud. */
+.ticker {
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: ticker linear infinite;
+}
+
+/* Samme afstand efter begge kopier, så -50 % lander præcis dér, hvor kopi to begynder. */
+.ticker-track > span {
+  padding-right: 3rem;
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* Skjul scrollbar visuelt på den horisontalt scrollbare bundnavigation, uden at fjerne scroll-funktionen */
 .no-scrollbar {
   scrollbar-width: none;

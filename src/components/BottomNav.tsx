@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentType, type CSSProperties, type MouseEvent } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useRotation } from "../features/motivation/useRotation";
+import { QuoteTicker } from "./QuoteTicker";
 import {
   IconActivity,
   IconCalendar,
@@ -122,6 +124,7 @@ export function BottomNav() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<Thumb>({ width: 0, left: 0 });
   const select = useNavigateWithTransition();
+  const { rotation } = useRotation();
 
   /*
    * Menuen kan scrolles vandret, men den indbyggede scrollbar er skjult (.no-scrollbar),
@@ -171,7 +174,11 @@ export function BottomNav() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)/95 backdrop-blur-md"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.5rem)" }}
+      /*
+       * Rulleteksten bor i den luft, der før var polstring: safe-area + 8 px er blevet til
+       * 4 px + 16 px tekst + (safe-area − 12 px). Samme totalhøjde på telefonen, så menuen flytter sig ikke.
+       */
+      style={{ paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 0.75rem))" }}
     >
       <div className="flex items-stretch pt-2 pl-2">
         {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}
@@ -201,6 +208,9 @@ export function BottomNav() {
           />
         </div>
       )}
+      <div className="mt-1">
+        <QuoteTicker quotes={rotation.map((q) => q.text)} />
+      </div>
     </nav>
   );
 }
