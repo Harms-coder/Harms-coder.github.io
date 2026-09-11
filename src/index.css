@@ -208,7 +208,10 @@ h1 {
   animation-timing-function: cubic-bezier(0.2, 0.9, 0.25, 1.05);
 }
 
-/* Det aktive ikon "aktiverer sig" én gang, når fanen vælges. Klassen sættes kun på den aktive fane. */
+/*
+ * Det aktive ikon "aktiverer sig" én gang, når fanen vælges. Klassen sættes kun på den aktive fane.
+ * Bevidst uden prefers-reduced-motion: brugeren har bedt om bevægelserne, og appen er hans egen.
+ */
 .nav-icon-bounce {
   animation: nav-bounce 500ms ease-out;
 }
@@ -231,13 +234,6 @@ h1 {
 .nav-icon-sweep path {
   transform-origin: 50% 50%;
   animation: nav-spin 700ms ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [class*="nav-icon-"],
-  [class*="nav-icon-"] path {
-    animation: none;
-  }
 }
 
 @keyframes nav-bounce {

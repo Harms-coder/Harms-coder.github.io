@@ -102,8 +102,7 @@ function useNavigateWithTransition() {
   }, [location]);
 
   return (to: string) => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (to === location.pathname || !document.startViewTransition || reduced) {
+    if (to === location.pathname || !document.startViewTransition) {
       navigate(to);
       return;
     }
