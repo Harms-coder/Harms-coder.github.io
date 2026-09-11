@@ -12,6 +12,7 @@ import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/l
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
 import { DEFAULT_QUOTES, dayNumber, rotationOf } from "../src/lib/quotes.ts";
 import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
+import { listWeightComparisons } from "../src/lib/weightComparisons.ts";
 import type { BodyweightEntry, CardioEntry, WorkoutSession } from "../src/types/index.ts";
 
 let checks = 0;
@@ -271,6 +272,29 @@ check("rotationen er de stjernede — eller alle, hvis ingen er stjernet", () =>
   assert.deepEqual(rotationOf([a, b, c]), [a, c]);
   assert.deepEqual(rotationOf([b, { starred: false }]), [b, { starred: false }]);
   assert.deepEqual(rotationOf([]), []);
+});
+
+console.log("Vægt-sammenligninger");
+
+check("intet under 40 kg, ellers både enkelte ting og sammensætninger med tal i fornuftigt leje", () => {
+  assert.deepEqual(listWeightComparisons(30), []);
+  const list = listWeightComparisons(45_000);
+  assert.ok(list.length > 10);
+  assert.ok(list.every((c) => c.kinds.length === 1 || c.kinds.length === 2));
+  assert.ok(list.some((c) => c.kinds.length === 2), "der bør være sammensætninger ved 45 ton");
+  for (const c of list) {
+    const numbers = c.text.match(/\d+/g)?.map(Number) ?? [];
+    assert.ok(numbers.every((n) => n >= 2 && n <= 300), c.text);
+  }
+});
+
+check("sammensætninger nævner den tunge ting først og den lette højst 9 gange", () => {
+  const combos = listWeightComparisons(45_000).filter((c) => c.kinds.length === 2);
+  for (const c of combos) {
+    const [, light] = c.text.split(" og ");
+    const n = Number(light.match(/^\d+/)?.[0] ?? 1);
+    assert.ok(n <= 9, c.text);
+  }
 });
 
 console.log(`\n${checks} tjek bestået.`);

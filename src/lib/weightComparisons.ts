@@ -14,7 +14,8 @@ interface WeightComparisonItem {
 
 export interface WeightComparison {
   text: string;
-  kind: ComparisonKind;
+  /** Én ting — eller to ved en sammensætning ("2 elefanter og 3 køer"). */
+  kinds: ComparisonKind[];
 }
 
 /** Løst afrundede gennemsnitsvægte — til sjov perspektivering, ikke faktatjek. */
@@ -51,47 +52,69 @@ const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
 
 const MIN_MULTIPLE = 0.6;
 const MAX_MULTIPLE = 300;
+/** Sammensætninger: den lette del må højst optræde dette antal gange, ellers bliver sætningen lang. */
+const MAX_SECONDARY = 9;
+const MAX_COMBOS = 30;
+
+function count(item: WeightComparisonItem, n: number): string {
+  return n <= 1 ? item.singular : `${n} ${item.plural}`;
+}
 
 /**
- * Vælger en tilfældig, "passende" sammenligning for en given totalvægt (kg) —
- * fx "Det svarer til ca. 4 elefanter". Vælges tilfældigt blandt de referencer der
- * giver et overskueligt antal (0,6-300x), så det varierer i stedet for altid at
- * vise det samme for samme vægtklasse. Ting, der har et rigtigt billede (preferred),
- * foretrækkes, så billederne faktisk bliver set.
+ * Alle "passende" sammenligninger for en given totalvægt (kg): enkelte ting, der giver et
+ * overskueligt antal (0,6-300x), plus sammensætninger af to ting, der tilsammen rammer vægten
+ * ("ca. 2 elefanter og 3 køer"). Rækkefølgen er tilfældig, så Oversigt kan bladre igennem dem.
+ * Ting med et rigtigt billede (preferred) foretrækkes, så billederne faktisk bliver set.
  */
-export function getWeightComparison(
+export function listWeightComparisons(
   totalKg: number,
   preferred: ReadonlySet<ComparisonKind> = new Set(),
-): WeightComparison | undefined {
-  if (!Number.isFinite(totalKg) || totalKg < 40) return undefined;
+): WeightComparison[] {
+  if (!Number.isFinite(totalKg) || totalKg < 40) return [];
 
   const inRange = WEIGHT_COMPARISONS.filter((item) => {
     const multiple = totalKg / item.kg;
     return multiple >= MIN_MULTIPLE && multiple <= MAX_MULTIPLE;
   });
   const withPhoto = inRange.filter((item) => preferred.has(item.kind));
+  const pool = withPhoto.length > 0 ? withPhoto : inRange;
 
-  const candidates =
-    withPhoto.length > 0
-      ? withPhoto
-      : inRange.length > 0
-        ? inRange
-        : [
-            WEIGHT_COMPARISONS.reduce((best, item) =>
-              Math.abs(Math.log(totalKg / item.kg)) < Math.abs(Math.log(totalKg / best.kg))
-                ? item
-                : best,
-            ),
-          ];
+  const singles: WeightComparison[] = pool.map((item) => ({
+    text: `Det svarer til ca. ${count(item, Math.round(totalKg / item.kg))}`,
+    kinds: [item.kind],
+  }));
 
-  const chosen = candidates[Math.floor(Math.random() * candidates.length)];
-  const multiple = Math.round(totalKg / chosen.kg);
+  // Sammensætninger: n af den tunge ting, og resten fyldt op med en lettere ting.
+  const combos: WeightComparison[] = [];
+  for (const heavy of pool) {
+    const n = Math.floor(totalKg / heavy.kg);
+    if (n < 1 || n > 30) continue;
+    const rest = totalKg - n * heavy.kg;
+    for (const light of pool) {
+      if (light.kg >= heavy.kg) continue;
+      const m = Math.round(rest / light.kg);
+      if (m < 1 || m > MAX_SECONDARY || Math.abs(rest - m * light.kg) > light.kg * 0.35) continue;
+      combos.push({
+        text: `Det svarer til ca. ${count(heavy, n)} og ${count(light, m)}`,
+        kinds: [heavy.kind, light.kind],
+      });
+    }
+  }
 
-  return {
-    text:
-      multiple <= 1
-        ? `Det svarer til ca. ${chosen.singular}`
-        : `Det svarer til ca. ${multiple} ${chosen.plural}`,
-    kind: chosen.kind,
-  };
+  if (singles.length === 0) {
+    const nearest = WEIGHT_COMPARISONS.reduce((best, item) =>
+      Math.abs(Math.log(totalKg / item.kg)) < Math.abs(Math.log(totalKg / best.kg)) ? item : best,
+    );
+    return [{ text: `Det svarer til ca. ${count(nearest, Math.round(totalKg / nearest.kg))}`, kinds: [nearest.kind] }];
+  }
+  return shuffle([...singles, ...shuffle(combos).slice(0, MAX_COMBOS)]);
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
 }

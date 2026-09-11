@@ -35,7 +35,7 @@ import { computeGoalProgress } from "../../lib/goalProgress";
 import { dayNumber } from "../../lib/quotes";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
-import { getWeightComparison, type ComparisonKind } from "../../lib/weightComparisons";
+import { listWeightComparisons, type ComparisonKind } from "../../lib/weightComparisons";
 import type {
   BodyweightEntry,
   CardioEntry,
@@ -184,10 +184,18 @@ export function OverviewPage() {
   const cardioCountDelta = percentChange(cardioEntries.length, prevCardioEntries.length);
   const cardioKmDelta = percentChange(totalCardioKm, prevTotalCardioKm);
   const kgLiftedDelta = percentChange(totalKgLifted, prevTotalKgLifted);
-  const weightComparison = useMemo(
-    () => getWeightComparison(totalKgLifted, PHOTOGRAPHED_KINDS),
+  // Vægt-sammenligningen bladrer gennem alle passende sammenligninger, mens siden er åben.
+  const weightComparisons = useMemo(
+    () => listWeightComparisons(totalKgLifted, PHOTOGRAPHED_KINDS),
     [totalKgLifted],
   );
+  const [comparisonStep, setComparisonStep] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setComparisonStep((n) => n + 1), 10000);
+    return () => clearInterval(id);
+  }, []);
+  const weightComparison =
+    weightComparisons.length > 0 ? weightComparisons[comparisonStep % weightComparisons.length] : undefined;
 
   const weightInRange = useMemo(
     () =>
@@ -334,9 +342,11 @@ export function OverviewPage() {
           label={`Kg løftet · ${RANGE_LABELS[range].toLowerCase()}`}
           value={`${Math.round(totalKgLifted).toLocaleString("da-DK")} kg`}
           delta={kgLiftedDelta}
-          note={weightComparison?.text}
+          note={weightComparison && <RollingText text={weightComparison.text} />}
           noteIllustration={
-            weightComparison && <ComparisonIllustration kind={weightComparison.kind} />
+            weightComparison && (
+              <ComparisonIllustration key={weightComparison.text} kinds={weightComparison.kinds} />
+            )
           }
           icon={IconDumbbell}
           className="col-span-2"

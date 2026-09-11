@@ -12,7 +12,7 @@ interface StatTileProps {
   /** Procentvis ændring vs. forrige periode. Udelades hvis der ikke er noget at sammenligne med. */
   delta?: number;
   /** Valgfri ekstra linje, fx en sjov sammenligning — vises til højre, adskilt af en lodret streg. */
-  note?: string;
+  note?: ReactNode;
   /** Valgfri stregtegning ved siden af noten, fx en silhuet der matcher sammenligningen. */
   noteIllustration?: ReactNode;
   className?: string;
