@@ -1,25 +1,15 @@
-import {
-  IconSilhouetteAnimal,
-  IconSilhouetteCar,
-  IconSilhouettePerson,
-  IconSilhouettePlane,
-  IconSilhouetteTruck,
-  IconSilhouetteWhale,
-  type IconComponent,
-} from "../../components/icons";
 import type { ComparisonKind } from "../../lib/weightComparisons";
+import { COMPARISON_SILHOUETTES } from "./comparisonSilhouettes";
 
-const SILHOUETTES: Record<ComparisonKind, IconComponent> = {
-  person: IconSilhouettePerson,
-  animal: IconSilhouetteAnimal,
-  whale: IconSilhouetteWhale,
-  car: IconSilhouetteCar,
-  truck: IconSilhouetteTruck,
-  plane: IconSilhouettePlane,
-};
-
-/** Stregtegning der matcher vægt-sammenligningen, fx en lastbil ved "5 lastbiler". */
+/** Udfyldt silhuet af det, vægten sammenlignes med — fx et næsehorn ved "2 næsehorn". */
 export function ComparisonIllustration({ kind }: { kind: ComparisonKind }) {
-  const Icon = SILHOUETTES[kind];
-  return <Icon className="h-9 w-9 text-(--color-accent-glow)" />;
+  const { fill, strokes } = COMPARISON_SILHOUETTES[kind];
+  return (
+    <svg viewBox="0 0 48 24" aria-hidden="true" className="h-10 w-20 text-(--color-accent-glow)">
+      <path d={fill} fill="currentColor" fillRule="nonzero" />
+      {strokes.map(([d, width]) => (
+        <path key={d} d={d} fill="none" stroke="currentColor" strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" />
+      ))}
+    </svg>
+  );
 }

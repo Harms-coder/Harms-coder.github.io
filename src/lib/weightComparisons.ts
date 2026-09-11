@@ -1,5 +1,9 @@
-/** Grov silhuet-gruppe, så hver sammenligning kan vises med en passende stregtegning. */
-export type ComparisonKind = "person" | "animal" | "whale" | "car" | "truck" | "plane";
+/** Hver sammenligning har sin egen silhuet (tegnet i scripts/silhouettes.py). */
+export type ComparisonKind =
+  | "person" | "fridge" | "piano"
+  | "lion" | "tiger" | "gorilla" | "bear" | "horse" | "cow" | "giraffe"
+  | "rhino" | "hippo" | "elephant" | "orca" | "whale"
+  | "car" | "suv" | "pickup" | "bus" | "garbage" | "lorry" | "semi" | "locomotive" | "submarine" | "plane";
 
 interface WeightComparisonItem {
   singular: string;
@@ -16,32 +20,32 @@ export interface WeightComparison {
 /** Løst afrundede gennemsnitsvægte — til sjov perspektivering, ikke faktatjek. */
 const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
   { singular: "en voksen person", plural: "voksne personer", kg: 80, kind: "person" },
-  { singular: "et køleskab", plural: "køleskabe", kg: 100, kind: "person" },
-  { singular: "et klaver", plural: "klaverer", kg: 150, kind: "person" },
-  { singular: "en løve", plural: "løver", kg: 190, kind: "animal" },
-  { singular: "en tiger", plural: "tigre", kg: 230, kind: "animal" },
-  { singular: "en gorilla", plural: "gorillaer", kg: 300, kind: "animal" },
-  { singular: "en isbjørn", plural: "isbjørne", kg: 400, kind: "animal" },
-  { singular: "en hest", plural: "heste", kg: 500, kind: "animal" },
-  { singular: "en ko", plural: "køer", kg: 700, kind: "animal" },
-  { singular: "en giraf", plural: "giraffer", kg: 800, kind: "animal" },
+  { singular: "et køleskab", plural: "køleskabe", kg: 100, kind: "fridge" },
+  { singular: "et klaver", plural: "klaverer", kg: 150, kind: "piano" },
+  { singular: "en løve", plural: "løver", kg: 190, kind: "lion" },
+  { singular: "en tiger", plural: "tigre", kg: 230, kind: "tiger" },
+  { singular: "en gorilla", plural: "gorillaer", kg: 300, kind: "gorilla" },
+  { singular: "en isbjørn", plural: "isbjørne", kg: 400, kind: "bear" },
+  { singular: "en hest", plural: "heste", kg: 500, kind: "horse" },
+  { singular: "en ko", plural: "køer", kg: 700, kind: "cow" },
+  { singular: "en giraf", plural: "giraffer", kg: 800, kind: "giraffe" },
   { singular: "en mindre bil", plural: "mindre biler", kg: 1000, kind: "car" },
   { singular: "en almindelig bil", plural: "almindelige biler", kg: 1500, kind: "car" },
-  { singular: "en SUV", plural: "SUV'er", kg: 2000, kind: "car" },
-  { singular: "en pickup truck", plural: "pickup trucks", kg: 2500, kind: "car" },
-  { singular: "et næsehorn", plural: "næsehorn", kg: 3000, kind: "animal" },
-  { singular: "en flodhest", plural: "flodheste", kg: 4000, kind: "animal" },
-  { singular: "en elefant", plural: "elefanter", kg: 5000, kind: "animal" },
-  { singular: "en spækhugger", plural: "spækhuggere", kg: 7000, kind: "whale" },
-  { singular: "en skolebus", plural: "skolebusser", kg: 9000, kind: "truck" },
-  { singular: "en bybus", plural: "bybusser", kg: 12000, kind: "truck" },
-  { singular: "en skraldebil", plural: "skraldebiler", kg: 15000, kind: "truck" },
-  { singular: "en lastbil", plural: "lastbiler", kg: 20000, kind: "truck" },
+  { singular: "en SUV", plural: "SUV'er", kg: 2000, kind: "suv" },
+  { singular: "en pickup truck", plural: "pickup trucks", kg: 2500, kind: "pickup" },
+  { singular: "et næsehorn", plural: "næsehorn", kg: 3000, kind: "rhino" },
+  { singular: "en flodhest", plural: "flodheste", kg: 4000, kind: "hippo" },
+  { singular: "en elefant", plural: "elefanter", kg: 5000, kind: "elephant" },
+  { singular: "en spækhugger", plural: "spækhuggere", kg: 7000, kind: "orca" },
+  { singular: "en skolebus", plural: "skolebusser", kg: 9000, kind: "bus" },
+  { singular: "en bybus", plural: "bybusser", kg: 12000, kind: "bus" },
+  { singular: "en skraldebil", plural: "skraldebiler", kg: 15000, kind: "garbage" },
+  { singular: "en lastbil", plural: "lastbiler", kg: 20000, kind: "lorry" },
   { singular: "en pukkelhval", plural: "pukkelhvaler", kg: 30000, kind: "whale" },
-  { singular: "en sættevogn", plural: "sættevogne", kg: 40000, kind: "truck" },
-  { singular: "et jernbanelokomotiv", plural: "jernbanelokomotiver", kg: 60000, kind: "truck" },
+  { singular: "en sættevogn", plural: "sættevogne", kg: 40000, kind: "semi" },
+  { singular: "et jernbanelokomotiv", plural: "jernbanelokomotiver", kg: 60000, kind: "locomotive" },
   { singular: "en blåhval", plural: "blåhvaler", kg: 90000, kind: "whale" },
-  { singular: "en ubåd", plural: "ubåde", kg: 120000, kind: "whale" },
+  { singular: "en ubåd", plural: "ubåde", kg: 120000, kind: "submarine" },
   { singular: "et passagerfly", plural: "passagerfly", kg: 150000, kind: "plane" },
 ];
 
