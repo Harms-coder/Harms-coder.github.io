@@ -171,6 +171,8 @@ add("car",
     poly([(15, 8.2), (22, 8.2), (22, 11.8), (11.5, 11.8)], hole=True),
     poly([(23.6, 8.2), (29.4, 8.2), (34.8, 11.8), (23.6, 11.8)], hole=True))
 
+S["smallcar"] = S["car"]   # samme silhuet som bilen; kun fotoet adskiller dem
+
 add("suv",
     poly([(4, 16), (4, 10.6), (8, 9.8), (12, 4.8), (32, 4.8), (38, 9.8), (44, 10.8), (44, 16)]),
     rect(13, 3.4, 18, 1.2),
