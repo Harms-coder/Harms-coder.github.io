@@ -8,9 +8,8 @@ Sig "vis mig planen" for at få status.
 
 ## Rækkefølge
 
-- [ ] **13 · Host appen over https** — GitHub (privat repo = automatisk sikkerhedskopi) + GitHub Pages,
-      service worker så appen virker offline og opdaterer sig selv. Gør appen uafhængig af Mac'en og
-      låser op for 5. *~30 min + oprettelse af GitHub-konto.*
+- [x] **13 · Host appen over https** — gjort 2026-09-12: https://harms-coder.github.io/ (repo Harms-coder/Harms-coder.github.io). — GitHub (privat repo = automatisk sikkerhedskopi) + GitHub Pages,
+      Service worker så appen virker offline og opdaterer sig selv; hvert push til main udgiver.
 - [ ] **1 · "Som sidst" med ét tryk** — "Sidst: 80 kg × 8" bliver en knap, der udfylder sættet. *~10 min.*
 - [ ] **12 · Fejring ved PR** — glød/konfetti i live-træningen, når et sæt slår rekorden. *~15 min.*
 - [ ] **11 · Milepæle for total løftet** — 100 t, 500 t, 1.000 t … med sammenligningsbillederne
