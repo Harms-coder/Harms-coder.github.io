@@ -25,7 +25,7 @@ const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
   { singular: "en løve", plural: "løver", kg: 190, kind: "lion" },
   { singular: "en tiger", plural: "tigre", kg: 230, kind: "tiger" },
   { singular: "en gorilla", plural: "gorillaer", kg: 300, kind: "gorilla" },
-  { singular: "en isbjørn", plural: "isbjørne", kg: 400, kind: "bear" },
+  { singular: "en bjørn", plural: "bjørne", kg: 400, kind: "bear" },
   { singular: "en hest", plural: "heste", kg: 500, kind: "horse" },
   { singular: "en ko", plural: "køer", kg: 700, kind: "cow" },
   { singular: "en giraf", plural: "giraffer", kg: 800, kind: "giraffe" },
