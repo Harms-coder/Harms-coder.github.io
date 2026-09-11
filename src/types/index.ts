@@ -94,3 +94,11 @@ export interface Goal {
   startValue?: number;
   createdAt: string;
 }
+
+export interface Quote {
+  id: string;
+  text: string;
+  /** Med i rotationen på Oversigt og i kalenderen. */
+  starred: boolean;
+  createdAt: string;
+}

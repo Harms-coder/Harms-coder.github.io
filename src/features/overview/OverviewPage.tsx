@@ -31,7 +31,7 @@ import {
 } from "../../lib/date";
 import { RANGE_KEYS, RANGE_LABELS, getPreviousRangeBounds, getRangeStart, type RangeKey } from "../../lib/dateRange";
 import { computeGoalProgress } from "../../lib/goalProgress";
-import { QUOTES, quoteIndexForToday } from "../../lib/quotes";
+import { dayNumber } from "../../lib/quotes";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import { getWeightComparison } from "../../lib/weightComparisons";
@@ -44,6 +44,7 @@ import type {
   WorkoutSession,
 } from "../../types";
 import { TodayCard } from "./TodayCard";
+import { useRotation } from "../motivation/useRotation";
 
 const TOP_GAINS_SHOWN = 5;
 
@@ -66,12 +67,14 @@ export function OverviewPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [weekSessions, setWeekSessions] = useState<WorkoutSession[]>([]);
   const [weekCardio, setWeekCardio] = useState<CardioEntry[]>([]);
-  // Motivation-boksen starter på dagens citat og bladrer selv videre, mens siden er åben.
-  const [quoteIndex, setQuoteIndex] = useState(quoteIndexForToday);
+  // Motivation-boksen starter på dagens citat og bladrer selv videre i rotationen, mens siden er åben.
+  const { rotation } = useRotation();
+  const [quoteSteps, setQuoteSteps] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setQuoteIndex((i) => (i + 1) % QUOTES.length), 9000);
+    const id = setInterval(() => setQuoteSteps((n) => n + 1), 9000);
     return () => clearInterval(id);
   }, []);
+  const quoteText = rotation.length > 0 ? rotation[(dayNumber() + quoteSteps) % rotation.length].text : "";
   const [allSessions, setAllSessions] = useState<WorkoutSession[]>([]);
 
   async function load() {
@@ -276,7 +279,7 @@ export function OverviewPage() {
         </span>
         <div className="relative flex items-end justify-between gap-3">
           <RollingText
-            text={QUOTES[quoteIndex]}
+            text={quoteText}
             className="min-w-0 flex-1 text-[20px] font-semibold leading-snug text-(--color-text)"
           />
           <div className="flex flex-shrink-0 flex-col items-end gap-1 pb-1">

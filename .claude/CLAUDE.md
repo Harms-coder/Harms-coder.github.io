@@ -21,7 +21,7 @@ There is no test suite / test runner configured.
 
 **Stack:** React 19 + TypeScript + Vite, Tailwind CSS v4 (CSS-based `@theme` config, no `tailwind.config.js`), `react-router-dom`, `idb` (IndexedDB wrapper), `recharts` for charts.
 
-**Data layer (`src/db/`):** One IndexedDB database (`traeningsapp`, versioned schema in `src/db/database.ts`). Each domain entity has its own module (`exercises.ts`, `sessions.ts`, `sets.ts`, `cardio.ts`, `bodyweight.ts`, `routines.ts`, `plannedWorkouts.ts`) exposing typed CRUD functions built on `getDb()`. There is no global store/context — feature pages call these functions directly and refetch after each mutation. Domain types live in `src/types/index.ts`.
+**Data layer (`src/db/`):** One IndexedDB database (`traeningsapp`, versioned schema in `src/db/database.ts`). Each domain entity has its own module (`exercises.ts`, `sessions.ts`, `sets.ts`, `cardio.ts`, `bodyweight.ts`, `routines.ts`, `plannedWorkouts.ts`, `goals.ts`, `quotes.ts`) exposing typed CRUD functions built on `getDb()`. There is no global store/context — feature pages call these functions directly and refetch after each mutation. Domain types live in `src/types/index.ts`.
 
 When adding a store or index, bump `DB_VERSION` and add a new `if (oldVersion < N)` block in the `upgrade()` callback — don't edit the existing version blocks.
 

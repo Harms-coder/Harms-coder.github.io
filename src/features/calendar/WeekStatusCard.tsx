@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { IconCheck, IconDumbbell, IconFlame, IconRun, IconTarget } from "../../components/icons";
 import { DA_WEEKDAYS_SHORT, parseISODate, toISODate } from "../../lib/date";
-import { quoteOfTheDay } from "../../lib/quotes";
+import { useRotation } from "../motivation/useRotation";
 import type { CardioEntry, PlannedWorkout, WorkoutSession } from "../../types";
 
 function MiniStat({
@@ -50,6 +50,7 @@ export function WeekStatusCard({
   streakWeeks,
   weeklyTarget,
 }: WeekStatusCardProps) {
+  const { today } = useRotation();
   const start = parseISODate(weekStart);
   const days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(start);
@@ -138,9 +139,11 @@ export function WeekStatusCard({
         )}
       </div>
 
-      <p className="border-t border-(--color-border) pt-3 text-[13px] italic leading-snug text-(--color-text-secondary)">
-        “{quoteOfTheDay()}” — Vigorra
-      </p>
+      {today && (
+        <p className="border-t border-(--color-border) pt-3 text-[13px] italic leading-snug text-(--color-text-secondary)">
+          “{today.text}” — Vigorra
+        </p>
+      )}
     </div>
   );
 }

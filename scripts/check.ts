@@ -10,7 +10,7 @@ import { getWeekMonthKey, getWeekNumber, getWeekStart } from "../src/lib/date.ts
 import { groupByMonthAndWeek } from "../src/lib/grouping.ts";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/lib/plates.ts";
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
-import { QUOTES, quoteIndexForToday } from "../src/lib/quotes.ts";
+import { DEFAULT_QUOTES, dayNumber, rotationOf } from "../src/lib/quotes.ts";
 import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
 import type { BodyweightEntry, CardioEntry, WorkoutSession } from "../src/types/index.ts";
 
@@ -253,17 +253,24 @@ check("stang skelnes fra håndvægt", () => {
 
 console.log("Citater");
 
-check("alle citater er unikke og ikke tomme", () => {
-  assert.equal(new Set(QUOTES).size, QUOTES.length);
-  assert.ok(QUOTES.every((q) => q.trim().length > 0));
+check("standardcitaterne er unikke og ikke tomme", () => {
+  assert.equal(new Set(DEFAULT_QUOTES).size, DEFAULT_QUOTES.length);
+  assert.ok(DEFAULT_QUOTES.every((q) => q.trim().length > 0));
 });
 
 check("dagens citat skifter ved lokal midnat, ikke midt på dagen", () => {
   const morning = new Date(2026, 8, 11, 6, 0);
   const evening = new Date(2026, 8, 11, 23, 59);
   const nextDay = new Date(2026, 8, 12, 0, 1);
-  assert.equal(quoteIndexForToday(morning), quoteIndexForToday(evening));
-  assert.equal(quoteIndexForToday(nextDay), (quoteIndexForToday(evening) + 1) % QUOTES.length);
+  assert.equal(dayNumber(morning), dayNumber(evening));
+  assert.equal(dayNumber(nextDay), dayNumber(evening) + 1);
+});
+
+check("rotationen er de stjernede — eller alle, hvis ingen er stjernet", () => {
+  const a = { starred: true }, b = { starred: false }, c = { starred: true };
+  assert.deepEqual(rotationOf([a, b, c]), [a, c]);
+  assert.deepEqual(rotationOf([b, { starred: false }]), [b, { starred: false }]);
+  assert.deepEqual(rotationOf([]), []);
 });
 
 console.log(`\n${checks} tjek bestået.`);

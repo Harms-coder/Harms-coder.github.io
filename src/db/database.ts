@@ -5,6 +5,7 @@ import type {
   Exercise,
   Goal,
   PlannedWorkout,
+  Quote,
   Routine,
   SetEntry,
   WorkoutSession,
@@ -49,10 +50,14 @@ interface TraeningsappDB extends DBSchema {
     key: string;
     value: Goal;
   };
+  quotes: {
+    key: string;
+    value: Quote;
+  };
 }
 
 const DB_NAME = "traeningsapp";
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 
@@ -87,6 +92,10 @@ export function getDb() {
 
         if (oldVersion < 3) {
           db.createObjectStore("goals", { keyPath: "id" });
+        }
+
+        if (oldVersion < 4) {
+          db.createObjectStore("quotes", { keyPath: "id" });
         }
       },
     });

@@ -1,5 +1,6 @@
 import { DB_VERSION, getDb } from "./database";
 import { forgetSeedFlags } from "./exerciseSeed";
+import { forgetQuoteSeedFlag } from "./quotes";
 
 /** Alle stores i databasen. En backup skal indeholde dem alle for at være en fuld kopi. */
 const STORES = [
@@ -11,6 +12,7 @@ const STORES = [
   "routines",
   "plannedWorkouts",
   "goals",
+  "quotes",
 ] as const;
 
 type StoreName = (typeof STORES)[number];
@@ -114,6 +116,7 @@ export async function clearAllData(): Promise<void> {
   const db = await getDb();
   const tx = db.transaction(STORES, "readwrite");
   await Promise.all([...STORES.map((store) => tx.objectStore(store).clear()), tx.done]);
-  // Ellers ville appen stå helt uden øvelser: seedingen kører kun én gang nogensinde.
+  // Ellers ville appen stå helt uden øvelser og citater: seedingen kører kun én gang nogensinde.
   forgetSeedFlags();
+  forgetQuoteSeedFlag();
 }

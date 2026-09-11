@@ -1,12 +1,9 @@
 /**
- * Korte motivationslinjer i appens egen stemme — ingen tilskrevet rigtige personer, så der
- * aldrig står et fejlciteret navn i appen.
- *
- * quoteOfTheDay() vælger ud fra datoen, så det samme citat står hele dagen dér, hvor det
- * ikke skal "rulle" (fx kalenderen). Oversigtens boks og Motivation-siden bladrer selv videre
- * fra dagens citat.
+ * Standardcitaterne, der seedes ind i databasen første gang (se db/quotes.ts). I appens egen
+ * stemme — ingen tilskrevet rigtige personer, så der aldrig står et fejlciteret navn i appen.
+ * Brugeren kan slette dem, skrive sine egne og vælge med stjerner, hvilke der roterer.
  */
-export const QUOTES = [
+export const DEFAULT_QUOTES = [
   "Små skridt skaber store resultater.",
   "Konsistens skaber resultater.",
   "Den træning du gennemfører, tæller dobbelt.",
@@ -49,12 +46,13 @@ export const QUOTES = [
   "Stærk er ikke et mål — det er en vane.",
 ];
 
-/** Indeks for dagens citat: dage siden epoch (lokal midnat), så det skifter ved midnat. */
-export function quoteIndexForToday(now = new Date()): number {
-  const localMidnight = new Date(now).setHours(0, 0, 0, 0);
-  return Math.round(localMidnight / 86_400_000) % QUOTES.length;
+/** Dage siden epoch ved lokal midnat — skifter ved midnat, ikke midt på dagen. */
+export function dayNumber(now = new Date()): number {
+  return Math.round(new Date(now).setHours(0, 0, 0, 0) / 86_400_000);
 }
 
-export function quoteOfTheDay(now = new Date()): string {
-  return QUOTES[quoteIndexForToday(now)];
+/** Dem, der roterer: de stjernede — eller alle, hvis ingen er stjernet, så boksen aldrig er tom. */
+export function rotationOf<T extends { starred: boolean }>(quotes: T[]): T[] {
+  const starred = quotes.filter((q) => q.starred);
+  return starred.length > 0 ? starred : quotes;
 }
