@@ -53,13 +53,16 @@ export function IconTrendUp(props: IconProps) {
   );
 }
 
+/* Hver linje er sin egen gruppe, så bundmenuen kan lade dem hoppe én ad gangen. */
 export function IconList(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <path d="M9 6h12M9 12h12M9 18h12" />
-      <circle cx="4" cy="6" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="4" cy="12" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="4" cy="18" r="1.1" fill="currentColor" stroke="none" />
+      {[6, 12, 18].map((y) => (
+        <g key={y}>
+          <path d={`M9 ${y}h12`} />
+          <circle cx="4" cy={y} r="1.1" fill="currentColor" stroke="none" />
+        </g>
+      ))}
     </svg>
   );
 }
@@ -69,6 +72,28 @@ export function IconCalendar(props: IconProps) {
     <svg {...base(props)}>
       <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
       <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </svg>
+  );
+}
+
+/** Kalender med dagens dato på bladet — til bundmenuen, hvor bladet "rives af" ved tryk. */
+export function IconCalendarToday(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+      <text
+        x="12"
+        y="15.6"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="8"
+        fontWeight="700"
+        fill="currentColor"
+        stroke="none"
+      >
+        {new Date().getDate()}
+      </text>
     </svg>
   );
 }
@@ -92,12 +117,14 @@ export function IconScale(props: IconProps) {
   );
 }
 
+/* Tekstlinjerne er hver sin path med pathLength=1, så bundmenuen kan "skrive" dem én ad gangen. */
 export function IconClipboard(props: IconProps) {
   return (
     <svg {...base(props)}>
       <rect x="6" y="4.5" width="12" height="16.5" rx="2" />
       <rect x="9" y="2.5" width="6" height="3.5" rx="1" />
-      <path d="M9 12h6M9 16h6" />
+      <path className="ink" d="M9 12h6" pathLength={1} />
+      <path className="ink" d="M9 16h6" pathLength={1} />
     </svg>
   );
 }

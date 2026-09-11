@@ -4,7 +4,7 @@ import { useRotation } from "../features/motivation/useRotation";
 import { QuoteTicker } from "./QuoteTicker";
 import {
   IconActivity,
-  IconCalendar,
+  IconCalendarToday,
   IconClipboard,
   IconClock,
   IconDumbbell,
@@ -16,7 +16,7 @@ import {
 } from "./icons";
 
 /** Den lille bevægelse ikonet laver, når fanen vælges — keyframes i index.css (.nav-icon-*). */
-type IconAnim = "bounce" | "spin" | "draw" | "rise" | "sweep";
+type IconAnim = "bounce" | "spin" | "draw" | "fly" | "sweep" | "hoplines" | "tear" | "write" | "pop";
 
 interface NavItem {
   to: string;
@@ -31,12 +31,12 @@ const navItems: NavItem[] = [
   { to: "/", label: "Oversigt", Icon: IconHome, color: "var(--color-cat-goal)", anim: "bounce" },
   { to: "/traening", label: "Træning", Icon: IconDumbbell, color: "var(--color-cat-strength)", anim: "spin" },
   { to: "/cardio", label: "Cardio", Icon: IconActivity, color: "var(--color-cat-cardio)", anim: "draw" },
-  { to: "/progression", label: "Progression", Icon: IconTrendUp, color: "var(--color-cat-progress)", anim: "rise" },
-  { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)", anim: "bounce" },
-  { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)", anim: "bounce" },
-  { to: "/kalender", label: "Kalender", Icon: IconCalendar, color: "var(--color-cat-plan)", anim: "bounce" },
+  { to: "/progression", label: "Progression", Icon: IconTrendUp, color: "var(--color-cat-progress)", anim: "fly" },
+  { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)", anim: "pop" },
+  { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)", anim: "hoplines" },
+  { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, color: "var(--color-cat-plan)", anim: "tear" },
   { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)", anim: "bounce" },
-  { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)", anim: "bounce" },
+  { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)", anim: "write" },
   { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)", anim: "sweep" },
 ];
 
@@ -69,7 +69,10 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
               style={{ viewTransitionName: "nav-pill" }}
             />
           )}
-          <item.Icon className={`relative h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`} />
+          {/* Lidt større klip-ramme end ikonet, så et hop får plads, mens fx pilen kan flyve helt ud. */}
+          <span className="relative -m-1 flex h-7 w-7 items-center justify-center overflow-hidden">
+            <item.Icon className={`h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`} />
+          </span>
           <span className="relative whitespace-nowrap">{item.label}</span>
         </>
       )}
