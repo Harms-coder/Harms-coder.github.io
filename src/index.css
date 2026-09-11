@@ -327,7 +327,7 @@ h1 {
 
 /* Kun luft mellem citaterne — også efter det sidste, så -50 % lander præcis dér, hvor kopi to begynder. */
 .ticker-copy > span {
-  margin-right: 4rem;
+  margin-right: 3.2rem;
 }
 
 @keyframes ticker {
