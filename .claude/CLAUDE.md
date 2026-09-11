@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal, mobile-first PWA for logging strength training, cardio, and bodyweight. Local-only (no backend, no auth, no sync) — all data lives in IndexedDB in the browser. UI text is Danish; code (identifiers, comments) is English.
 
+## Plan
+
+`PLAN.md` holds the agreed feature roadmap with checkboxes. When the user asks to see the plan ("vis mig planen"), read it and report what's done and what's next; tick items off (and commit) as they ship.
+
 ## Commands
 
 ```bash
