@@ -14,7 +14,6 @@ import {
 } from "../../components/icons";
 import { ROUTINE_COLORS } from "../../db/routines";
 import { estimateWorkoutMinutes } from "../../lib/estimate";
-import { joinDanish } from "../../lib/format";
 import type { Exercise, Routine } from "../../types";
 
 export interface RoutineStatus {
@@ -108,12 +107,15 @@ export function RoutineCard({
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-start justify-between gap-2">
-        <span className="flex min-w-0 items-center gap-2.5">
+        {/* Større titel med en kort streg i programmets farve under — så navnet fanges først. */}
+        <span className="flex min-w-0 flex-col gap-1.5">
+          <span className="truncate text-[19px] font-semibold leading-tight tracking-(--tracking-display) text-(--color-text)">
+            {routine.name}
+          </span>
           <span
-            className="h-3 w-3 flex-shrink-0 rounded-full"
+            className="h-0.5 w-9 rounded-full"
             style={{ backgroundColor: routine.color ?? "var(--color-cat-plan)" }}
           />
-          <span className="truncate text-[16px] font-bold text-(--color-text)">{routine.name}</span>
         </span>
         <div className="flex flex-shrink-0 items-center gap-1">
           <button
@@ -159,9 +161,17 @@ export function RoutineCard({
       </div>
 
       {exerciseNames.length > 0 && (
-        <span className="text-[13px] leading-snug text-(--color-text-muted)">
-          {joinDanish(exerciseNames)}
-        </span>
+        <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+          {exerciseNames.map((exerciseName) => (
+            <li key={exerciseName} className="flex min-w-0 items-start gap-2 text-[13px] leading-snug text-(--color-text-secondary)">
+              <span
+                className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full opacity-80"
+                style={{ backgroundColor: routine.color ?? "var(--color-cat-plan)" }}
+              />
+              <span>{exerciseName}</span>
+            </li>
+          ))}
+        </ul>
       )}
 
       <Button

@@ -404,6 +404,19 @@ h1 {
   }
 }
 
+/* Vægtens viser: fra nul (helt til venstre) op forbi sin stilling og tilbage. Keyframes manglede — viseren stod stille. */
+@keyframes nav-swing {
+  from {
+    transform: rotate(-110deg);
+  }
+  65% {
+    transform: rotate(10deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 @keyframes nav-draw {
   from {
     stroke-dashoffset: 1;
