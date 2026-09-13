@@ -553,12 +553,9 @@ h1 {
   transition: width 320ms ease-out;
 }
 
-/*
- * Sporet bag baren er den tilhørende "-dim"-farve (fx mint-dim), udledt af barens farve.
- * ponytail: :has() på forælderen frem for en ekstra klasse på hver af de 6 kaldesteder.
- */
+/* Sporet bag baren: ét trin lysere end kortet, så man ser hvor langt der er til 100 %. Ingen var()-afhængighed her — barens farve sidder på barnet. */
 :has(> .cat-bar) {
-  background: color-mix(in srgb, var(--badge-color) 22%, var(--color-surface-2));
+  background: var(--color-surface-3);
 }
 
 /*
