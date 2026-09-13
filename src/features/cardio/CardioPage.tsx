@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { BackButton } from "../../components/BackButton";
 import { useLocation } from "react-router-dom";
 import { ActivityPicker } from "../../components/ActivityPicker";
 import { Button } from "../../components/Button";
@@ -96,6 +97,9 @@ export function CardioPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      {(location.state as { from?: string } | null)?.from === "overview" && (
+        <BackButton className="absolute left-4 top-4 z-10" />
+      )}
       <HeroHeader
         title="Cardio"
         subtitle="Find dit tempo. Kom længere."

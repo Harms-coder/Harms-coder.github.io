@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "../../components/Button";
+import { BackButton } from "../../components/BackButton";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { RollingText } from "../../components/RollingText";
 import { SwipeToDelete } from "../../components/SwipeToDelete";
@@ -69,6 +70,7 @@ export function MotivationPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/dashboard-mountains.jpg" imagePosition="center 70%" />
+      <BackButton />
       <h1 className="text-(--color-text)">Motivation</h1>
 
       <div className="flex flex-col gap-4 rounded-2xl border border-(--color-border-accent) bg-(--color-surface) p-4 card-shadow">

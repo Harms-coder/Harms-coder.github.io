@@ -312,6 +312,7 @@ export function OverviewPage() {
           label="Træninger"
           value={`${sessions.length}`}
           to="/historik"
+          state={{ from: "overview" }}
           icon={IconDumbbell}
           accent="var(--color-cat-strength)"
           delta={sessionsDelta}
@@ -328,6 +329,7 @@ export function OverviewPage() {
           label="Løbeture"
           value={`${cardioEntries.length}`}
           to="/cardio"
+          state={{ from: "overview" }}
           icon={IconRun}
           accent="var(--color-cat-cardio)"
           delta={cardioCountDelta}
@@ -388,6 +390,13 @@ export function OverviewPage() {
             Log din vægt et par gange for at se udviklingen her.
           </p>
         )}
+        <Link
+          to="/kropsvaegt"
+          className="flex items-center gap-1 self-start text-[13px] font-medium text-(--color-cat-body)"
+        >
+          Se kropsvægt
+          <IconChevronRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {allSets.length > 0 && (

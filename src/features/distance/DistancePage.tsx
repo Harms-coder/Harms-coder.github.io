@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { BackButton } from "../../components/BackButton";
 import {
   Bar,
   BarChart,
@@ -52,6 +53,7 @@ export function DistancePage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <BackButton />
       <h1 className="text-(--color-text)">Kilometer løbet</h1>
 
       <SegmentedControl

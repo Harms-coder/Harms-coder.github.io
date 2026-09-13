@@ -16,6 +16,8 @@ interface StatTileProps {
   /** Valgfri stregtegning ved siden af noten, fx en silhuet der matcher sammenligningen. */
   noteIllustration?: ReactNode;
   className?: string;
+  /** Router-state på linket, fx { from: "overview" } så målsiden kan vise en tilbage-knap. */
+  state?: unknown;
 }
 
 export function StatTile({
@@ -28,6 +30,7 @@ export function StatTile({
   note,
   noteIllustration,
   className = "",
+  state,
 }: StatTileProps) {
   const isPositive = (delta ?? 0) >= 0;
 
@@ -86,7 +89,7 @@ export function StatTile({
   }
 
   return (
-    <Link to={to} className={`${sharedClassName} active:opacity-70`}>
+    <Link to={to} state={state} className={`${sharedClassName} active:opacity-70`}>
       {content}
     </Link>
   );

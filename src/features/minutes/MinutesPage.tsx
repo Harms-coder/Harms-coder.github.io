@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { BackButton } from "../../components/BackButton";
 import {
   Bar,
   BarChart,
@@ -47,6 +48,7 @@ export function MinutesPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
+      <BackButton />
       <h1 className="text-(--color-text)">Træningsminutter</h1>
 
       {chartData.length === 0 ? (

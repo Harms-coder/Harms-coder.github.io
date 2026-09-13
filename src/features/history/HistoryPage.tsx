@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { BackButton } from "../../components/BackButton";
+import { useLocation } from "react-router-dom";
 import {
   IconChevronDown,
   IconClipboard,
@@ -136,6 +138,7 @@ export function HistoryPage() {
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [range, setRange] = useState<RangeKey>(DEFAULT_RANGE);
+  const fromOverview = (useLocation().state as { from?: string } | null)?.from === "overview";
   const [collapsedMonths, setCollapsedMonths] = useState<Set<string>>(new Set());
   const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set());
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
@@ -330,6 +333,7 @@ export function HistoryPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <PageBackdrop image="/images/historik-valley.jpg" imagePosition="center 70%" />
+      {fromOverview && <BackButton />}
       <div className="flex flex-col gap-1">
         <h1 className="text-(--color-text)">Historik</h1>
         <p className="text-[13px] text-(--color-text-secondary)">
