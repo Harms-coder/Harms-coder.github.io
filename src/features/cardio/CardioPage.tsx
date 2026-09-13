@@ -98,7 +98,7 @@ export function CardioPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       {(location.state as { from?: string } | null)?.from === "overview" && (
-        <BackButton className="absolute left-4 top-4 z-10" />
+        <BackButton className="absolute left-4 top-16 z-10" />
       )}
       <HeroHeader
         title="Cardio"
