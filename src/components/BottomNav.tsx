@@ -54,7 +54,7 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
       /* Ét aktivt punkt i guld — fanerne kendes på ikon og label, ikke på hver sin farve. */
       style={{ "--badge-color": "var(--color-gold-300)" } as CSSProperties}
       className={({ isActive: routeActive }) =>
-        `relative flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
+        `relative z-10 flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
           routeActive || alsoActive ? "cat-glow" : "text-(--color-text-dim) active:text-(--color-text)"
         }`
       }
@@ -63,16 +63,11 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
         const isActive = routeActive || alsoActive;
         return (
         <>
-          {/* Pillen er sit eget element, så det kun er den — ikke ikon og tekst — der glider med. */}
-          {isActive && (
-            <span
-              aria-hidden="true"
-              className="cat-badge absolute inset-0 rounded-xl border"
-              style={{ viewTransitionName: "nav-pill" }}
-            />
-          )}
           {/* Lidt større klip-ramme end ikonet, så et hop får plads, mens fx pilen kan flyve helt ud. */}
-          <span className="relative -m-1 flex h-7 w-7 items-center justify-center overflow-hidden">
+          <span
+            data-nav-active={isActive || undefined}
+            className="relative -m-1 flex h-7 w-7 items-center justify-center overflow-hidden"
+          >
             <item.Icon className={`h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`} />
           </span>
           <span className="relative whitespace-nowrap">{item.label}</span>
@@ -91,46 +86,59 @@ interface Thumb {
   left: number;
 }
 
-/**
- * Navigerer inde i en View Transition, så browseren selv animerer den aktive pille (den eneste
- * med view-transition-name) fra den gamle fane til den nye. React Router v7 pakker navigationen i
- * React.startTransition, så DOM'en er IKKE opdateret, når navigate() returnerer — derfor venter
- * callbacket på et promise, der først opfyldes når den nye rute er committet (layout-effekten
- * herunder). Uden det tager Safari "efter"-billedet for tidligt og opgiver transitionen.
- * React Routers egen viewTransition-prop virker kun med data-routers, ikke <BrowserRouter>.
- */
-function useNavigateWithTransition() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const committedRef = useRef<(() => void) | null>(null);
-
-  useLayoutEffect(() => {
-    committedRef.current?.();
-    committedRef.current = null;
-  }, [location]);
-
-  return (to: string) => {
-    if (to === location.pathname || !document.startViewTransition) {
-      navigate(to);
-      return;
-    }
-    document.startViewTransition(
-      () =>
-        new Promise<void>((resolve) => {
-          committedRef.current = resolve;
-          // ponytail: sikkerhedsnet — hænger React (fx en langsom lazy-side), fryser siden ikke.
-          setTimeout(resolve, 500);
-          navigate(to);
-        }),
-    );
-  };
+/** Pillens placering i menu-rækken (px), målt på det aktive punkt. */
+interface Pill {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 }
 
 export function BottomNav() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<Thumb>({ width: 0, left: 0 });
-  const select = useNavigateWithTransition();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { rotation } = useRotation();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<Pill | null>(null);
+  // Pillen glider kun ved sideskift; når menuen rulles, følger den med uden forsinkelse.
+  const [pillSlides, setPillSlides] = useState(false);
+
+  /*
+   * Den aktive pille er ét element i menu-rækken, der glider hen til det valgte punkt (målt med
+   * getBoundingClientRect, så scroll er regnet med). Det afløser en View Transition, som fik
+   * telefonen til at tage et billede af hele siden ved hvert skift — det hakkede, og rulleteksten frøs.
+   * Ligger punktet i den rullende del, klippes pillen til den synlige del, så den ikke lægger sig
+   * ind over den fastgjorte Oversigt-fane.
+   */
+  const measurePill = (slide: boolean) => {
+    const row = rowRef.current;
+    const scroller = scrollerRef.current;
+    const link = row?.querySelector<HTMLElement>("[data-nav-active]")?.closest("a");
+    if (!row || !scroller || !link) return;
+    const rowRect = row.getBoundingClientRect();
+    const rect = link.getBoundingClientRect();
+    let left = rect.left;
+    let right = rect.right;
+    if (scroller.contains(link)) {
+      const s = scroller.getBoundingClientRect();
+      left = Math.max(left, s.left);
+      right = Math.min(right, s.right);
+    }
+    setPillSlides(slide);
+    setPill({
+      left: left - rowRect.left,
+      top: rect.top - rowRect.top,
+      width: Math.max(0, right - left),
+      height: rect.height,
+    });
+  };
+
+  useLayoutEffect(() => {
+    measurePill(pill !== null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   /*
    * Menuen kan scrolles vandret, men den indbyggede scrollbar er skjult (.no-scrollbar),
@@ -163,12 +171,16 @@ export function BottomNav() {
       frame = requestAnimationFrame(() => {
         frame = 0;
         update();
+        measurePill(false);
       });
     };
 
     update();
     el.addEventListener("scroll", onScroll, { passive: true });
-    const observer = new ResizeObserver(update);
+    const observer = new ResizeObserver(() => {
+      update();
+      measurePill(false);
+    });
     observer.observe(el);
     return () => {
       if (frame) cancelAnimationFrame(frame);
@@ -186,9 +198,25 @@ export function BottomNav() {
        */
       style={{ paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 1rem))" }}
     >
-      <div className="flex items-stretch pt-2 pl-2">
+      <div ref={rowRef} className="relative flex items-stretch pt-2 pl-2">
+        {pill && (
+          <span
+            aria-hidden="true"
+            className={`cat-badge absolute left-0 top-0 rounded-xl border ${
+              pillSlides ? "transition-[transform,width] duration-[350ms] ease-[cubic-bezier(0.2,0.9,0.25,1.05)]" : ""
+            }`}
+            style={
+              {
+                "--badge-color": "var(--color-gold-300)",
+                width: pill.width,
+                height: pill.height,
+                transform: `translate(${pill.left}px, ${pill.top}px)`,
+              } as CSSProperties
+            }
+          />
+        )}
         {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}
-        <NavItemLink item={homeItem} onSelect={select} />
+        <NavItemLink item={homeItem} onSelect={navigate} />
         <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
         <div
           ref={scrollerRef}
@@ -197,7 +225,7 @@ export function BottomNav() {
           {scrollableItems.map((item, i) => (
             <div key={item.to} className="flex items-center gap-1">
               {i > 0 && <span className="h-6 w-px flex-shrink-0 bg-(--color-border)" />}
-              <NavItemLink item={item} onSelect={select} />
+              <NavItemLink item={item} onSelect={navigate} />
             </div>
           ))}
         </div>

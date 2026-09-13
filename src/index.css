@@ -220,22 +220,6 @@ h1 {
 }
 
 /*
- * Bundmenu: den aktive pille glider fra den gamle fane til den nye. NavLink'ene navigerer med
- * viewTransition, og kun den aktive har view-transition-name: nav-pill, så browseren animerer
- * pillens position og størrelse selv. Selve siden skal ikke crossfade — den skifter med det samme.
- */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-group(nav-pill) {
-  animation-duration: 350ms;
-  animation-timing-function: cubic-bezier(0.2, 0.9, 0.25, 1.05);
-}
-
-/*
  * Det aktive ikon "aktiverer sig" én gang, når fanen vælges. Klassen sættes kun på den aktive fane.
  * Bevidst uden prefers-reduced-motion: brugeren har bedt om bevægelserne, og appen er hans egen.
  */
