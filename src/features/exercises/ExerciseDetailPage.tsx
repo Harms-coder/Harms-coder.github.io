@@ -114,7 +114,7 @@ export function ExerciseDetailPage() {
           placeholder="fx Primært target bryst og triceps"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-cat-library)"
+          className="resize-none rounded-xl border border-transparent bg-(--color-surface-2) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-accent)"
         />
       </label>
 

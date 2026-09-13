@@ -13,7 +13,7 @@ export function TextField({ label, className = "", ...props }: TextFieldProps) {
         </span>
       )}
       <input
-        className={`min-h-11 rounded-xl border border-(--color-border) bg-(--color-surface) px-3.5 text-base text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-accent) ${className}`}
+        className={`min-h-11 rounded-xl border border-transparent bg-(--color-surface-2) px-3.5 text-base text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-accent) ${className}`}
         {...props}
       />
     </label>

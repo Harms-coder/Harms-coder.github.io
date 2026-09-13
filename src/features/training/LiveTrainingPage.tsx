@@ -337,7 +337,7 @@ export function LiveTrainingPage() {
               placeholder="fx Følte mig stærk, skulderen strammede lidt"
               onChange={(e) => setNotes(e.target.value)}
               onBlur={() => session && void updateSessionNotes(session.id, notes)}
-              className="resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-cat-strength)"
+              className="resize-none rounded-xl border border-transparent bg-(--color-surface-2) px-3.5 py-2.5 text-[15px] leading-snug text-(--color-text) outline-none placeholder:text-(--color-text-muted) focus:border-(--color-accent)"
             />
           </label>
 

@@ -235,7 +235,7 @@ export function DayDetails({
                 type="date"
                 value={moveTo}
                 onChange={(e) => setMoveTo(e.target.value)}
-                className="min-h-9 rounded-lg border border-(--color-border) bg-(--color-surface) px-2.5 text-[14px] text-(--color-text) outline-none"
+                className="min-h-9 rounded-lg border border-transparent bg-(--color-surface-2) px-2.5 text-[14px] text-(--color-text) outline-none"
               />
               <Button
                 size="sm"

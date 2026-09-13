@@ -86,7 +86,7 @@ export function SetInputForm({
             inputMode="decimal"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="min-h-11 min-w-0 flex-1 rounded-xl border border-(--color-border) bg-(--color-surface) px-2 text-center text-[17px] font-semibold text-(--color-text) outline-none focus:border-(--color-cat-strength)"
+            className="min-h-11 min-w-0 flex-1 rounded-xl border border-transparent bg-(--color-surface-2) px-2 text-center text-[17px] font-semibold text-(--color-text) outline-none focus:border-(--color-accent)"
           />
           {WEIGHT_DELTAS_UP.map((delta) => (
             <button
@@ -123,7 +123,7 @@ export function SetInputForm({
             inputMode="numeric"
             value={reps}
             onChange={(e) => setReps(e.target.value)}
-            className="min-h-11 w-16 rounded-xl border border-(--color-border) bg-(--color-surface) px-2 text-center text-[17px] font-semibold text-(--color-text) outline-none focus:border-(--color-cat-strength)"
+            className="min-h-11 w-16 rounded-xl border border-transparent bg-(--color-surface-2) px-2 text-center text-[17px] font-semibold text-(--color-text) outline-none focus:border-(--color-accent)"
           />
           <div className="flex flex-1 flex-wrap gap-2">
             {REP_PRESETS.map((preset) => (
@@ -144,7 +144,7 @@ export function SetInputForm({
         </div>
       </div>
 
-      <Button onClick={handleSave}>Gem sæt</Button>
+      <Button onClick={handleSave} tone="progress">Gem sæt</Button>
     </div>
   );
 }
