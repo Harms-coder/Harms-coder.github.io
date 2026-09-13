@@ -540,7 +540,7 @@ h1 {
       color-mix(in srgb, var(--badge-color) 26%, transparent)
     ),
     linear-gradient(rgb(18 31 29 / 0.5), rgb(18 31 29 / 0.5)),
-    var(--leaf-veins) center / 300% auto no-repeat;
+    var(--leaf-veins) var(--leaf-pos, 50% 50%) / 300% auto no-repeat;
   border-color: color-mix(in srgb, var(--badge-color) 48%, transparent) !important;
   box-shadow:
     0 0 14px color-mix(in srgb, var(--badge-color) 22%, transparent),
@@ -691,13 +691,12 @@ input {
 /*
  * ===== Bladmønster =====
  * Det gentagende naturmotiv: bladets årer (leaf-veins) i guldknapperne, og et fint blad-mesh
- * (leaf-mesh, en sømløs spejl-flise af brugerens makrofoto) bag hele appen og bag bundmenuen.
- * Fliseudsnittet styres med --leaf-tile: mindre tal = finere mønster.
+ * (leaf-mesh, brugerens makrofoto i ét stykke) bag hele appen og bag bundmenuen.
+ *
  */
 :root {
   --leaf-mesh: url("./assets/leaf-mesh.jpg");
   --leaf-veins: url("./assets/leaf-veins.jpg");
-  --leaf-tile: 210px;
 }
 
 /* Baggrund bag hele appen: sløret, kun årerne lyser svagt igennem det mørke. */
@@ -705,7 +704,8 @@ input {
   content: "";
   position: absolute;
   inset: -12px;
-  background: var(--leaf-mesh) center top / var(--leaf-tile) auto repeat;
+  /* Ét stort foto, ikke fliser: skaleres til at dække skærmen. */
+  background: var(--leaf-mesh) center / cover no-repeat;
   opacity: 0.3;
   filter: blur(0.4px) contrast(1.8) brightness(1.3) saturate(0.7);
   mix-blend-mode: screen;
@@ -724,5 +724,5 @@ input {
 nav.fixed {
   background:
     linear-gradient(180deg, rgb(10 21 22 / 0.86), rgb(10 21 22 / 0.94)),
-    var(--leaf-mesh) center top / var(--leaf-tile) auto repeat;
+    var(--leaf-mesh) center / cover no-repeat;
 }

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import { seedDefaultExercisesIfNeeded } from './db/exerciseSeed'
 import { seedDefaultQuotesIfNeeded } from './db/quotes'
+import { startLeafBadges } from './lib/leafBadges'
 import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 
@@ -14,7 +15,9 @@ async function bootstrap() {
   await seedDefaultExercisesIfNeeded()
   await seedDefaultQuotesIfNeeded()
 
-  createRoot(document.getElementById('root')!).render(
+  const root = document.getElementById('root')!
+  startLeafBadges(root)
+  createRoot(root).render(
     <StrictMode>
       <BrowserRouter>
         <App />
