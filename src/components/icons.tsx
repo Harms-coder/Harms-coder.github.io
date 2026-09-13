@@ -491,27 +491,11 @@ export function IconMore(props: IconProps) {
  * hoved og tilspidsede fartstriber. Tegnet efter en reference brugeren valgte.
  * Farven kommer fra currentColor, så den følger den kategori den vises i.
  */
-/** Fed løber-silhuet efter brugerens reference: kraftige lemmer, fremadlænet, fartstriber der spidser bagud. */
+/** Løberen er SPORET direkte fra brugerens reference-billede (cv2-kontur → path), ikke tegnet i hånden. */
 export function IconRun(props: IconProps) {
   return (
     <svg {...base(props)} fill="currentColor" stroke="none">
-      <circle cx="17.9" cy="4.5" r="2.35" />
-      <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.7}>
-        {/* Krop */}
-        <path d="M16.1 8.2 11.9 13.2" />
-        {/* Forreste arm: bøjet, hånden frem */}
-        <path d="M15.4 8.9 18.6 10.7 21.3 9" strokeWidth={2.4} />
-        {/* Bagerste arm: bøjet bagud-op */}
-        <path d="M14.8 8.6 11.6 6.6 9.6 8.6" strokeWidth={2.4} />
-        {/* Forreste ben: knæ frem, fod ned */}
-        <path d="M11.9 13.2 16.9 15.5 16.3 20.6" />
-        {/* Bagerste ben: sparket bagud */}
-        <path d="M11.9 13.2 8.1 16.2 3.9 19.7" />
-      </g>
-      {/* Fartstriber: tykke ved kroppen, spidse bagud. */}
-      <path d="M1 9.4 10 8.9 10 10.1Z" />
-      <path d="M1 11.9 8.6 11.4 8.6 12.6Z" />
-      <path d="M1 14.4 7 13.9 7 15.1Z" />
+      <path d="M8.62 14.08 L8.43 13.71 L7.97 13.71 L7.88 13.81 L0 13.99 L7.23 14.18 L7.32 14.27 L8.43 14.27Z M10.1 11.86 L10.01 11.4 L1.3 11.68Z M12.05 9.73 L12.05 9.54 L11.86 9.36 L3.06 9.64 L8.53 9.73 L8.62 9.82 L11.21 9.82 L11.31 9.92 L11.86 9.92Z M23.81 11.12 L23.35 10.75 L20.2 10.84 L20.02 10.66 L19.55 8.9 L19.09 8.8 L19.09 8.06 L18.81 7.41 L15.2 3.52 L14.64 3.24 L14.08 3.34 L11.31 5.37 L10.75 6.02 L10.75 6.67 L11.12 7.14 L11.86 7.23 L13.99 5.65 L14.55 5.56 L16.22 7.32 L16.22 7.88 L12.97 12.23 L12.79 12.6 L12.79 13.44 L12.32 13.53 L12.23 13.16 L9.27 16.12 L5.19 19.55 L5 20.02 L5.19 20.66 L5.84 21.03 L6.49 20.85 L10.01 17.79 L10.56 17.42 L13.16 14.83 L13.25 14.36 L13.81 14.36 L15.94 15.29 L15.94 15.75 L13.9 16.86 L13.71 16.86 L13.34 17.24 L13.25 18.07 L13.53 18.44 L13.9 18.63 L14.36 18.63 L14.55 18.44 L14.73 18.44 L15.47 17.98 L15.66 17.98 L16.4 17.51 L16.59 17.51 L17.14 17.14 L17.33 17.14 L18.07 16.68 L19.18 16.22 L19.55 15.85 L19.55 15.1 L19.37 14.73 L18.44 14.27 L16.4 13.53 L16.03 13.25 L16.03 12.88 L17.79 10.56 L18.25 10.66 L18.53 12.05 L18.9 12.51 L19.27 12.69 L23.35 12.51 L23.91 12.05 L24 11.49Z M19.64 2.97 L19.09 3.15 L18.44 3.71 L18.16 4.26 L18.07 5.19 L18.35 5.93 L18.72 6.39 L19.64 6.86 L20.39 6.86 L20.94 6.67 L21.68 6.02 L21.96 5.37 L21.96 4.36 L21.68 3.8 L21.13 3.24 L20.48 2.97Z" />
     </svg>
   );
 }
