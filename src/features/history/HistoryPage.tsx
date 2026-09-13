@@ -217,16 +217,22 @@ export function HistoryPage() {
     );
   }
 
+  /*
+   * Listen nedenfor viser ALTID hele historikken (kun type og søgning filtrerer), så man kan rulle
+   * tilbage. Perioden (uge/måned/…) styrer kun statistik-rækken — se rangeItems.
+   */
   const filteredItems = useMemo(
     () =>
       allItems.filter(
-        (item) =>
-          item.date >= rangeStart &&
-          (typeFilter === "all" || item.kind === typeFilter) &&
-          matchesQuery(item),
+        (item) => (typeFilter === "all" || item.kind === typeFilter) && matchesQuery(item),
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [allItems, rangeStart, typeFilter, trimmedQuery, exerciseById],
+    [allItems, typeFilter, trimmedQuery, exerciseById],
+  );
+
+  const rangeItems = useMemo(
+    () => filteredItems.filter((item) => item.date >= rangeStart),
+    [filteredItems, rangeStart],
   );
 
   const months = useMemo<MonthGroup[]>(() => {
@@ -263,14 +269,14 @@ export function HistoryPage() {
   }, [filteredItems]);
 
   const summary = useMemo(() => {
-    const totalMin = filteredItems.reduce((sum, i) => sum + (i.durationMin ?? 0), 0);
-    const totalSets = filteredItems.reduce(
+    const totalMin = rangeItems.reduce((sum, i) => sum + (i.durationMin ?? 0), 0);
+    const totalSets = rangeItems.reduce(
       (sum, i) => sum + (i.kind === "strength" ? i.sets.length : 0),
       0,
     );
     const totalKm =
       Math.round(
-        filteredItems.reduce((sum, i) => sum + (i.kind === "cardio" ? i.distanceKm : 0), 0) * 10,
+        rangeItems.reduce((sum, i) => sum + (i.kind === "cardio" ? i.distanceKm : 0), 0) * 10,
       ) / 10;
     let deltaPercent: number | undefined;
     if (range !== "always") {
@@ -282,11 +288,11 @@ export function HistoryPage() {
           (typeFilter === "all" || item.kind === typeFilter),
       ).length;
       if (previousCount > 0) {
-        deltaPercent = Math.round(((filteredItems.length - previousCount) / previousCount) * 100);
+        deltaPercent = Math.round(((rangeItems.length - previousCount) / previousCount) * 100);
       }
     }
-    return { count: filteredItems.length, totalMin, totalSets, totalKm, deltaPercent };
-  }, [filteredItems, allItems, range, typeFilter]);
+    return { count: rangeItems.length, totalMin, totalSets, totalKm, deltaPercent };
+  }, [rangeItems, allItems, range, typeFilter]);
 
   function toggleMonth(key: string) {
     setCollapsedMonths((current) => {

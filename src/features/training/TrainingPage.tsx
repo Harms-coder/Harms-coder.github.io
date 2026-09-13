@@ -285,7 +285,7 @@ export function TrainingPage() {
         to="/traening/live"
         className="flex items-center justify-center gap-1 rounded-2xl border border-(--color-border-accent) bg-(--color-surface-2) px-4 py-3 text-center text-[14px] font-medium text-(--color-cat-strength) active:opacity-80"
       >
-        Skift til live-tilstand
+        Dagens planlagte træning
         <IconChevronRight className="h-3.5 w-3.5" />
       </Link>
 
