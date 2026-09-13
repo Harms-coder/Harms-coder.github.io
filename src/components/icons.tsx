@@ -491,28 +491,27 @@ export function IconMore(props: IconProps) {
  * hoved og tilspidsede fartstriber. Tegnet efter en reference brugeren valgte.
  * Farven kommer fra currentColor, så den følger den kategori den vises i.
  */
+/** Fed løber-silhuet efter brugerens reference: kraftige lemmer, fremadlænet, fartstriber der spidser bagud. */
 export function IconRun(props: IconProps) {
   return (
     <svg {...base(props)} fill="currentColor" stroke="none">
-      <circle cx="19" cy="6.05" r="2.05" />
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="miter"
-        strokeMiterlimit={3}
-        strokeWidth={2.15}
-      >
-        <path d="M17.4 8.2 12.7 12.9" />
-        <path d="M15.6 8.4 13.85 4.7 10.6 7.55" strokeWidth={2} />
-        <path d="M18.4 9.2 18.75 11.15 22.05 11.85" strokeWidth={2} />
-        <path d="M12.7 12.9 18.2 15.3 12.8 17.65" />
-        <path d="M12.55 13.15 5.6 19.2" />
+      <circle cx="17.9" cy="4.5" r="2.35" />
+      <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.7}>
+        {/* Krop */}
+        <path d="M16.1 8.2 11.9 13.2" />
+        {/* Forreste arm: bøjet, hånden frem */}
+        <path d="M15.4 8.9 18.6 10.7 21.3 9" strokeWidth={2.4} />
+        {/* Bagerste arm: bøjet bagud-op */}
+        <path d="M14.8 8.6 11.6 6.6 9.6 8.6" strokeWidth={2.4} />
+        {/* Forreste ben: knæ frem, fod ned */}
+        <path d="M11.9 13.2 16.9 15.5 16.3 20.6" />
+        {/* Bagerste ben: sparket bagud */}
+        <path d="M11.9 13.2 8.1 16.2 3.9 19.7" />
       </g>
       {/* Fartstriber: tykke ved kroppen, spidse bagud. */}
-      <path d="M2.1 9.95 11.2 9.5 11.2 10.4Z" />
-      <path d="M1.5 11.85 9.7 11.4 9.7 12.3Z" />
-      <path d="M1.5 13.75 8.2 13.3 8.2 14.2Z" />
+      <path d="M1 9.4 10 8.9 10 10.1Z" />
+      <path d="M1 11.9 8.6 11.4 8.6 12.6Z" />
+      <path d="M1 14.4 7 13.9 7 15.1Z" />
     </svg>
   );
 }
