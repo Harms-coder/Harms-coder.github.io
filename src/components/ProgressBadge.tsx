@@ -22,7 +22,7 @@ const BADGE_COLORS: Record<BadgeKind, string> = {
 };
 
 const className =
-  "flex min-h-9 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-[12.5px] font-medium text-(--color-text)";
+  "flex min-h-9 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3.5 text-[12.5px] font-medium text-(--color-text)";
 
 export function ProgressBadge({ badge }: { badge: Badge }) {
   const Icon = ICONS[badge.kind];

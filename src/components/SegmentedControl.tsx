@@ -57,12 +57,12 @@ export function SegmentedControl<T extends string>({
   const height = size === "sm" ? "min-h-8" : "min-h-9";
   const containerClass =
     layout === "wrap"
-      ? `glass-fill relative flex gap-1 rounded-full ${size === "sm" ? "p-0.5" : "p-1"}`
+      ? `glass-fill relative flex gap-1 rounded-2xl ${size === "sm" ? "p-0.5" : "p-1"}`
       : "no-scrollbar glow-scroller glow-scroller-x relative flex gap-2 overflow-x-auto";
   const buttonClass =
     layout === "wrap"
-      ? `${height} flex-1 whitespace-nowrap rounded-full px-1 text-[12px] font-medium`
-      : `${height} flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium`;
+      ? `${height} flex-1 whitespace-nowrap rounded-xl px-1 text-[12px] font-medium`
+      : `${height} flex-shrink-0 rounded-xl px-3.5 text-[13px] font-medium`;
   const inactiveClass = layout === "wrap" ? "bg-transparent" : "glass-fill";
 
   return (
@@ -74,7 +74,7 @@ export function SegmentedControl<T extends string>({
       {pill && (
         <span
           aria-hidden="true"
-          className="cat-fill absolute left-0 top-0 rounded-full transition-[transform,width] duration-300 ease-[cubic-bezier(0.2,0.9,0.25,1.05)]"
+          className="cat-fill absolute left-0 top-0 rounded-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.2,0.9,0.25,1.05)]"
           style={{
             width: pill.width,
             height: pill.height,
