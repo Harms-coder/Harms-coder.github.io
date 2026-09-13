@@ -704,9 +704,9 @@ input {
   content: "";
   position: absolute;
   inset: -12px;
-  /* Ét stort foto, ikke fliser: skaleres til at dække skærmen. */
+  /* Fotoet på højkant og spejlet én gang nedad, så det dækker en telefonskærm zoomet langt ud, uden fliser. */
   background: var(--leaf-mesh) center / cover no-repeat;
-  opacity: 0.3;
+  opacity: 0.2;
   filter: blur(0.4px) contrast(1.8) brightness(1.3) saturate(0.7);
   mix-blend-mode: screen;
 }
