@@ -199,7 +199,6 @@ export function ProgressionPage() {
           options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
           value={gainsRange}
           onChange={setGainsRange}
-          layout="scroll"
         />
 
         {strengthGains.length > 0 ? (
@@ -227,7 +226,6 @@ export function ProgressionPage() {
           options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
           value={balanceRange}
           onChange={setBalanceRange}
-          layout="scroll"
         />
 
         {muscleBalance.length > 0 ? (
@@ -306,7 +304,6 @@ export function ProgressionPage() {
             options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
             value={chartsRange}
             onChange={setChartsRange}
-            layout="scroll"
           />
 
           {filteredDailyStats.length === 0 ? (

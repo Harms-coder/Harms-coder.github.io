@@ -362,7 +362,6 @@ export function HistoryPage() {
         options={RANGE_KEYS.map((key) => ({ value: key, label: RANGE_LABELS[key] }))}
         value={range}
         onChange={setRange}
-        layout="scroll"
         tone="history"
       />
 

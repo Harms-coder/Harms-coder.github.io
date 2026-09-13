@@ -9,9 +9,7 @@ import {
   IconClock,
   IconDumbbell,
   IconHome,
-  IconList,
-  IconScale,
-  IconTarget,
+  IconMore,
   IconTrendUp,
 } from "./icons";
 
@@ -23,6 +21,8 @@ interface NavItem {
   label: string;
   Icon: ComponentType<{ className?: string }>;
   anim: IconAnim;
+  /** Andre ruter, der også tæller som "denne fane" (Mere samler flere sider). */
+  also?: string[];
 }
 
 const navItems: NavItem[] = [
@@ -30,15 +30,16 @@ const navItems: NavItem[] = [
   { to: "/traening", label: "Træning", Icon: IconDumbbell, anim: "spin" },
   { to: "/cardio", label: "Cardio", Icon: IconActivity, anim: "draw" },
   { to: "/progression", label: "Progression", Icon: IconTrendUp, anim: "fly" },
-  { to: "/mal", label: "Mål", Icon: IconTarget, anim: "pop" },
-  { to: "/oevelser", label: "Øvelser", Icon: IconList, anim: "hoplines" },
   { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, anim: "tear" },
-  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, anim: "swing" },
   { to: "/plan", label: "Programmer", Icon: IconClipboard, anim: "write" },
   { to: "/historik", label: "Historik", Icon: IconClock, anim: "sweep" },
+  { to: "/mere", label: "Mere", Icon: IconMore, anim: "pop", also: ["/mal", "/oevelser", "/kropsvaegt"] },
 ];
 
 function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string) => void }) {
+  const { pathname } = useLocation();
+  const alsoActive = item.also?.some((p) => pathname.startsWith(p)) ?? false;
+
   function onClick(e: MouseEvent<HTMLAnchorElement>) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
@@ -52,13 +53,15 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
       onClick={onClick}
       /* Ét aktivt punkt i guld — fanerne kendes på ikon og label, ikke på hver sin farve. */
       style={{ "--badge-color": "var(--color-gold-300)" } as CSSProperties}
-      className={({ isActive }) =>
+      className={({ isActive: routeActive }) =>
         `relative flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
-          isActive ? "cat-glow" : "text-(--color-text-dim) active:text-(--color-text)"
+          routeActive || alsoActive ? "cat-glow" : "text-(--color-text-dim) active:text-(--color-text)"
         }`
       }
     >
-      {({ isActive }) => (
+      {({ isActive: routeActive }) => {
+        const isActive = routeActive || alsoActive;
+        return (
         <>
           {/* Pillen er sit eget element, så det kun er den — ikke ikon og tekst — der glider med. */}
           {isActive && (
@@ -74,7 +77,8 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
           </span>
           <span className="relative whitespace-nowrap">{item.label}</span>
         </>
-      )}
+        );
+      }}
     </NavLink>
   );
 }

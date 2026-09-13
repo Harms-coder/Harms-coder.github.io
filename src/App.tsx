@@ -4,6 +4,7 @@ import { BottomNav } from "./components/BottomNav";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { BackupPage } from "./features/data/BackupPage";
+import { MorePage } from "./features/more/MorePage";
 import { DemoSeedPage } from "./features/demo/DemoSeedPage";
 import { ExerciseDetailPage } from "./features/exercises/ExerciseDetailPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
@@ -96,6 +97,7 @@ function App() {
             </LazyPage>
           }
         />
+        <Route path="/mere" element={<MorePage />} />
         <Route path="/backup" element={<BackupPage />} />
         <Route path="/demo" element={<DemoSeedPage />} />
       </Routes>
