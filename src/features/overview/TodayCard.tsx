@@ -4,6 +4,7 @@ import { Button } from "../../components/Button";
 import { IconChevronRight, IconClock } from "../../components/icons";
 import { listExercises } from "../../db/exercises";
 import { getPlannedWorkoutForDate, listPlannedWorkoutsInRange } from "../../db/plannedWorkouts";
+import { listRoutines } from "../../db/routines";
 import { getActiveSession, listSessionsInRange, startSession } from "../../db/sessions";
 import { formatMediumDate, parseISODate, toISODate, todayISODate } from "../../lib/date";
 import type { PlannedWorkout, WorkoutSession } from "../../types";
@@ -16,7 +17,7 @@ type TodayState =
   | { kind: "activeSession"; session: WorkoutSession }
   | { kind: "completedToday" }
   | { kind: "plan"; exerciseNames: string[] }
-  | { kind: "noPlan"; nextPlanDate?: string };
+  | { kind: "noPlan"; nextPlanDate?: string; nextPlanName?: string };
 
 export function TodayCard() {
   const navigate = useNavigate();
@@ -54,7 +55,15 @@ export function TodayCard() {
     const next = upcoming
       .filter((p: PlannedWorkout) => p.date > today)
       .sort((a, b) => a.date.localeCompare(b.date))[0];
-    setState({ kind: "noPlan", nextPlanDate: next?.date });
+    const routineName = next?.routineId
+      ? (await listRoutines()).find((r) => r.id === next.routineId)?.name
+      : undefined;
+    setState({
+      kind: "noPlan",
+      nextPlanDate: next?.date,
+      // Uden program: "3 øvelser", så man stadig ved hvad passet er.
+      nextPlanName: routineName ?? (next ? `${next.exerciseIds.length} øvelser` : undefined),
+    });
   }
 
   useEffect(() => {
@@ -129,14 +138,16 @@ export function TodayCard() {
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-      <span className="text-[13px] font-medium text-(--color-text-muted)">
-        {state.nextPlanDate ? "Næste pas" : "Ingen plan for i dag"}
-      </span>
+      <span className="text-[13px] font-medium text-(--color-text-muted)">Ingen træning i dag</span>
       <span className="text-[15px] font-medium text-(--color-text)">
-        {state.nextPlanDate
-          ? formatMediumDate(parseISODate(state.nextPlanDate))
-          : "Start en fri træning, eller læg en plan under Programmer/Kalender."}
+        Hviledag — husk at slappe af, det er dér kroppen bygger.
       </span>
+      {state.nextPlanDate && (
+        <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
+          <IconClock className="h-4 w-4 flex-shrink-0" />
+          Næste pas: {state.nextPlanName} · {formatMediumDate(parseISODate(state.nextPlanDate))}
+        </span>
+      )}
       <Button onClick={handleStart}>Start træning</Button>
     </div>
   );

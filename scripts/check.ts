@@ -10,6 +10,7 @@ import { getWeekMonthKey, getWeekNumber, getWeekStart } from "../src/lib/date.ts
 import { groupByMonthAndWeek } from "../src/lib/grouping.ts";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/lib/plates.ts";
 import { formatKg } from "../src/lib/format.ts";
+import { greeting } from "../src/lib/greeting.ts";
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
 import { DEFAULT_QUOTES, dayNumber, rotationOf } from "../src/lib/quotes.ts";
 import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
@@ -29,6 +30,15 @@ check("kg under et ton, ton derover med én decimal", () => {
   assert.equal(formatKg(1000), "1 ton");
   assert.equal(formatKg(56230), "56,2 ton");
   assert.equal(formatKg(65202), "65,2 ton");
+});
+
+check("hilsen følger klokkeslættet", () => {
+  assert.equal(greeting(7), "Godmorgen");
+  assert.equal(greeting(11), "God formiddag");
+  assert.equal(greeting(13), "Godmiddag");
+  assert.equal(greeting(16), "God eftermiddag");
+  assert.equal(greeting(21), "God aften");
+  assert.equal(greeting(2), "Godnat");
 });
 
 console.log("Dato-regler");

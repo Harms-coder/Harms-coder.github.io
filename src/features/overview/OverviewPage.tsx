@@ -13,6 +13,7 @@ import { ProgressBadge } from "../../components/ProgressBadge";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
 import { formatKg } from "../../lib/format";
+import { USER_NAME, greeting } from "../../lib/greeting";
 import { StatTile } from "../../components/StatTile";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { ComparisonIllustration } from "./ComparisonIllustration";
@@ -228,7 +229,7 @@ export function OverviewPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <HeroHeader
-        title="Oversigt"
+        title={`${greeting(new Date().getHours())}, ${USER_NAME}`}
         subtitle="Disciplin i dag — et stærkere dig i morgen."
         image="/images/dashboard-peaks.jpg"
         imagePosition="center 40%"
