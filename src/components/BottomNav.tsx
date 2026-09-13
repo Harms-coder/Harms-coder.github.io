@@ -22,22 +22,20 @@ interface NavItem {
   to: string;
   label: string;
   Icon: ComponentType<{ className?: string }>;
-  /** Hvert punkt har sin egen farve, så fanerne kan kendes fra hinanden på farven alene. */
-  color: string;
   anim: IconAnim;
 }
 
 const navItems: NavItem[] = [
-  { to: "/", label: "Oversigt", Icon: IconHome, color: "var(--color-cat-goal)", anim: "bounce" },
-  { to: "/traening", label: "Træning", Icon: IconDumbbell, color: "var(--color-cat-strength)", anim: "spin" },
-  { to: "/cardio", label: "Cardio", Icon: IconActivity, color: "var(--color-cat-cardio)", anim: "draw" },
-  { to: "/progression", label: "Progression", Icon: IconTrendUp, color: "var(--color-cat-progress)", anim: "fly" },
-  { to: "/mal", label: "Mål", Icon: IconTarget, color: "var(--color-cat-record)", anim: "pop" },
-  { to: "/oevelser", label: "Øvelser", Icon: IconList, color: "var(--color-cat-library)", anim: "hoplines" },
-  { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, color: "var(--color-cat-plan)", anim: "tear" },
-  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, color: "var(--color-cat-body)", anim: "swing" },
-  { to: "/plan", label: "Programmer", Icon: IconClipboard, color: "var(--color-cat-plan)", anim: "write" },
-  { to: "/historik", label: "Historik", Icon: IconClock, color: "var(--color-cat-history)", anim: "sweep" },
+  { to: "/", label: "Oversigt", Icon: IconHome, anim: "bounce" },
+  { to: "/traening", label: "Træning", Icon: IconDumbbell, anim: "spin" },
+  { to: "/cardio", label: "Cardio", Icon: IconActivity, anim: "draw" },
+  { to: "/progression", label: "Progression", Icon: IconTrendUp, anim: "fly" },
+  { to: "/mal", label: "Mål", Icon: IconTarget, anim: "pop" },
+  { to: "/oevelser", label: "Øvelser", Icon: IconList, anim: "hoplines" },
+  { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, anim: "tear" },
+  { to: "/kropsvaegt", label: "Kropsvægt", Icon: IconScale, anim: "swing" },
+  { to: "/plan", label: "Programmer", Icon: IconClipboard, anim: "write" },
+  { to: "/historik", label: "Historik", Icon: IconClock, anim: "sweep" },
 ];
 
 function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string) => void }) {
@@ -52,10 +50,11 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
       to={item.to}
       end={item.to === "/"}
       onClick={onClick}
-      style={{ "--badge-color": item.color } as CSSProperties}
+      /* Ét aktivt punkt i guld — fanerne kendes på ikon og label, ikke på hver sin farve. */
+      style={{ "--badge-color": "var(--color-gold-300)" } as CSSProperties}
       className={({ isActive }) =>
         `relative flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
-          isActive ? "cat-glow" : "text-(--color-text-muted) active:text-(--color-text)"
+          isActive ? "cat-glow" : "text-(--color-text-dim) active:text-(--color-text)"
         }`
       }
     >
