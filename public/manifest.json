@@ -1,12 +1,12 @@
 {
-  "name": "Træningsapp",
-  "short_name": "Træning",
+  "name": "Vigorra",
+  "short_name": "Vigorra",
   "description": "Personlig træningslog for styrke, cardio og kropsvægt",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#06080c",
-  "theme_color": "#06080c",
+  "background_color": "#040b0c",
+  "theme_color": "#040b0c",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
