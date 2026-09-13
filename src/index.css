@@ -618,11 +618,17 @@ h1 {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Ét svagt petroleum-skær i toppen og et endnu svagere i bunden — ingen kulørte lyskilder. */
+  /*
+   * Flere bløde lyskilder bag indholdet i appens egne farver: petroleum i toppen, guld til højre,
+   * mint til venstre, blå nederst til højre og et varmt strejf i bunden. Ingen billeder her —
+   * laget skal være billigt at tegne (view transitions tager et billede af hele siden).
+   */
   background:
-    radial-gradient(75% 40% at 50% -10%, rgba(52, 120, 100, 0.36) 0%, transparent 70%),
-    radial-gradient(50% 30% at 108% 8%, rgba(224, 188, 140, 0.16) 0%, transparent 70%),
-    radial-gradient(60% 34% at 50% 112%, rgba(52, 120, 100, 0.18) 0%, transparent 70%),
+    radial-gradient(70% 38% at 50% -8%, rgba(52, 120, 100, 0.34) 0%, transparent 70%),
+    radial-gradient(54% 30% at 114% 26%, rgba(224, 188, 140, 0.16) 0%, transparent 68%),
+    radial-gradient(56% 32% at -16% 58%, rgba(127, 236, 195, 0.12) 0%, transparent 68%),
+    radial-gradient(58% 32% at 106% 78%, rgba(94, 198, 247, 0.1) 0%, transparent 68%),
+    radial-gradient(66% 36% at 58% 112%, rgba(201, 162, 106, 0.12) 0%, transparent 70%),
     linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 55%, var(--color-bg) 100%);
 }
 
@@ -704,25 +710,12 @@ input {
 /*
  * ===== Bladmønster =====
  * Det gentagende naturmotiv: bladets årer (leaf-veins) i guldknapperne, og et fint blad-mesh
- * (leaf-mesh, brugerens makrofoto i ét stykke) bag hele appen og bag bundmenuen.
+ * (leaf-mesh, brugerens makrofoto i ét stykke) bag bundmenuen.
  *
  */
 :root {
   --leaf-mesh: url("./assets/leaf-mesh.jpg");
   --leaf-veins: url("./assets/leaf-veins.jpg");
-}
-
-/* Baggrund bag hele appen: sløret, kun årerne lyser svagt igennem det mørke. */
-.app-ambience::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  /* Fotoet på højkant og spejlet én gang nedad, så det dækker en telefonskærm zoomet langt ud, uden fliser. */
-  background: var(--leaf-mesh) center / cover no-repeat;
-  /* Ingen CSS-filter her: kontrast og sløring er bagt ind i billedfilen. Et filter på et lag i fuld
-     skærmstørrelse gjorde hvert sideskift (view transition) mærkbart tungt. */
-  opacity: 0.2;
-  mix-blend-mode: screen;
 }
 
 /* Knapper og aktive piller: bladårer som tekstur oven på gradienten. */
