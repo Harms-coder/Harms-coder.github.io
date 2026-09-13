@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef, useState, type PointerEvent } from "react";
+
 const MAX_LABELS_SHOWN = 7;
 
 interface SparklineProps {
@@ -15,7 +17,11 @@ function pickLabelIndexes(count: number): Set<number> {
   return new Set(Array.from({ length: MAX_LABELS_SHOWN }, (_, i) => Math.round(i * step)));
 }
 
-/** Kompakt trend-graf med udfyldt areal, gennemsnitslinje, punkter pr. dag og start/slut-værdier i hjørnerne. */
+/**
+ * Kompakt trend-graf med udfyldt areal, gennemsnitslinje, punkter pr. dag og start/slut-værdier i
+ * hjørnerne. Man kan køre fingeren hen over den og se værdien for hvert punkt.
+ * viewBox'en følger den målte bredde, så teksten aldrig strækkes (preserveAspectRatio="none" gjorde det).
+ */
 export function Sparkline({
   values,
   labels,
@@ -23,9 +29,20 @@ export function Sparkline({
   color = "var(--color-cat-progress)",
   unit = "",
 }: SparklineProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [width, setWidth] = useState(300);
+  const [active, setActive] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => setWidth(Math.max(1, entry.contentRect.width)));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   if (values.length < 2) return null;
 
-  const width = 300;
   const padTop = 16;
   const padBottom = labels ? 16 : 0;
   const min = Math.min(...values);
@@ -43,12 +60,28 @@ export function Sparkline({
   const avgY = toY(avg);
   const shownLabelIndexes = labels ? pickLabelIndexes(labels.length) : undefined;
 
+  function onPointer(e: PointerEvent<SVGSVGElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    setActive(Math.max(0, Math.min(values.length - 1, Math.round(x / stepX))));
+  }
+
+  // Markørens tekst holdes inden for grafen: venstrestillet nær venstre kant, højrestillet nær højre.
+  const activeX = active === null ? 0 : active * stepX;
+  const activeAnchor = activeX < 48 ? "start" : activeX > width - 48 ? "end" : "middle";
+
   return (
     <svg
+      ref={svgRef}
       viewBox={`0 0 ${width} ${totalHeight}`}
       width="100%"
       height={totalHeight}
-      preserveAspectRatio="none"
+      style={{ touchAction: "pan-y" }}
+      onPointerDown={onPointer}
+      onPointerMove={onPointer}
+      onPointerUp={() => setActive(null)}
+      onPointerLeave={() => setActive(null)}
+      onPointerCancel={() => setActive(null)}
     >
       <defs>
         <linearGradient id="sparklineFill" x1="0" y1="0" x2="0" y2="1">
@@ -63,12 +96,16 @@ export function Sparkline({
           </feMerge>
         </filter>
       </defs>
-      <text x={0} y={10} fontSize={10} fill="var(--color-text-muted)" textAnchor="start">
-        {values[0]}{unit}
-      </text>
-      <text x={width} y={10} fontSize={10} fill="var(--color-text)" fontWeight={600} textAnchor="end">
-        {values[values.length - 1]}{unit}
-      </text>
+      {active === null && (
+        <>
+          <text x={0} y={10} fontSize={10} fill="var(--color-text-muted)" textAnchor="start">
+            {values[0]}{unit}
+          </text>
+          <text x={width} y={10} fontSize={10} fill="var(--color-text)" fontWeight={600} textAnchor="end">
+            {values[values.length - 1]}{unit}
+          </text>
+        </>
+      )}
       <line
         x1={0}
         y1={avgY}
@@ -111,6 +148,23 @@ export function Sparkline({
               {label}
             </text>
           ),
+      )}
+      {active !== null && (
+        <g>
+          <line
+            x1={activeX}
+            y1={padTop - 2}
+            x2={activeX}
+            y2={chartBottom}
+            stroke="rgba(255, 255, 255, 0.28)"
+            strokeWidth={1}
+          />
+          <circle cx={activeX} cy={toY(values[active])} r={4.5} fill={color} stroke="var(--color-surface)" strokeWidth={2} />
+          <text x={activeX} y={10} fontSize={10.5} fontWeight={600} fill="var(--color-text)" textAnchor={activeAnchor}>
+            {values[active]}{unit}
+            {labels?.[active] ? ` · ${labels[active]}` : ""}
+          </text>
+        </g>
       )}
     </svg>
   );

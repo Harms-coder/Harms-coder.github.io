@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { getWeekMonthKey, getWeekNumber, getWeekStart } from "../src/lib/date.ts";
 import { groupByMonthAndWeek } from "../src/lib/grouping.ts";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../src/lib/plates.ts";
+import { formatKg } from "../src/lib/format.ts";
 import { computeProjectedGoalDate } from "../src/lib/projection.ts";
 import { DEFAULT_QUOTES, dayNumber, rotationOf } from "../src/lib/quotes.ts";
 import { computeActivityWeekStreak, computeWeeklyStreak } from "../src/lib/streak.ts";
@@ -21,6 +22,14 @@ function check(name: string, fn: () => void) {
   checks++;
   console.log(`  ✓ ${name}`);
 }
+
+console.log("Formatering");
+check("kg under et ton, ton derover med én decimal", () => {
+  assert.equal(formatKg(820.4), "820 kg");
+  assert.equal(formatKg(1000), "1 ton");
+  assert.equal(formatKg(56230), "56,2 ton");
+  assert.equal(formatKg(65202), "65,2 ton");
+});
 
 console.log("Dato-regler");
 

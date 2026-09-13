@@ -12,6 +12,7 @@ import {
 import { ProgressBadge } from "../../components/ProgressBadge";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
+import { formatKg } from "../../lib/format";
 import { StatTile } from "../../components/StatTile";
 import { StrengthGainList } from "../../components/StrengthGainList";
 import { ComparisonIllustration } from "./ComparisonIllustration";
@@ -340,7 +341,7 @@ export function OverviewPage() {
         />
         <StatTile
           label={`Kg løftet · ${RANGE_LABELS[range].toLowerCase()}`}
-          value={`${Math.round(totalKgLifted).toLocaleString("da-DK")} kg`}
+          value={formatKg(totalKgLifted)}
           delta={kgLiftedDelta}
           note={weightComparison && <RollingText text={weightComparison.text} />}
           noteIllustration={
@@ -391,11 +392,10 @@ export function OverviewPage() {
       {allSets.length > 0 && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <div className="flex items-center justify-between">
-            <span className="section-title">
-              Styrke-fremgang · {RANGE_LABELS[range].toLowerCase()}
-            </span>
+            {/* Perioden står allerede på flisen "Kg løftet · måned" lige ovenover; med versaler blev linjen for lang. */}
+            <span className="section-title">Styrke-fremgang</span>
             {avgGainPercent !== undefined && (
-              <span className="text-[15px] font-semibold text-(--color-accent-glow)">
+              <span className="whitespace-nowrap text-[15px] font-semibold text-(--color-accent-glow)">
                 {avgGainPercent > 0 ? "+" : ""}
                 {avgGainPercent}% i gennemsnit
               </span>

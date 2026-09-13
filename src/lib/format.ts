@@ -17,3 +17,11 @@ export function joinDanish(items: string[]): string {
   const lowered = items.map((item, i) => (i === 0 ? item : item.toLowerCase()));
   return `${lowered.slice(0, -1).join(", ")} og ${lowered[lowered.length - 1]}`;
 }
+
+/** Løftet vægt: "820 kg" under et ton, derover "56,2 ton" — 65.202 kg er svært at læse i ét blik. */
+export function formatKg(kg: number): string {
+  if (kg >= 1000) {
+    return `${(kg / 1000).toLocaleString("da-DK", { maximumFractionDigits: 1 })} ton`;
+  }
+  return `${Math.round(kg).toLocaleString("da-DK")} kg`;
+}
