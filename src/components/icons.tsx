@@ -25,12 +25,17 @@ export function IconHome(props: IconProps) {
   );
 }
 
+/** Fyldt silhuet efter brugerens reference: tyk stang, en høj inderplade og en lavere yderplade i hver ende. */
 export function IconDumbbell(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <rect x="3.5" y="9" width="3" height="6" rx="1" />
-      <rect x="17.5" y="9" width="3" height="6" rx="1" />
-      <path d="M6.5 12h11" strokeWidth={2.2} />
+      <g fill="currentColor" stroke="none">
+        <rect x="8" y="10.6" width="8" height="2.8" rx="1.2" />
+        <rect x="5" y="7" width="3.2" height="10" rx="1.2" />
+        <rect x="15.8" y="7" width="3.2" height="10" rx="1.2" />
+        <rect x="2" y="8.8" width="2.4" height="6.4" rx="1" />
+        <rect x="19.6" y="8.8" width="2.4" height="6.4" rx="1" />
+      </g>
     </svg>
   );
 }
