@@ -347,9 +347,9 @@ export function ProgressionPage() {
                       <Line
                         type="monotone"
                         dataKey="maxWeight"
-                        stroke="var(--color-accent-bright)"
+                        stroke="var(--color-cat-progress)"
                         strokeWidth={2}
-                        dot={{ r: 3, fill: "var(--color-accent-bright)" }}
+                        dot={{ r: 3, fill: "var(--color-cat-progress)" }}
                         activeDot={vaegtGraf.tooltipActive === false ? false : { r: 5 }}
                       />
                     </LineChart>
@@ -373,7 +373,7 @@ export function ProgressionPage() {
                         contentStyle={chartTooltipStyle}
                         labelStyle={{ color: "var(--color-text)" }}
                       />
-                      <Bar dataKey="volume" fill="var(--color-accent-glow)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="volume" fill="var(--color-cat-progress)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

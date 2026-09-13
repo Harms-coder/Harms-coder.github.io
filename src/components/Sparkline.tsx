@@ -20,7 +20,7 @@ export function Sparkline({
   values,
   labels,
   height = 64,
-  color = "var(--color-accent-bright)",
+  color = "var(--color-cat-progress)",
   unit = "",
 }: SparklineProps) {
   if (values.length < 2) return null;

@@ -32,7 +32,7 @@ export function AxisTrendChart({
   projection,
   includeZero = false,
   height = 60,
-  color = "var(--color-accent-bright)",
+  color = "var(--color-cat-progress)",
 }: AxisTrendChartProps) {
   // Eget id pr. graf — ellers deler to grafer på samme side den samme gradient-definition.
   const fillId = useId();
