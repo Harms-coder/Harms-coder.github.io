@@ -84,7 +84,7 @@
    * luft, så de læses som mærke frem for brødtekst.
    */
   --tracking-display: -0.022em;
-  --tracking-eyebrow: 0.18em;
+  --tracking-eyebrow: 0.2em;
   --tracking-wordmark: 0.3em;
 
   --font-sans:
@@ -178,9 +178,9 @@ h1 {
  * text-[9.5px] uppercase tracking-[0.18em] tre steder.
  */
 .eyebrow {
-  font-size: 0.594rem;
-  font-weight: 600;
-  line-height: 1.1;
+  font-size: 0.6rem;
+  font-weight: 400;
+  line-height: 1.25;
   text-transform: uppercase;
   letter-spacing: var(--tracking-eyebrow);
 }
