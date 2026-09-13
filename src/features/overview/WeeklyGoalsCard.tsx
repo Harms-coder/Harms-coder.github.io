@@ -20,7 +20,7 @@ export function WeeklyGoalsCard({ goals }: WeeklyGoalsCardProps) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[16px] font-bold text-(--color-text)">Ugens mål</span>
+        <span className="section-title">Ugens mål</span>
         <Link
           to="/mal"
           className="flex items-center gap-1 text-[12.5px] font-medium text-(--color-text-muted) active:opacity-70"

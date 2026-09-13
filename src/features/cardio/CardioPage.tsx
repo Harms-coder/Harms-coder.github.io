@@ -176,7 +176,7 @@ export function CardioPage() {
         />
       </div>
 
-      <span className="text-[13px] font-medium text-(--color-text-muted)">Seneste træninger</span>
+      <span className="section-title">Seneste træninger</span>
 
       {loading && <p className="text-sm text-(--color-text-muted)">Indlæser…</p>}
 

@@ -14,5 +14,13 @@ export function startLeafBadges(root: HTMLElement) {
     }
   };
   assign();
-  new MutationObserver(assign).observe(root, { childList: true, subtree: true });
+  // Én gennemgang pr. frame: et sideskift udløser hundredvis af mutationer på én gang.
+  let frame = 0;
+  new MutationObserver(() => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      assign();
+    });
+  }).observe(root, { childList: true, subtree: true });
 }

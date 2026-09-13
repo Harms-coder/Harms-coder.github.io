@@ -180,7 +180,7 @@ export function ProgressionPage() {
 
       <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="flex items-center justify-between">
-          <span className="text-[13px] font-medium text-(--color-text-muted)">
+          <span className="section-title">
             Styrke-fremgang
           </span>
           {avgGainPercent !== undefined && (
@@ -213,7 +213,7 @@ export function ProgressionPage() {
 
       <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[13px] font-medium text-(--color-text-muted)">
+          <span className="section-title">
             Fordeling pr. muskelgruppe
           </span>
           {muscleBalance.length > 0 && (
@@ -358,7 +358,7 @@ export function ProgressionPage() {
               </div>
 
               <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
-                <span className="text-[13px] font-medium text-(--color-text-muted)">
+                <span className="section-title">
                   Volume pr. træning (kg × reps)
                 </span>
                 <div className="h-48" {...volumeGraf.handlers}>

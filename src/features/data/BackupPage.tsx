@@ -134,7 +134,7 @@ export function BackupPage() {
           >
             <IconDownload className="h-[18px] w-[18px] text-(--color-cat-progress)" />
           </span>
-          <span className="text-[15px] font-semibold text-(--color-text)">Gem en kopi</span>
+          <span className="section-title">Gem en kopi</span>
         </div>
         <p className="text-[13px] text-(--color-text-muted)">
           Lægger hele din historik — øvelser, træninger, sæt, cardio, kropsvægt, programmer og
@@ -153,7 +153,7 @@ export function BackupPage() {
           >
             <IconUpload className="h-[18px] w-[18px] text-(--color-cat-record)" />
           </span>
-          <span className="text-[15px] font-semibold text-(--color-text)">Gendan fra fil</span>
+          <span className="section-title">Gendan fra fil</span>
         </div>
         <p className="text-[13px] text-(--color-text-muted)">
           Indlæser en tidligere backup. Alt hvad du har i appen nu bliver erstattet, så brug den
@@ -187,7 +187,7 @@ export function BackupPage() {
           >
             <IconTrash className="h-[18px] w-[18px] text-(--color-danger)" />
           </span>
-          <span className="text-[15px] font-semibold text-(--color-text)">Slet alle data</span>
+          <span className="section-title">Slet alle data</span>
         </div>
         <p className="text-[13px] text-(--color-text-muted)">
           Tømmer appen helt. Brug den til at komme af med eksempeldata igen — gem en backup

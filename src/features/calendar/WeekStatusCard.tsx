@@ -78,7 +78,7 @@ export function WeekStatusCard({
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[15px] font-semibold text-(--color-text)">Ugens status</span>
+        <span className="section-title">Ugens status</span>
         {streakWeeks > 0 && (
           <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-(--color-cat-strength)">
             <IconFlame className="h-3.5 w-3.5" />

@@ -107,7 +107,7 @@ export function TrainingIdleView({
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3">
             <IconBadge icon={IconDumbbell} accent="var(--color-cat-strength)" />
-            <span className="text-[16px] font-bold text-(--color-text)">Dagens plan</span>
+            <span className="section-title">Dagens plan</span>
           </div>
           {plan && !completedToday && (
             <span className="cat-badge flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] font-medium"
@@ -160,7 +160,7 @@ export function TrainingIdleView({
         >
           <div className="flex items-center gap-3">
             <IconBadge icon={IconActivity} accent="var(--color-cat-record)" />
-            <span className="text-[16px] font-bold text-(--color-text)">Sidste træning</span>
+            <span className="section-title">Sidste træning</span>
           </div>
           <span className="text-[15px] font-semibold text-(--color-text)">{lastSession.title}</span>
           <StatRow
@@ -179,7 +179,7 @@ export function TrainingIdleView({
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="flex items-center gap-3">
           <IconBadge icon={IconTrendUp} accent="var(--color-cat-progress)" />
-          <span className="text-[16px] font-bold text-(--color-text)">Hurtigt overblik</span>
+          <span className="section-title">Hurtigt overblik</span>
         </div>
         <div className="flex items-stretch justify-between">
           <div className="flex flex-1 flex-col items-center gap-1">
@@ -221,7 +221,7 @@ export function TrainingIdleView({
       <div className="flex items-center gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <IconBadge icon={IconLightbulb} accent="var(--color-cat-goal)" />
         <div className="flex flex-col gap-0.5">
-          <span className="text-[16px] font-bold text-(--color-text)">Tip</span>
+          <span className="section-title">Tip</span>
           <span className="text-[13px] text-(--color-text-muted)">
             Start træningen, så får du adgang til øvelser, sættæller og varighed med det samme.
           </span>

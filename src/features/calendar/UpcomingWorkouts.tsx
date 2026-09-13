@@ -42,7 +42,7 @@ export function UpcomingWorkouts({
         >
           <IconCalendar className="h-4 w-4 text-(--color-cat-plan)" />
         </span>
-        <span className="text-[15px] font-semibold text-(--color-text)">Kommende træninger</span>
+        <span className="section-title">Kommende træninger</span>
       </div>
 
       <div className="flex flex-col">

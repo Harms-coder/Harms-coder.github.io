@@ -175,7 +175,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)/95 backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)"
       /*
        * Rulleteksten bor i den luft, der før var polstring: safe-area + 8 px er blevet til
        * 4 px + 20 px tekst + (safe-area − 16 px). Samme totalhøjde på telefonen, så menuen flytter sig ikke.

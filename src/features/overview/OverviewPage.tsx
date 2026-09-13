@@ -252,7 +252,7 @@ export function OverviewPage() {
       ) : (
         <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-[16px] font-bold text-(--color-text)">Ugens mål</span>
+            <span className="section-title">Ugens mål</span>
             <Link
               to="/mal"
               className="flex items-center gap-1 text-[12.5px] font-medium text-(--color-cat-record)"
@@ -355,7 +355,7 @@ export function OverviewPage() {
 
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="flex items-center justify-between">
-          <span className="text-[13px] font-medium text-(--color-text-muted)">Kropsvægt</span>
+          <span className="section-title">Kropsvægt</span>
           {latestWeight && (
             <span className="text-[15px] font-semibold text-(--color-text)">
               {latestWeight.weight} kg
@@ -391,7 +391,7 @@ export function OverviewPage() {
       {allSets.length > 0 && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-medium text-(--color-text-muted)">
+            <span className="section-title">
               Styrke-fremgang · {RANGE_LABELS[range].toLowerCase()}
             </span>
             {avgGainPercent !== undefined && (

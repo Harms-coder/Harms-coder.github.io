@@ -94,7 +94,7 @@ export function MotivationPage() {
 
       <div className="mt-2 flex items-center justify-between gap-3">
         <div className="flex flex-col">
-          <h2 className="text-[15px] font-semibold text-(--color-text)">Alle citater</h2>
+          <h2 className="section-title">Alle citater</h2>
           <span className="text-[12px] text-(--color-text-muted)">
             {rotation.length === quotes.length
               ? "Alle er i rotation"
