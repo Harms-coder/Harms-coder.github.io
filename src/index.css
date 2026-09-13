@@ -9,22 +9,22 @@
    * Flader: dyb, næsten sort med et svagt petroleum-skær — ikke neutralt gråt.
    * Trappen går mørkest (bg) til lysest (surface-3).
    */
-  --color-bg: #050d0e;
-  --color-bg-elevated: #0b1517;
+  --color-bg: #040b0c;
+  --color-bg-elevated: #0a1516;
   --color-bg-tertiary: #101a19;
-  --color-surface: #101a19;
-  --color-surface-2: #18211f;
-  --color-surface-3: #1f2926;
+  --color-surface: #121f1d;
+  --color-surface-2: #1c2a27;
+  --color-surface-3: #263532;
 
   /* Kanter: hårfine, neutrale. border-gold er forbeholdt det ene fremhævede kort (dagens træning). */
-  --color-border: rgba(255, 255, 255, 0.07);
-  --color-border-strong: rgba(255, 255, 255, 0.12);
-  --color-border-accent: rgba(255, 255, 255, 0.09);
-  --color-border-gold: rgba(201, 162, 106, 0.28);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-border-accent: rgba(255, 255, 255, 0.13);
+  --color-border-gold: rgba(224, 188, 140, 0.42);
 
   /* Tekst. text-muted holder mindst 4.5:1 mod surface-3 (målt: 6.3:1) — sænk den ikke uden at regne efter. */
   --color-text: #eef1f0;
-  --color-text-secondary: #c3cbca;
+  --color-text-secondary: #cdd5d3;
   --color-text-muted: #9ba5a6;
   --color-text-dim: #5f6b6c;
   /* Mørk tekst oven på guld/mint-flader (knapper, aktive piller). */
@@ -38,11 +38,11 @@
   --color-gold-900: #5b4a33;
 
   /* Data-accenter: bruges kun til datapunkter. mint = styrke/fremgang, blue = cardio, orange = kropsvægt. */
-  --color-mint: #8fe0be;
+  --color-mint: #7fecc3;
   --color-mint-dim: #2a4a40;
-  --color-blue: #67beec;
+  --color-blue: #5ec6f7;
   --color-blue-dim: #1c3b48;
-  --color-orange: #d9915c;
+  --color-orange: #e8975a;
 
   /* Bevarede navne: resten af appen læser accent/kategori herfra, så de peger ind i paletten ovenfor. */
   --color-accent: var(--color-gold-500);
@@ -64,7 +64,7 @@
   --color-success: var(--color-mint);
 
   --color-shadow: rgba(0, 0, 0, 0.45);
-  --color-glow: rgba(201, 162, 106, 0.14);
+  --color-glow: rgba(224, 188, 140, 0.22);
 
   /* Radius-skala: 14 px (kontroller) / 20 px (kort) / fuld (piller og barer). Overskriver Tailwinds xl/2xl. */
   --radius-xl: 14px;
@@ -76,7 +76,7 @@
   /* Skygger */
   --shadow-card: 0 2px 14px rgba(0, 0, 0, 0.45);
   --shadow-lifted: 0 6px 24px rgba(0, 0, 0, 0.5);
-  --shadow-gold: 0 8px 28px -10px rgba(201, 162, 106, 0.55);
+  --shadow-gold: 0 8px 28px -8px rgba(201, 162, 106, 0.7), 0 0 22px rgba(201, 162, 106, 0.22);
 
   /*
    * Tracking-skala. Store overskrifter strammes let (display-typografi falder fra hinanden
@@ -484,19 +484,25 @@ h1 {
   /* !important overskriver den parrede `border-(--color-border)`-utility i hvert kald, så ALLE kort får samme kant ét sted fra. */
   border-color: var(--color-border) !important;
   border-width: 1px !important;
-  /* Let ophøjet: en meget svag top-lysning, ingen farvet gloss. */
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, rgba(255, 255, 255, 0) 45%);
+  /* Blank overflade: lys falder oppefra-venstre, og bunden går et nøk mørkere, så kortet buer. */
+  background-image:
+    linear-gradient(158deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(90, 160, 140, 0.06) 0%, rgba(0, 0, 0, 0.18) 100%);
   box-shadow:
     var(--shadow-card),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
 }
 
 .accent-fill {
-  background: linear-gradient(135deg, #e3c795 0%, #b98f56 100%);
+  background: linear-gradient(135deg, #f0d7a8 0%, #d3ab72 45%, #b3874c 100%);
   color: var(--color-text-on-accent);
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: var(--shadow-gold);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    var(--shadow-gold),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -8px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Sekundære knapper, +/− knapper og inaktive piller: surface-2, ingen synlig kant i hvile. */
@@ -513,8 +519,12 @@ h1 {
 .hero-glow {
   border-color: var(--color-border-gold) !important;
   background:
-    linear-gradient(160deg, var(--color-glow) 0%, transparent 55%),
+    linear-gradient(160deg, var(--color-glow) 0%, transparent 60%),
     var(--color-surface);
+  box-shadow:
+    var(--shadow-card),
+    0 0 28px rgba(201, 162, 106, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
 /*
@@ -522,17 +532,24 @@ h1 {
  * Farven sættes pr. kategori via --badge-color, så betydningen er konsistent på tværs af appen.
  */
 .cat-badge {
-  background: color-mix(in srgb, var(--badge-color) 14%, transparent);
-  border-color: color-mix(in srgb, var(--badge-color) 30%, transparent) !important;
+  background: color-mix(in srgb, var(--badge-color) 22%, transparent);
+  border-color: color-mix(in srgb, var(--badge-color) 48%, transparent) !important;
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--badge-color) 22%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 /* Progress-bar i kategorifarven: fuld accent med en let lysere top, blød width-transition, ingen glød. */
 .cat-bar {
   background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--badge-color) 88%, white) 0%,
-    var(--badge-color) 100%
+    90deg,
+    color-mix(in srgb, var(--badge-color) 78%, black) 0%,
+    var(--badge-color) 55%,
+    color-mix(in srgb, var(--badge-color) 80%, white) 100%
   );
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--badge-color) 45%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   transition: width 320ms ease-out;
 }
 
@@ -551,17 +568,23 @@ h1 {
 .cat-fill {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--badge-color) 86%, white) 0%,
-    color-mix(in srgb, var(--badge-color) 80%, black) 100%
+    color-mix(in srgb, var(--badge-color) 78%, white) 0%,
+    var(--badge-color) 45%,
+    color-mix(in srgb, var(--badge-color) 76%, black) 100%
   );
   color: var(--color-text-on-accent);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 28px -10px color-mix(in srgb, var(--badge-color) 55%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 8px 28px -8px color-mix(in srgb, var(--badge-color) 70%, transparent),
+    0 0 22px color-mix(in srgb, var(--badge-color) 22%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -8px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Glødende tekst/ikon i kategorifarven — bruges til aktive faner og fremhævede tal. */
 .cat-glow {
   color: var(--badge-color);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--badge-color) 55%, transparent));
 }
 
 /* Meget svag glød bag en kalenderdag der har aktivitet — nok til at øjet fanger den, ikke nok til at larme. */
@@ -578,8 +601,9 @@ h1 {
   pointer-events: none;
   /* Ét svagt petroleum-skær i toppen og et endnu svagere i bunden — ingen kulørte lyskilder. */
   background:
-    radial-gradient(75% 40% at 50% -10%, rgba(52, 110, 96, 0.22) 0%, transparent 70%),
-    radial-gradient(60% 34% at 50% 112%, rgba(52, 110, 96, 0.1) 0%, transparent 70%),
+    radial-gradient(75% 40% at 50% -10%, rgba(52, 120, 100, 0.36) 0%, transparent 70%),
+    radial-gradient(50% 30% at 108% 8%, rgba(224, 188, 140, 0.16) 0%, transparent 70%),
+    radial-gradient(60% 34% at 50% 112%, rgba(52, 120, 100, 0.18) 0%, transparent 70%),
     linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 55%, var(--color-bg) 100%);
 }
 
