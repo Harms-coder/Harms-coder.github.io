@@ -427,28 +427,32 @@ h1 {
 }
 
 /*
- * Rullende tekstskift (RollingText): den gamle linje ruller op og ud, den nye ind nedefra.
- * Blur'et gør, at skiftet ligner et hjul der drejer, ikke to tekster der overlapper.
+ * Rullende tekstskift (RollingText og ComparisonIllustration): den gamle linje glider op og ud,
+ * den nye ind nedefra. Kun transform og opacity — ingen blur: filter-animationer hakker på
+ * telefonen, og de to bevægelser har nu samme varighed, så de føles som ét hjul der drejer.
  */
 .roll-in {
-  animation: roll-in 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: roll-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
 }
 
 .roll-out {
-  animation: roll-out 480ms cubic-bezier(0.5, 0, 0.7, 0.4) both;
+  animation: roll-out 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 @keyframes roll-in {
   from {
-    transform: translateY(70%);
+    transform: translateY(55%);
     opacity: 0;
-    filter: blur(2px);
+  }
+  35% {
+    opacity: 1;
   }
   to {
     transform: none;
     opacity: 1;
-    filter: blur(0);
   }
 }
 
@@ -456,12 +460,13 @@ h1 {
   from {
     transform: none;
     opacity: 1;
-    filter: blur(0);
+  }
+  55% {
+    opacity: 0;
   }
   to {
-    transform: translateY(-70%);
+    transform: translateY(-55%);
     opacity: 0;
-    filter: blur(2px);
   }
 }
 

@@ -347,7 +347,7 @@ export function OverviewPage() {
           note={weightComparison && <RollingText text={weightComparison.text} />}
           noteIllustration={
             weightComparison && (
-              <ComparisonIllustration key={weightComparison.text} kinds={weightComparison.kinds} />
+              <ComparisonIllustration kinds={weightComparison.kinds} />
             )
           }
           icon={IconDumbbell}

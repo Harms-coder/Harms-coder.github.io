@@ -5,8 +5,8 @@ interface RollingTextProps {
   className?: string;
 }
 
-// Kortere end .roll-out (480 ms), så højden er på plads, før den gamle tekst fjernes.
-const HEIGHT_EASE = "height 450ms cubic-bezier(0.2, 0.8, 0.2, 1)";
+// Samme kurve og lidt kortere end rullet (520 ms), så højden er på plads, før den gamle tekst fjernes.
+const HEIGHT_EASE = "height 480ms cubic-bezier(0.22, 1, 0.36, 1)";
 
 /**
  * Tekst der "ruller", når den skifter: den gamle linje ruller op og ud, den nye ind nedefra.
