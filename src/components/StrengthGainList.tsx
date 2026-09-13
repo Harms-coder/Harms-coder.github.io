@@ -17,7 +17,8 @@ const BAR_COLORS = [
 ];
 
 export function StrengthGainList({ gains, className = "" }: StrengthGainListProps) {
-  const maxPercent = Math.max(1, ...gains.map((g) => Math.abs(g.percent)));
+  // Fast skala: 100 % fremgang = fuld bar. Så vokser barerne synligt fra uge til måned til år,
+  // i stedet for at den største altid fylder hele bredden.
   return (
     <div className={`flex flex-col gap-2.5 overscroll-contain ${className}`}>
       {gains.map((gain, index) => (
@@ -34,7 +35,7 @@ export function StrengthGainList({ gains, className = "" }: StrengthGainListProp
               className="cat-bar h-full rounded-full"
               style={
                 {
-                  width: `${Math.max(4, (Math.abs(gain.percent) / maxPercent) * 100)}%`,
+                  width: `${Math.min(100, Math.max(3, Math.abs(gain.percent)))}%`,
                   "--badge-color": BAR_COLORS[index % BAR_COLORS.length],
                 } as CSSProperties
               }
