@@ -177,7 +177,7 @@ export function PlanPage() {
 
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
-      <PageBackdrop image="/images/plan-mountains.jpg" imagePosition="center 55%" />
+      <PageBackdrop image="/images/plan-bridge.jpg" imagePosition="center 60%" />
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-(--color-text)">Programmer</h1>

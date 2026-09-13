@@ -15,7 +15,7 @@ export function PageBackdrop({ image, imagePosition = "center" }: PageBackdropPr
       <img
         src={image}
         alt=""
-        className="image-fade-bottom absolute inset-0 h-full w-full object-cover opacity-40"
+        className="image-fade-bottom absolute inset-0 h-full w-full object-cover opacity-55"
         style={{ objectPosition: imagePosition }}
       />
       {/* Både mørkning og varm tone toner helt ud inden underkanten, så der ikke opstår en synlig kant. */}
