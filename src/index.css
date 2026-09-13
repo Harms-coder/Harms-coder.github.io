@@ -533,7 +533,14 @@ h1 {
  * Farven sættes pr. kategori via --badge-color, så betydningen er konsistent på tværs af appen.
  */
 .cat-badge {
-  background: color-mix(in srgb, var(--badge-color) 22%, transparent);
+  /* Farvet plade med bladårerne igennem — samme motiv som knapperne, dæmpet med et mørkt slør. */
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--badge-color) 26%, transparent),
+      color-mix(in srgb, var(--badge-color) 26%, transparent)
+    ),
+    linear-gradient(rgb(18 31 29 / 0.5), rgb(18 31 29 / 0.5)),
+    var(--leaf-veins) center / 300% auto no-repeat;
   border-color: color-mix(in srgb, var(--badge-color) 48%, transparent) !important;
   box-shadow:
     0 0 14px color-mix(in srgb, var(--badge-color) 22%, transparent),
@@ -690,7 +697,7 @@ input {
 :root {
   --leaf-mesh: url("./assets/leaf-mesh.jpg");
   --leaf-veins: url("./assets/leaf-veins.jpg");
-  --leaf-tile: 300px;
+  --leaf-tile: 210px;
 }
 
 /* Baggrund bag hele appen: sløret, kun årerne lyser svagt igennem det mørke. */
@@ -699,8 +706,8 @@ input {
   position: absolute;
   inset: -12px;
   background: var(--leaf-mesh) center top / var(--leaf-tile) auto repeat;
-  opacity: 0.55;
-  filter: blur(0.6px) contrast(1.7) brightness(1.3) saturate(0.75);
+  opacity: 0.3;
+  filter: blur(0.4px) contrast(1.8) brightness(1.3) saturate(0.7);
   mix-blend-mode: screen;
 }
 
