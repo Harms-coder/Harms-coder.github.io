@@ -731,8 +731,8 @@ input {
   background-blend-mode: soft-light, normal;
 }
 
-/* Bundmenu: samme mesh bag menuen, mørkere så ikonerne står klart. */
-nav.fixed {
+/* Bundmenu: samme mesh bag selve menuen (ikke bag rulleteksten), mørkere så ikonerne står klart. */
+.nav-menu {
   background:
     linear-gradient(180deg, rgb(10 21 22 / 0.86), rgb(10 21 22 / 0.94)),
     var(--leaf-mesh) center / cover no-repeat;

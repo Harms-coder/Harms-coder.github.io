@@ -249,7 +249,7 @@ export function BottomNav() {
           "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 1rem))",
       }}
     >
-      <div className="border-y border-(--color-border) bg-(--color-bg-elevated) pb-1.5">
+      <div className="nav-menu border-y border-(--color-border) pb-1.5">
         <div ref={rowRef} className="relative flex items-stretch pt-2 pl-2">
           {pill && (
             <span
