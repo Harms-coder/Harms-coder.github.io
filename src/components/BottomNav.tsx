@@ -112,7 +112,7 @@ function NavItemLink({
                 className={`h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`}
               />
             </span>
-            <span className="relative whitespace-nowrap">{item.label}</span>
+            <span className="nav-label relative whitespace-nowrap">{item.label}</span>
           </>
         );
       }}

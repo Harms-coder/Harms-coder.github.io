@@ -89,6 +89,8 @@
 
   --font-sans:
     "Jost", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  /* Ordmærkets skrift (bred geometrisk, spatierede versaler) — Montserrat er den nærmeste webfont. */
+  --font-display: "Montserrat", var(--font-sans);
 }
 
 html,
@@ -167,10 +169,21 @@ body {
  * fra. Titlerne lå før på 24px, 28px og 30px afhængigt af siden.
  */
 h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: var(--tracking-display);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+/* Bundmenuens faner i samme skrift som ordmærket og overskrifterne. */
+.nav-label {
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /*
