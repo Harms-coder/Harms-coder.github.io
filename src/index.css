@@ -819,3 +819,45 @@ input {
     transform: scale(0.94);
   }
 }
+
+/*
+ * ===== Præstationsvæggen =====
+ * Et netop oplåst trofæ popper frem og glimter et par gange, så øjet finder det i gitteret.
+ * Kører kun første gang, trofæet vises som låst op (huskes i localStorage).
+ */
+/* Låst op: kort i øvelsens kategorifarve — kun kant, tone og glød, ingen bladtekstur.
+   .cat-badge ville fylde hele flisen med forstørrede bladårer og æde teksten. */
+.trophy-on {
+  border-color: color-mix(in srgb, var(--badge-color) 42%, transparent) !important;
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--badge-color) 8%, transparent),
+      color-mix(in srgb, var(--badge-color) 8%, transparent)
+    ),
+    var(--color-surface);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--badge-color) 16%, transparent);
+}
+
+.trophy-unlock {
+  animation: trophy-unlock 1.6s cubic-bezier(0.2, 0.9, 0.25, 1.05) 1;
+}
+
+@keyframes trophy-unlock {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  45% {
+    transform: scale(1);
+  }
+  60% {
+    box-shadow: 0 0 0 0 var(--badge-color);
+  }
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { TONE_COLORS } from "../../components/Button";
-import { IconChevronRight, IconList, IconScale, IconTarget, type IconComponent } from "../../components/icons";
+import { IconChevronRight, IconList, IconScale, IconTarget, IconTrophy, type IconComponent } from "../../components/icons";
 
 interface Entry {
   to: string;
@@ -13,6 +13,7 @@ interface Entry {
 
 /** De sider, der ikke fik plads i bundmenuen. Samme farver som deres egne sider. */
 const ENTRIES: Entry[] = [
+  { to: "/praestationer", label: "Præstationer", description: "Trofæerne du har låst op — og dem der mangler", Icon: IconTrophy, color: TONE_COLORS.record },
   { to: "/mal", label: "Mål", description: "Ugentlige mål, 1RM, kropsvægt og løb", Icon: IconTarget, color: TONE_COLORS.goal },
   { to: "/oevelser", label: "Øvelser", description: "Biblioteket med beskrivelser, favoritter og PR'er", Icon: IconList, color: TONE_COLORS.library },
   { to: "/kropsvaegt", label: "Kropsvægt", description: "Vejninger, udvikling og fremskrivning", Icon: IconScale, color: TONE_COLORS.body },

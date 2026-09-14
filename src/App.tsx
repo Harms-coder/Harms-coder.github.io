@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { BottomNav } from "./components/BottomNav";
+import { AchievementsPage } from "./features/achievements/AchievementsPage";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
 import { BackupPage } from "./features/data/BackupPage";
@@ -67,6 +68,7 @@ function App() {
             </LazyPage>
           }
         />
+        <Route path="/praestationer" element={<AchievementsPage />} />
         <Route path="/oevelser" element={<ExercisesPage />} />
         <Route path="/oevelser/:id" element={<ExerciseDetailPage />} />
         <Route path="/kalender" element={<CalendarPage />} />

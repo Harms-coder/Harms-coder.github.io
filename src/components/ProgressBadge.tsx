@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import type { Badge, BadgeKind } from "../lib/progressBadges";
 import { IconCheck, IconFlame, IconTrendUp, IconTrophy, type IconComponent } from "./icons";
 
-const ICONS: Record<BadgeKind, IconComponent> = {
+/* Ikon og farve pr. badge-type. Delt med Præstationsvæggen, så en badge ser ens ud begge steder. */
+export const BADGE_ICONS: Record<BadgeKind, IconComponent> = {
   pr: IconTrophy,
   oneRm: IconTrophy,
   gain: IconTrendUp,
@@ -12,7 +13,7 @@ const ICONS: Record<BadgeKind, IconComponent> = {
 };
 
 /** Hver badge-type har sin egen kategorifarve, så betydningen kan aflæses på farven alene. */
-const BADGE_COLORS: Record<BadgeKind, string> = {
+export const BADGE_COLORS: Record<BadgeKind, string> = {
   pr: "var(--color-cat-strength)",
   oneRm: "var(--color-cat-record)",
   gain: "var(--color-cat-progress)",
@@ -25,7 +26,7 @@ const className =
   "flex min-h-9 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3.5 text-[12.5px] font-medium text-(--color-text)";
 
 export function ProgressBadge({ badge }: { badge: Badge }) {
-  const Icon = ICONS[badge.kind];
+  const Icon = BADGE_ICONS[badge.kind];
   const style = { "--badge-color": BADGE_COLORS[badge.kind] } as React.CSSProperties;
   const content = (
     <>

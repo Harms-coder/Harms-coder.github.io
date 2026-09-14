@@ -17,8 +17,9 @@ Sig "vis mig planen" for at få status.
 - [x] **11 · Milepæle for total løftet** — gjort 2026-09-14: kort på Oversigten med alt der nogensinde er
       løftet, sammenligningsbilledet ("7 blåhvaler"), nået milepæl og vej til den næste (1, 5, 10, 25, 50,
       100, 250, 500, 1.000 ton …).
-- [ ] **10 · Præstationsvæg** — trofæ-side for de badges appen allerede beregner (PR, 1RM, streak, bedste
-      måned, mål), med oplåsnings-animation. *~30 min.*
+- [x] **10 · Præstationsvæg** — gjort 2026-09-14: siden /praestationer (via Mere) viser de seks badges som
+      trofæer, låst op eller ej, med tekst om hvad der skal til. Et netop oplåst trofæ popper frem og
+      glimter én gang; hvad der er set, huskes i localStorage.
 - [ ] **2 · Supersæt** — markér to øvelser som par i program og live-træning; hviletimeren kører
       imellem dem. *~30 min.*
 - [ ] **5 · Besked når hvilen er slut, selv med låst skærm** — Web Notifications i den installerede app.
