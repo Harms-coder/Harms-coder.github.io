@@ -23,8 +23,10 @@ Sig "vis mig planen" for at få status.
 - [x] **2 · Supersæt** — gjort 2026-09-14: to øvelser i træk kan parres i programmet ("+ Supersæt"), og i
       den planlagte træning skiftes der automatisk til makkeren, når sættet er gemt. Hviletimeren kører
       imellem dem som før. Gælder den planlagte træning, ikke de løse træningskort.
-- [ ] **5 · Besked når hvilen er slut, selv med låst skærm** — Web Notifications i den installerede app.
-      *~15 min, kræver 13.*
+- [x] **5 · Besked når hvilen er slut** — gjort 2026-09-14: hviletimeren har en "Giv besked"-knap, og når
+      hvilen er slut kommer en systembesked via service workeren. Forbehold: appen har ingen push-server,
+      så en telefon der har ligget låst længe, får først beskeden i det øjeblik appen åbnes igen.
+      Ægte besked på låst skærm kræver en push-backend (VAPID) — ikke lavet.
 - [ ] **6 · Muskel-heatmap** — kropssilhuet (for/bag) farvet efter volumen de sidste 7 dage, og
       "hvilet/træt" ud fra dage siden sidst. *~45 min.*
 - [ ] **7 · Månedens opsummering** — "Din september": kg, træninger, PR'er, længste streak, mest

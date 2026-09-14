@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { IconClock, IconX } from "../../components/icons";
+import { IconBell, IconClock, IconX } from "../../components/icons";
+import {
+  notificationPermission,
+  notifyRestDone,
+  requestNotificationPermission,
+} from "../../lib/restNotification";
 
 const PRESETS_SEC = [60, 120, 180];
 
@@ -43,6 +48,9 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
   const [justFinished, setJustFinished] = useState(false);
   const lastHandledSignal = useRef(autoStartSignal);
   const audioRef = useRef<AudioContext | null>(null);
+  const [permission, setPermission] = useState(notificationPermission);
+  /* Så beskeden kun sendes én gang pr. hvile, selv hvis siden vågner flere gange. */
+  const notifiedFor = useRef<number | null>(null);
 
   function start(seconds: number) {
     // Oprettes/genoptages her, mens vi stadig er inde i brugerens tryk.
@@ -55,6 +63,7 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
     setLastPreset(seconds);
     setEndTime(Date.now() + seconds * 1000);
     setJustFinished(false);
+    notifiedFor.current = null;
   }
 
   function stop() {
@@ -71,7 +80,16 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
   useEffect(() => {
     if (endTime === null) return;
     const id = setInterval(() => setNow(Date.now()), 250);
-    return () => clearInterval(id);
+    /*
+     * iOS fryser siden, mens skærmen er låst, så intervallet står stille. Når telefonen vågner,
+     * læses uret igen med det samme — ellers ville timeren se ud til at hænge på fx 0:37.
+     */
+    const onWake = () => setNow(Date.now());
+    document.addEventListener("visibilitychange", onWake);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onWake);
+    };
   }, [endTime]);
 
   const remainingSec = endTime !== null ? Math.max(0, Math.ceil((endTime - now) / 1000)) : null;
@@ -89,6 +107,10 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
       }
       // Virker ikke på iOS, men koster intet at forsøge der hvor det gør.
       navigator.vibrate?.([180, 90, 180]);
+      if (endTime !== null && notifiedFor.current !== endTime) {
+        notifiedFor.current = endTime;
+        void notifyRestDone();
+      }
       const timeout = setTimeout(() => setJustFinished(false), 4000);
       return () => clearTimeout(timeout);
     }
@@ -131,6 +153,18 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
             </button>
           ))}
         </div>
+      )}
+
+      {permission === "default" && (
+        /* Vises kun indtil der er svaret — iOS kræver et tryk for overhovedet at måtte spørge. */
+        <button
+          type="button"
+          onClick={() => void requestNotificationPermission().then(setPermission)}
+          className="flex min-h-9 items-center justify-center gap-1.5 self-start rounded-full glass-fill px-3 text-[12.5px] font-medium text-(--color-text-secondary) active:opacity-70"
+        >
+          <IconBell className="h-3.5 w-3.5" />
+          Giv besked når hvilen er slut
+        </button>
       )}
 
       {justFinished && (

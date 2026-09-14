@@ -130,6 +130,16 @@ export function IconRepeat(props: IconProps) {
   );
 }
 
+/* Klokke: kuppel, kant og knebel — bruges til beskeder. */
+export function IconBell(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M18 9a6 6 0 0 0-12 0c0 4-1.5 5.5-2 6.2h16c-.5-.7-2-2.2-2-6.2Z" />
+      <path d="M10.2 18.5a2 2 0 0 0 3.6 0" />
+    </svg>
+  );
+}
+
 export function IconClock(props: IconProps) {
   return (
     <svg {...base(props)}>
