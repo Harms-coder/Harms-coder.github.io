@@ -36,8 +36,9 @@ Sig "vis mig planen" for at få status.
 - [ ] **8 · Del et træningskort som billede** — kort i appens design, delt via delingsarket. *~30 min.*
 - [ ] **9 · Fremgangsfotos + kropsmål** — talje, arme osv. ved siden af kropsvægten; fotos gemmes i
       appens database og kommer med i backuppen. *~40 min.*
-- [ ] **14 · CSV-eksport** — regnearksfil, én række pr. sæt (dato, øvelse, kg, gentagelser, type), til
-      Excel/Numbers eller en træner. *~10 min.*
+- [x] **14 · CSV-eksport** — gjort 2026-09-14: "Gem som CSV" på Backup-siden. Én række pr. sæt med dato,
+      øvelse, kategori, kg, gentagelser, type og volumen. Semikolon og komma-decimaler, så et dansk
+      Excel/Numbers deler den rigtigt op, og BOM så æ, ø og å vises rigtigt.
 
 ## Fravalgt (kan tages op igen)
 

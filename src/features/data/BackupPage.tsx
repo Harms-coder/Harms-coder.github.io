@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { Button } from "../../components/Button";
-import { IconChevronLeft, IconDownload, IconTrash, IconUpload } from "../../components/icons";
+import { buildSetsCsv, csvFilename } from "../../db/csvExport";
+import { shareOrDownload } from "../../lib/shareFile";
+import { IconChevronLeft, IconDownload, IconList, IconTrash, IconUpload } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import {
   clearAllData,
@@ -29,26 +31,31 @@ export function BackupPage() {
       const json = JSON.stringify(backup);
       const file = new File([json], backupFilename(), { type: "application/json" });
 
-      /*
-       * På telefonen er delings-arket den pålidelige vej ud af appen ("Gem i Filer",
-       * AirDrop, mail). En <a download> virker ikke altid i en installeret PWA, så den
-       * bruges kun som fallback på computer.
-       */
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: backupFilename() });
-      } else {
-        const url = URL.createObjectURL(file);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = backupFilename();
-        link.click();
-        URL.revokeObjectURL(url);
-      }
+      await shareOrDownload(file, backupFilename());
       setStatus({ kind: "ok", text: `${countRecords(backup)} poster gemt i ${backupFilename()}` });
     } catch (error) {
       // AbortError betyder bare at brugeren lukkede delings-arket — ikke en fejl at vise.
       if (error instanceof Error && error.name === "AbortError") setStatus({ kind: "idle" });
       else setStatus({ kind: "error", text: "Kunne ikke lave backup. Prøv igen." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleCsvExport() {
+    setBusy(true);
+    try {
+      const { csv, rowCount } = await buildSetsCsv();
+      if (rowCount === 0) {
+        setStatus({ kind: "error", text: "Der er ingen sæt at eksportere endnu." });
+        return;
+      }
+      const name = csvFilename();
+      await shareOrDownload(new File([csv], name, { type: "text/csv" }), name);
+      setStatus({ kind: "ok", text: `${rowCount} sæt gemt i ${name}` });
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") setStatus({ kind: "idle" });
+      else setStatus({ kind: "error", text: "Kunne ikke lave CSV-filen. Prøv igen." });
     } finally {
       setBusy(false);
     }
@@ -142,6 +149,25 @@ export function BackupPage() {
         </p>
         <Button tone="progress" onClick={handleExport} disabled={busy}>
           Gem backup
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center gap-2.5">
+          <span
+            className="cat-badge flex h-9 w-9 items-center justify-center rounded-full border"
+            style={{ "--badge-color": "var(--color-cat-history)" } as React.CSSProperties}
+          >
+            <IconList className="h-[18px] w-[18px] text-(--color-cat-history)" />
+          </span>
+          <span className="section-title">Regneark med alle sæt</span>
+        </div>
+        <p className="text-[13px] text-(--color-text-muted)">
+          Én række pr. sæt med dato, øvelse, kg, gentagelser og type — til Excel, Numbers eller en
+          træner. Det er en kopi til at kigge i, ikke en backup: filen kan ikke læses ind igen.
+        </p>
+        <Button variant="secondary" onClick={handleCsvExport} disabled={busy}>
+          Gem som CSV
         </Button>
       </div>
 
