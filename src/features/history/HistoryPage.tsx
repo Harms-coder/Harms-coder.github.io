@@ -15,6 +15,8 @@ import {
   type IconComponent,
 } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
+import { buildMonthSummary } from "../../lib/monthSummary";
+import { formatKg } from "../../lib/format";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { SummaryRow } from "../../components/SummaryRow";
 import { SwipeToDelete } from "../../components/SwipeToDelete";
@@ -23,6 +25,7 @@ import { listExercises } from "../../db/exercises";
 import { deleteSession, listSessions } from "../../db/sessions";
 import { deleteSet, listSetsForSession } from "../../db/sets";
 import {
+  DA_MONTHS,
   formatDuration,
   formatLongDate,
   formatMonthTitle,
@@ -31,6 +34,7 @@ import {
   getWeekNumber,
   getWeekStart,
   parseISODate,
+  todayISODate,
 } from "../../lib/date";
 import {
   DEFAULT_RANGE,
@@ -297,6 +301,22 @@ export function HistoryPage() {
     return { count: rangeItems.length, totalMin, totalSets, totalKm, deltaPercent };
   }, [rangeItems, allItems, range, typeFilter]);
 
+  /*
+   * Månedens opsummering står øverst. Er den indeværende måned stadig tom (fx den 1.), vises
+   * den seneste måned med træning i stedet — et kort med nuller siger ingenting.
+   */
+  const monthSummary = useMemo(() => {
+    const trainedMonths = [
+      ...new Set(sessions.filter((s) => s.endedAt).map((s) => s.date.slice(0, 7))),
+    ].sort();
+    if (trainedMonths.length === 0) return undefined;
+    const currentKey = todayISODate().slice(0, 7);
+    const monthKey = trainedMonths.includes(currentKey)
+      ? currentKey
+      : trainedMonths[trainedMonths.length - 1];
+    return buildMonthSummary({ monthKey, sessions, setsBySession, exercises });
+  }, [sessions, setsBySession, exercises]);
+
   function toggleMonth(key: string) {
     setCollapsedMonths((current) => {
       const next = new Set(current);
@@ -340,6 +360,45 @@ export function HistoryPage() {
           Dine træninger samlet ét sted.
         </p>
       </div>
+
+      {monthSummary && monthSummary.sessionCount > 0 && (
+        <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border-gold) bg-(--color-surface) p-4 card-shadow">
+          <span className="section-title">
+            Din {DA_MONTHS[Number(monthSummary.monthKey.slice(5, 7)) - 1].toLowerCase()}
+          </span>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="flex flex-col">
+              <span className="text-[22px] font-bold leading-tight text-(--color-text)">
+                {monthSummary.sessionCount}
+              </span>
+              <span className="eyebrow text-(--color-text-muted)">Træninger</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[22px] font-bold leading-tight text-(--color-text)">
+                {formatKg(monthSummary.kgLifted)}
+              </span>
+              <span className="eyebrow text-(--color-text-muted)">Løftet</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[22px] font-bold leading-tight text-(--color-cat-record)">
+                {monthSummary.prCount}
+              </span>
+              <span className="eyebrow text-(--color-text-muted)">Rekorder</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[22px] font-bold leading-tight text-(--color-text)">
+                {monthSummary.longestStreak}
+              </span>
+              <span className="eyebrow text-(--color-text-muted)">Længste stime</span>
+            </div>
+          </div>
+          {monthSummary.topExercise && (
+            <span className="text-[13px] text-(--color-text-secondary)">
+              Mest trænet: {monthSummary.topExercise.name} · {monthSummary.topExercise.sets} sæt
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-surface) px-3">
         <IconSearch className="h-4 w-4 flex-shrink-0 text-(--color-cat-history)" />

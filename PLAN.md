@@ -30,8 +30,9 @@ Sig "vis mig planen" for at få status.
 - [x] **6 · Muskel-heatmap** — gjort 2026-09-14: "Muskelkort" på Progression viser krop forfra og bagfra,
       farvet efter volumen de sidste 7 dage (mint → guld), plus hårdest trænet og mest udhvilet
       ud fra dage siden sidst.
-- [ ] **7 · Månedens opsummering** — "Din september": kg, træninger, PR'er, længste streak, mest
-      trænede øvelse. *~30 min.*
+- [x] **7 · Månedens opsummering** — gjort 2026-09-14: "Din september"-kortet øverst på Historik med
+      træninger, kg løftet, rekorder, længste stime og mest trænede øvelse. Er den indeværende måned
+      stadig tom, vises den seneste måned med træning.
 - [ ] **8 · Del et træningskort som billede** — kort i appens design, delt via delingsarket. *~30 min.*
 - [ ] **9 · Fremgangsfotos + kropsmål** — talje, arme osv. ved siden af kropsvægten; fotos gemmes i
       appens database og kommer med i backuppen. *~40 min.*
