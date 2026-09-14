@@ -1,4 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ComponentType, type CSSProperties, type MouseEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentType,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRotation } from "../features/motivation/useRotation";
 import { QuoteTicker } from "./QuoteTicker";
@@ -14,7 +22,17 @@ import {
 } from "./icons";
 
 /** Den lille bevægelse ikonet laver, når fanen vælges — keyframes i index.css (.nav-icon-*). */
-type IconAnim = "bounce" | "spin" | "draw" | "fly" | "sweep" | "hoplines" | "tear" | "write" | "pop" | "swing";
+type IconAnim =
+  | "bounce"
+  | "spin"
+  | "draw"
+  | "fly"
+  | "sweep"
+  | "hoplines"
+  | "tear"
+  | "write"
+  | "pop"
+  | "swing";
 
 interface NavItem {
   to: string;
@@ -33,15 +51,35 @@ const navItems: NavItem[] = [
   { to: "/kalender", label: "Kalender", Icon: IconCalendarToday, anim: "tear" },
   { to: "/plan", label: "Programmer", Icon: IconClipboard, anim: "write" },
   { to: "/historik", label: "Historik", Icon: IconClock, anim: "sweep" },
-  { to: "/mere", label: "Mere", Icon: IconMore, anim: "pop", also: ["/mal", "/oevelser", "/kropsvaegt"] },
+  {
+    to: "/mere",
+    label: "Mere",
+    Icon: IconMore,
+    anim: "pop",
+    also: ["/mal", "/oevelser", "/kropsvaegt"],
+  },
 ];
 
-function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string) => void }) {
+function NavItemLink({
+  item,
+  onSelect,
+}: {
+  item: NavItem;
+  onSelect: (to: string) => void;
+}) {
   const { pathname } = useLocation();
   const alsoActive = item.also?.some((p) => pathname.startsWith(p)) ?? false;
 
   function onClick(e: MouseEvent<HTMLAnchorElement>) {
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (
+      e.defaultPrevented ||
+      e.button !== 0 ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey
+    )
+      return;
     e.preventDefault();
     onSelect(item.to);
   }
@@ -55,23 +93,27 @@ function NavItemLink({ item, onSelect }: { item: NavItem; onSelect: (to: string)
       style={{ "--badge-color": "var(--color-gold-300)" } as CSSProperties}
       className={({ isActive: routeActive }) =>
         `relative z-10 flex min-w-16 flex-shrink-0 flex-col items-center gap-1 border border-transparent px-3 py-1.5 text-[11px] font-medium transition-colors ${
-          routeActive || alsoActive ? "cat-glow" : "text-(--color-text-dim) active:text-(--color-text)"
+          routeActive || alsoActive
+            ? "cat-glow"
+            : "text-(--color-text-dim) active:text-(--color-text)"
         }`
       }
     >
       {({ isActive: routeActive }) => {
         const isActive = routeActive || alsoActive;
         return (
-        <>
-          {/* Lidt større klip-ramme end ikonet, så et hop får plads, mens fx pilen kan flyve helt ud. */}
-          <span
-            data-nav-active={isActive || undefined}
-            className="relative -m-1 flex h-7 w-7 items-center justify-center overflow-hidden"
-          >
-            <item.Icon className={`h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`} />
-          </span>
-          <span className="relative whitespace-nowrap">{item.label}</span>
-        </>
+          <>
+            {/* Lidt større klip-ramme end ikonet, så et hop får plads, mens fx pilen kan flyve helt ud. */}
+            <span
+              data-nav-active={isActive || undefined}
+              className="relative -m-1 flex h-7 w-7 items-center justify-center overflow-hidden"
+            >
+              <item.Icon
+                className={`h-5 w-5 ${isActive ? `nav-icon-${item.anim}` : ""}`}
+              />
+            </span>
+            <span className="relative whitespace-nowrap">{item.label}</span>
+          </>
         );
       }}
     </NavLink>
@@ -115,7 +157,9 @@ export function BottomNav() {
   const measurePill = (slide: boolean) => {
     const row = rowRef.current;
     const scroller = scrollerRef.current;
-    const link = row?.querySelector<HTMLElement>("[data-nav-active]")?.closest("a");
+    const link = row
+      ?.querySelector<HTMLElement>("[data-nav-active]")
+      ?.closest("a");
     if (!row || !scroller || !link) return;
     const rowRect = row.getBoundingClientRect();
     const rect = link.getBoundingClientRect();
@@ -191,57 +235,70 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-(--color-border) bg-(--color-bg-elevated)"
+      /*
+       * Selve menuen er sin egen løftede flade med kant over og under; rulleteksten nedenunder
+       * står på appens almindelige baggrund, så de to ikke flyder sammen.
+       */
+      className="fixed inset-x-0 bottom-0 z-20 bg-(--color-bg)"
       /*
        * Rulleteksten bor i den luft, der før var polstring: safe-area + 8 px er blevet til
        * 4 px + 20 px tekst + (safe-area − 16 px). Samme totalhøjde på telefonen, så menuen flytter sig ikke.
        */
-      style={{ paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 1rem))" }}
+      style={{
+        paddingBottom:
+          "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) - 1rem))",
+      }}
     >
-      <div ref={rowRef} className="relative flex items-stretch pt-2 pl-2">
-        {pill && (
-          <span
-            aria-hidden="true"
-            className={`cat-badge absolute left-0 top-0 rounded-xl border ${
-              pillSlides ? "transition-[transform,width] duration-[350ms] ease-[cubic-bezier(0.2,0.9,0.25,1.05)]" : ""
-            }`}
-            style={
-              {
-                "--badge-color": "var(--color-gold-300)",
-                width: pill.width,
-                height: pill.height,
-                transform: `translate(${pill.left}px, ${pill.top}px)`,
-              } as CSSProperties
-            }
-          />
-        )}
-        {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}
-        <NavItemLink item={homeItem} onSelect={navigate} />
-        <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
-        <div
-          ref={scrollerRef}
-          className="no-scrollbar glow-scroller flex flex-1 items-center gap-1 overflow-x-auto pr-2"
-        >
-          {scrollableItems.map((item, i) => (
-            <div key={item.to} className="flex items-center gap-1">
-              {i > 0 && <span className="h-6 w-px flex-shrink-0 bg-(--color-border)" />}
-              <NavItemLink item={item} onSelect={navigate} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {thumb.width > 0 && (
-        <div
-          aria-hidden="true"
-          className="mx-auto mt-1.5 h-[3px] w-28 overflow-hidden rounded-full bg-(--color-border-strong)"
-        >
+      <div className="border-y border-(--color-border) bg-(--color-bg-elevated) pb-1.5">
+        <div ref={rowRef} className="relative flex items-stretch pt-2 pl-2">
+          {pill && (
+            <span
+              aria-hidden="true"
+              className={`cat-badge absolute left-0 top-0 rounded-xl border ${
+                pillSlides
+                  ? "transition-[transform,width] duration-[350ms] ease-[cubic-bezier(0.2,0.9,0.25,1.05)]"
+                  : ""
+              }`}
+              style={
+                {
+                  "--badge-color": "var(--color-gold-300)",
+                  width: pill.width,
+                  height: pill.height,
+                  transform: `translate(${pill.left}px, ${pill.top}px)`,
+                } as CSSProperties
+              }
+            />
+          )}
+          {/* Fastgjort uden for scroll-containeren, så Oversigt altid kan nås uanset hvor langt man har scrollet menuen. */}
+          <NavItemLink item={homeItem} onSelect={navigate} />
+          <div className="mx-1 w-px flex-shrink-0 bg-(--color-border)" />
           <div
-            className="h-full rounded-full bg-(--color-text-secondary)"
-            style={{ width: `${thumb.width}%`, marginLeft: `${thumb.left}%` }}
-          />
+            ref={scrollerRef}
+            className="no-scrollbar glow-scroller flex flex-1 items-center gap-1 overflow-x-auto pr-2"
+          >
+            {scrollableItems.map((item, i) => (
+              <div key={item.to} className="flex items-center gap-1">
+                {i > 0 && (
+                  <span className="h-6 w-px flex-shrink-0 bg-(--color-border)" />
+                )}
+                <NavItemLink item={item} onSelect={navigate} />
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+
+        {thumb.width > 0 && (
+          <div
+            aria-hidden="true"
+            className="mx-auto mt-1.5 h-[3px] w-28 overflow-hidden rounded-full bg-(--color-border-strong)"
+          >
+            <div
+              className="h-full rounded-full bg-(--color-text-secondary)"
+              style={{ width: `${thumb.width}%`, marginLeft: `${thumb.left}%` }}
+            />
+          </div>
+        )}
+      </div>
       <div className="mt-1">
         <QuoteTicker quotes={rotation.map((q) => q.text)} />
       </div>
