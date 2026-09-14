@@ -750,3 +750,72 @@ input {
     linear-gradient(180deg, rgb(10 21 22 / 0.86), rgb(10 21 22 / 0.94)),
     var(--leaf-mesh) center / 220px auto repeat-x;
 }
+
+/*
+ * ===== Fejring ved PR (PrCelebration) =====
+ * Et kort, selvlukkende lag: guld-glød over skærmen, konfetti der kastes ud fra midten
+ * og et pokal-banner. Bevidst uden prefers-reduced-motion-gate — telefonen kører med
+ * Reducér bevægelse slået til, og fejringen ville da aldrig blive set.
+ */
+.pr-flash {
+  background: radial-gradient(60% 40% at 50% 45%, rgba(224, 188, 140, 0.3) 0%, transparent 70%);
+  animation: pr-flash 2s ease-out forwards;
+}
+
+@keyframes pr-flash {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Hvert stykke kastes ud i sin egen retning (--pr-x/--pr-y) og drejer undervejs. */
+.pr-confetti {
+  animation: pr-confetti 2s cubic-bezier(0.15, 0.6, 0.35, 1) forwards;
+}
+
+@keyframes pr-confetti {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.6);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--pr-x), var(--pr-y)) rotate(var(--pr-rotate)) scale(1);
+  }
+}
+
+/* Banneret popper op, holder, og trækker sig tilbage igen. */
+.pr-banner {
+  animation: pr-banner 2s cubic-bezier(0.2, 0.9, 0.25, 1.05) forwards;
+}
+
+@keyframes pr-banner {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  22% {
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}

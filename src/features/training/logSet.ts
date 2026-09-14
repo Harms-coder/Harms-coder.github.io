@@ -10,11 +10,12 @@ export async function logSet(input: {
   reps: number;
   setType: SetType;
   order: number;
-}): Promise<{ newSet: SetEntry; updatedExercise?: Exercise }> {
+}): Promise<{ newSet: SetEntry; updatedExercise?: Exercise; isNewPr: boolean }> {
   const newSet = await addSet(input);
-  const updatedExercise =
+  /* Kun normale sæt og 1RM tæller som rekord — opvarmning og drop-sæt gør ikke. */
+  const pr =
     input.setType === "normal" || input.setType === "1rm"
       ? await maybeUpdatePr(input.exerciseId, input.weight, input.reps)
       : undefined;
-  return { newSet, updatedExercise };
+  return { newSet, updatedExercise: pr?.exercise, isNewPr: pr?.isNewPr ?? false };
 }

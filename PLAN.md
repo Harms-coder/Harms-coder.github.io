@@ -12,7 +12,8 @@ Sig "vis mig planen" for at få status.
       Service worker så appen virker offline og opdaterer sig selv; hvert push til main udgiver.
 - [x] **1 · "Som sidst" med ét tryk** — gjort 2026-09-14: knappen "Som sidst: 80 kg × 8" ligger øverst i sæt-formularen
       og udfylder vægt og reps med sidste gangs sæt. Både i træningskortene og i den planlagte træning.
-- [ ] **12 · Fejring ved PR** — glød/konfetti i live-træningen, når et sæt slår rekorden. *~15 min.*
+- [x] **12 · Fejring ved PR** — gjort 2026-09-14: guld-glød, konfetti og et "NY REKORD"-banner, når et sæt
+      slår øvelsens rekord. Både i træningskortene og i den planlagte træning.
 - [ ] **11 · Milepæle for total løftet** — 100 t, 500 t, 1.000 t … med sammenligningsbillederne
       ("Du har nu løftet en blåhval"). *~15 min.*
 - [ ] **10 · Præstationsvæg** — trofæ-side for de badges appen allerede beregner (PR, 1RM, streak, bedste

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { ExercisePhotoThumb } from "../exercises/ExercisePhotoThumb";
+import { PrCelebration } from "../../components/PrCelebration";
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -51,6 +52,9 @@ export function LiveTrainingPage() {
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [notes, setNotes] = useState("");
   const [restAutoSignal, setRestAutoSignal] = useState(0);
+  /* Fejring ved rekord: tælleren stiger for hvert PR-sæt, teksten viser sættet der slog den. */
+  const [prSignal, setPrSignal] = useState(0);
+  const [prDetail, setPrDetail] = useState<string>();
 
   const [nowTick, setNowTick] = useState(Date.now());
   const [isPaused, setIsPaused] = useState(false);
@@ -133,7 +137,7 @@ export function LiveTrainingPage() {
 
   async function handleAddSet(values: { weight: number; reps: number; setType: SetType }) {
     if (!session || !currentExerciseId) return;
-    const { newSet, updatedExercise } = await logSet({
+    const { newSet, updatedExercise, isNewPr } = await logSet({
       sessionId: session.id,
       exerciseId: currentExerciseId,
       weight: values.weight,
@@ -146,6 +150,10 @@ export function LiveTrainingPage() {
       setExercises((current) =>
         current.map((exercise) => (exercise.id === currentExerciseId ? updatedExercise : exercise)),
       );
+    }
+    if (isNewPr) {
+      setPrDetail(`${values.weight} kg × ${values.reps}`);
+      setPrSignal((n) => n + 1);
     }
     setRestAutoSignal((t) => t + 1);
   }
@@ -247,6 +255,8 @@ export function LiveTrainingPage() {
       >
         Annuller træning
       </button>
+
+      <PrCelebration signal={prSignal} detail={prDetail} />
 
       {currentExercise ? (
         <>

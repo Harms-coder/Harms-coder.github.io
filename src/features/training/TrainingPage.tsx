@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { IconChevronRight } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
+import { PrCelebration } from "../../components/PrCelebration";
 import { listExercises } from "../../db/exercises";
 import { listGoals } from "../../db/goals";
 import { listCardioEntries } from "../../db/cardio";
@@ -61,6 +62,9 @@ export function TrainingPage() {
   const [exerciseOrder, setExerciseOrder] = useState<string[]>([]);
   const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+  /* Fejring ved rekord: tælleren stiger for hvert PR-sæt, teksten viser sættet der slog den. */
+  const [prSignal, setPrSignal] = useState(0);
+  const [prDetail, setPrDetail] = useState<string>();
   const [seeds, setSeeds] = useState<Record<string, { weight: number; reps: number } | undefined>>(
     {},
   );
@@ -222,7 +226,7 @@ export function TrainingPage() {
   ) {
     if (!session) return;
     const existingForExercise = sets.filter((s) => s.exerciseId === exerciseId);
-    const { newSet, updatedExercise } = await logSet({
+    const { newSet, updatedExercise, isNewPr } = await logSet({
       sessionId: session.id,
       exerciseId,
       weight: values.weight,
@@ -235,6 +239,10 @@ export function TrainingPage() {
       setExercises((current) =>
         current.map((exercise) => (exercise.id === exerciseId ? updatedExercise : exercise)),
       );
+    }
+    if (isNewPr) {
+      setPrDetail(`${values.weight} kg × ${values.reps}`);
+      setPrSignal((n) => n + 1);
     }
   }
 
@@ -303,6 +311,7 @@ export function TrainingPage() {
         <IconChevronRight className="h-3.5 w-3.5" />
       </Link>
 
+      <PrCelebration signal={prSignal} detail={prDetail} />
       {exerciseOrder.map((exerciseId) => {
         const exercise = exerciseById.get(exerciseId);
         if (!exercise) return null;

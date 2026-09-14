@@ -67,7 +67,7 @@ export async function maybeUpdatePr(
   exerciseId: string,
   weight: number,
   reps: number,
-): Promise<Exercise | undefined> {
+): Promise<{ exercise: Exercise; isNewPr: boolean } | undefined> {
   const db = await getDb();
   const existing = await db.get("exercises", exerciseId);
   if (!existing) return undefined;
@@ -77,7 +77,7 @@ export async function maybeUpdatePr(
     weight > existing.prWeight ||
     (weight === existing.prWeight && (existing.prReps === undefined || reps > existing.prReps));
 
-  if (!beatsPr) return existing;
+  if (!beatsPr) return { exercise: existing, isNewPr: false };
 
   const updated: Exercise = {
     ...existing,
@@ -86,5 +86,5 @@ export async function maybeUpdatePr(
     prDate: new Date().toISOString(),
   };
   await db.put("exercises", updated);
-  return updated;
+  return { exercise: updated, isNewPr: true };
 }
