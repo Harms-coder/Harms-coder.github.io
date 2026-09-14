@@ -26,7 +26,7 @@ import {
   chartTooltipStyle,
 } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
-import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
+import { formatMediumDate, formatShortDate, parseISODate, toISODate, todayISODate } from "../../lib/date";
 import {
   DEFAULT_RANGE,
   RANGE_KEYS,
@@ -35,7 +35,9 @@ import {
   type RangeKey,
 } from "../../lib/dateRange";
 import { MuscleBalance } from "../../components/MuscleBalance";
+import { MuscleHeatmap } from "../../components/MuscleHeatmap";
 import { buildMuscleBalance } from "../../lib/muscleBalance";
+import { buildMuscleHeatmap, restLabel } from "../../lib/muscleHeatmap";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import type { Exercise, SetEntry, WorkoutSession } from "../../types";
@@ -99,6 +101,24 @@ export function ProgressionPage() {
     () => buildMuscleBalance(allSets, exerciseById, getRangeStart(balanceRange)),
     [allSets, exerciseById, balanceRange],
   );
+
+  /* Heatmappet ser altid på de sidste 7 dage — det er "hvad har jeg trænet på det seneste",
+     ikke en periode man vælger. */
+  const heatmap = useMemo(() => {
+    const today = todayISODate();
+    const from = toISODate(new Date(parseISODate(today).getTime() - 6 * 86_400_000));
+    return buildMuscleHeatmap(allSets, exerciseById, from, today);
+  }, [allSets, exerciseById]);
+
+  /* Mest og mindst trænet — det er dem, man skal handle på. */
+  const heatmapHighlights = useMemo(() => {
+    const trained = [...heatmap.entries()].filter(([, load]) => load.sets > 0);
+    const hardest = [...trained].sort((a, b) => b[1].volumeKg - a[1].volumeKg)[0];
+    const restedLongest = [...heatmap.entries()]
+      .filter(([, load]) => load.daysSince !== undefined && load.daysSince >= 4)
+      .sort((a, b) => (b[1].daysSince ?? 0) - (a[1].daysSince ?? 0))[0];
+    return { hardest, restedLongest, trainedCount: trained.length };
+  }, [heatmap]);
 
   const badges = useMemo(
     () => computeBadges({ exercises, setsByExercise, sessions, goalProgress: [] }),
@@ -207,6 +227,38 @@ export function ProgressionPage() {
           <p className="text-[13px] text-(--color-text-muted)">
             Ingen øvelser med nok historik i denne periode.
           </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+        <div className="flex items-center justify-between gap-2">
+          <span className="section-title">Muskelkort</span>
+          <span className="text-[13px] text-(--color-text-muted)">Sidste 7 dage</span>
+        </div>
+
+        {heatmapHighlights.trainedCount === 0 ? (
+          <p className="text-[13px] text-(--color-text-muted)">
+            Ingen sæt de sidste 7 dage. Log en træning, så farves kroppen efter, hvad du har
+            arbejdet med.
+          </p>
+        ) : (
+          <>
+            <MuscleHeatmap loads={heatmap} />
+            <div className="flex flex-col gap-1 pt-1">
+              {heatmapHighlights.hardest && (
+                <span className="text-[13px] text-(--color-text-secondary)">
+                  Hårdest trænet: {heatmapHighlights.hardest[0]} ·{" "}
+                  {heatmapHighlights.hardest[1].sets} sæt
+                </span>
+              )}
+              {heatmapHighlights.restedLongest && (
+                <span className="text-[13px] text-(--color-text-secondary)">
+                  Mest udhvilet: {heatmapHighlights.restedLongest[0]} ·{" "}
+                  {restLabel(heatmapHighlights.restedLongest[1]).toLowerCase()}
+                </span>
+              )}
+            </div>
+          </>
         )}
       </div>
 
