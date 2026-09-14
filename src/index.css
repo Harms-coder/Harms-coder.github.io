@@ -9,7 +9,7 @@
    * Flader: dyb, næsten sort med et svagt petroleum-skær — ikke neutralt gråt.
    * Trappen går mørkest (bg) til lysest (surface-3).
    */
-  --color-bg: #040b0c;
+  --color-bg: #000000;
   --color-bg-elevated: #0a1516;
   --color-bg-tertiary: #101a19;
   --color-surface: #121f1d;
@@ -110,7 +110,7 @@ html {
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 100%) fixed;
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
@@ -633,7 +633,7 @@ h1 {
     radial-gradient(56% 32% at -16% 58%, rgba(127, 236, 195, 0.12) 0%, transparent 68%),
     radial-gradient(58% 32% at 106% 78%, rgba(94, 198, 247, 0.1) 0%, transparent 68%),
     radial-gradient(66% 36% at 58% 112%, rgba(201, 162, 106, 0.12) 0%, transparent 70%),
-    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 55%, var(--color-bg) 100%);
+    var(--color-bg);
 }
 
 /* Fin filmisk kornstruktur oven på ambient-laget — tager det "flade" ud af de store gradienter. */
@@ -735,5 +735,5 @@ input {
 .nav-menu {
   background:
     linear-gradient(180deg, rgb(10 21 22 / 0.86), rgb(10 21 22 / 0.94)),
-    var(--leaf-mesh) center / cover no-repeat;
+    var(--leaf-mesh) center / 220px auto repeat-x;
 }
