@@ -9,7 +9,7 @@ import { listCardioEntries } from "../../db/cardio";
 import { getPlannedWorkoutForDate, listPlannedWorkoutsInRange } from "../../db/plannedWorkouts";
 import { listRoutines } from "../../db/routines";
 import { deleteSession, endSession, getActiveSession, listSessions, startSession } from "../../db/sessions";
-import { deleteSet, getLastSetForExercise, listSetsForSession } from "../../db/sets";
+import { deleteSet, getLastSetFromEarlierSession, listSetsForSession } from "../../db/sets";
 import { formatShortDate, getCurrentWeekRange, parseISODate, toISODate, todayISODate } from "../../lib/date";
 import { joinDanish } from "../../lib/format";
 import { computeActivityWeekStreak } from "../../lib/streak";
@@ -145,7 +145,21 @@ export function TrainingPage() {
     if (activeSession) {
       setSession(activeSession);
       setSets(sessionSets);
-      setExerciseOrder(orderFromSets(sessionSets));
+      const order = orderFromSets(sessionSets);
+      setExerciseOrder(order);
+      /* Genoptaget træning: hent "sidst"-sættene for de øvelser, der allerede er i gang,
+         så "Som sidst"-knappen også er der efter en genindlæsning. */
+      const earlier = await Promise.all(
+        order.map((id) => getLastSetFromEarlierSession(id, activeSession.id)),
+      );
+      setSeeds(
+        Object.fromEntries(
+          order.map((id, i) => [
+            id,
+            earlier[i] ? { weight: earlier[i]!.weight, reps: earlier[i]!.reps } : undefined,
+          ]),
+        ),
+      );
     } else {
       await loadIdleDashboard(allExercises);
     }
@@ -193,8 +207,8 @@ export function TrainingPage() {
     setShowPicker(false);
     setExpandedExerciseId(exercise.id);
     setExerciseOrder((order) => (order.includes(exercise.id) ? order : [...order, exercise.id]));
-    if (!(exercise.id in seeds)) {
-      const last = await getLastSetForExercise(exercise.id);
+    if (session && !(exercise.id in seeds)) {
+      const last = await getLastSetFromEarlierSession(exercise.id, session.id);
       setSeeds((current) => ({
         ...current,
         [exercise.id]: last ? { weight: last.weight, reps: last.reps } : undefined,
@@ -303,6 +317,7 @@ export function TrainingPage() {
             expanded={expandedExerciseId === exerciseId}
             initialWeight={lastInSession?.weight ?? seed?.weight}
             initialReps={lastInSession?.reps ?? seed?.reps}
+            lastSet={seed}
             onToggle={() =>
               setExpandedExerciseId((current) => (current === exerciseId ? null : exerciseId))
             }

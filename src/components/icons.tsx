@@ -118,6 +118,18 @@ export function IconCalendarToday(props: IconProps) {
   );
 }
 
+/* Gentag: en cirkel med et hak i hver ende og pilehoveder — "gør det samme igen". */
+export function IconRepeat(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 12a8 8 0 0 1 8-8c2.7 0 5 1.3 6.4 3.4" />
+      <path d="M20 12a8 8 0 0 1-8 8c-2.7 0-5-1.3-6.4-3.4" />
+      <path d="M18.6 3.4v4h-4" />
+      <path d="M5.4 20.6v-4h4" />
+    </svg>
+  );
+}
+
 export function IconClock(props: IconProps) {
   return (
     <svg {...base(props)}>

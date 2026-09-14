@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { IconRepeat } from "../../components/icons";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../../lib/plates";
 import type { SetType } from "../../types";
 
@@ -17,6 +18,8 @@ const SET_TYPE_LABELS: Record<SetType, string> = {
 interface SetInputFormProps {
   initialWeight?: number;
   initialReps?: number;
+  /** Sidste sæt fra en tidligere træning — vises som "Som sidst"-knappen, hvis det findes. */
+  lastSet?: { weight: number; reps: number };
   /** Navnet bruges til at afgøre om skiveberegningen giver mening for øvelsen. */
   exerciseName?: string;
   onSave: (values: { weight: number; reps: number; setType: SetType }) => void;
@@ -25,6 +28,7 @@ interface SetInputFormProps {
 export function SetInputForm({
   initialWeight,
   initialReps,
+  lastSet,
   exerciseName,
   onSave,
 }: SetInputFormProps) {
@@ -49,8 +53,28 @@ export function SetInputForm({
     onSave({ weight: weightValue, reps: repsValue, setType });
   }
 
+  const matchesLastSet =
+    lastSet !== undefined && weight === lastSet.weight.toString() && reps === lastSet.reps.toString();
+
   return (
     <div className="flex flex-col gap-3 border-t border-(--color-border) pt-3">
+      {lastSet && (
+        /* Ét tryk udfylder vægt og reps med sidste gangs sæt — appens hurtigste vej til et logget sæt. */
+        <button
+          type="button"
+          onClick={() => {
+            setWeight(lastSet.weight.toString());
+            setReps(lastSet.reps.toString());
+          }}
+          className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-[14px] font-medium active:opacity-70 ${
+            matchesLastSet ? "accent-fill text-(--color-text)" : "glass-fill text-(--color-text)"
+          }`}
+        >
+          <IconRepeat className="h-4 w-4 flex-shrink-0" />
+          Som sidst: {lastSet.weight} kg × {lastSet.reps}
+        </button>
+      )}
+
       <div className="flex flex-wrap gap-2">
         {(Object.keys(SET_TYPE_LABELS) as SetType[]).map((type) => (
           <button

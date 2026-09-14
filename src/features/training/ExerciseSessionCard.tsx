@@ -15,6 +15,7 @@ interface ExerciseSessionCardProps {
   expanded: boolean;
   initialWeight?: number;
   initialReps?: number;
+  lastSet?: { weight: number; reps: number };
   onToggle: () => void;
   onAddSet: (values: { weight: number; reps: number; setType: SetType }) => void;
   onDeleteSet: (setId: string) => void;
@@ -26,6 +27,7 @@ export function ExerciseSessionCard({
   expanded,
   initialWeight,
   initialReps,
+  lastSet,
   onToggle,
   onAddSet,
   onDeleteSet,
@@ -90,7 +92,13 @@ export function ExerciseSessionCard({
       )}
 
       {expanded && (
-        <SetInputForm initialWeight={initialWeight} initialReps={initialReps} onSave={onAddSet} />
+        <SetInputForm
+          initialWeight={initialWeight}
+          initialReps={initialReps}
+          lastSet={lastSet}
+          exerciseName={exercise.name}
+          onSave={onAddSet}
+        />
       )}
     </div>
   );

@@ -18,7 +18,7 @@ import {
   getActiveSession,
   updateSessionNotes,
 } from "../../db/sessions";
-import { deleteSet, listSetsForExercise, listSetsForSession } from "../../db/sets";
+import { deleteSet, getLastSetFromEarlierSession, listSetsForSession } from "../../db/sets";
 import { formatMediumDate, parseISODate } from "../../lib/date";
 import type { Exercise, SetEntry, SetType, WorkoutSession } from "../../types";
 import { ExercisePicker } from "./ExercisePicker";
@@ -98,8 +98,7 @@ export function LiveTrainingPage() {
 
   useEffect(() => {
     if (!currentExerciseId || !session || currentExerciseId in priorSets) return;
-    void listSetsForExercise(currentExerciseId).then((allSets) => {
-      const prior = [...allSets].reverse().find((s) => s.sessionId !== session.id);
+    void getLastSetFromEarlierSession(currentExerciseId, session.id).then((prior) => {
       setPriorSets((current) => ({ ...current, [currentExerciseId]: prior }));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -322,6 +321,7 @@ export function LiveTrainingPage() {
             exerciseName={currentExercise.name}
             initialWeight={lastInSession?.weight ?? priorSet?.weight}
             initialReps={lastInSession?.reps ?? priorSet?.reps}
+            lastSet={priorSet}
             onSave={handleAddSet}
           />
 

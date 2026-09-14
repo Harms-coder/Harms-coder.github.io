@@ -28,6 +28,22 @@ export async function getLastSetForExercise(
   return all.reduce((latest, set) => (set.createdAt > latest.createdAt ? set : latest));
 }
 
+/**
+ * Sidste sæt for øvelsen fra en tidligere træning — grundlaget for "Sidst: 80 kg × 8".
+ * Sæt fra den igangværende træning tæller ikke med, ellers ville "som sidst" bare gentage
+ * det, man netop har logget.
+ */
+export async function getLastSetFromEarlierSession(
+  exerciseId: string,
+  currentSessionId: string,
+): Promise<SetEntry | undefined> {
+  const db = await getDb();
+  const all = await db.getAllFromIndex("sets", "by-exercise", exerciseId);
+  const earlier = all.filter((set) => set.sessionId !== currentSessionId);
+  if (earlier.length === 0) return undefined;
+  return earlier.reduce((latest, set) => (set.createdAt > latest.createdAt ? set : latest));
+}
+
 export async function addSet(input: {
   sessionId: string;
   exerciseId: string;
