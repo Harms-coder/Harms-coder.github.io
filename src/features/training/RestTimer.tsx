@@ -114,7 +114,7 @@ export function RestTimer({ autoStartSignal }: RestTimerProps) {
       const timeout = setTimeout(() => setJustFinished(false), 4000);
       return () => clearTimeout(timeout);
     }
-  }, [remainingSec]);
+  }, [remainingSec, endTime]);
 
   const isRunning = remainingSec !== null && remainingSec > 0;
 
