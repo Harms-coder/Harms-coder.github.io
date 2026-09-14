@@ -140,6 +140,17 @@ export function IconBell(props: IconProps) {
   );
 }
 
+/* Del: kasse med en pil, der peger op og ud — samme motiv som systemets delings-ikon. */
+export function IconShare(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.5v11" />
+      <path d="M8.2 7.3 12 3.5l3.8 3.8" />
+      <path d="M6.5 11H5.5a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 18.5 11h-1" />
+    </svg>
+  );
+}
+
 export function IconClock(props: IconProps) {
   return (
     <svg {...base(props)}>

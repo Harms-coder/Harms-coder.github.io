@@ -33,7 +33,9 @@ Sig "vis mig planen" for at få status.
 - [x] **7 · Månedens opsummering** — gjort 2026-09-14: "Din september"-kortet øverst på Historik med
       træninger, kg løftet, rekorder, længste stime og mest trænede øvelse. Er den indeværende måned
       stadig tom, vises den seneste måned med træning.
-- [ ] **8 · Del et træningskort som billede** — kort i appens design, delt via delingsarket. *~30 min.*
+- [x] **8 · Del et træningskort som billede** — gjort 2026-09-14: "Del som billede" på en udfoldet træning
+      i Historik laver et PNG i appens design (logo, dato, nøgletal, øvelser) og åbner delingsarket.
+      Tegnet direkte på et canvas — ingen ny afhængighed.
 - [ ] **9 · Fremgangsfotos + kropsmål** — talje, arme osv. ved siden af kropsvægten; fotos gemmes i
       appens database og kommer med i backuppen. *~40 min.*
 - [x] **14 · CSV-eksport** — gjort 2026-09-14: "Gem som CSV" på Backup-siden. Én række pr. sæt med dato,

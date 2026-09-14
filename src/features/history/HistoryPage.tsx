@@ -10,12 +10,15 @@ import {
   IconMapPin,
   IconRun,
   IconSearch,
+  IconShare,
   IconTrendUp,
   IconX,
   type IconComponent,
 } from "../../components/icons";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { buildMonthSummary } from "../../lib/monthSummary";
+import { buildWorkoutCardPng } from "./workoutCardImage";
+import { shareOrDownload } from "../../lib/shareFile";
 import { formatKg } from "../../lib/format";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { SummaryRow } from "../../components/SummaryRow";
@@ -316,6 +319,47 @@ export function HistoryPage() {
       : trainedMonths[trainedMonths.length - 1];
     return buildMonthSummary({ monthKey, sessions, setsBySession, exercises });
   }, [sessions, setsBySession, exercises]);
+
+  /* Delingen kan tage et øjeblik (skrifter og logo skal være hentet), så knappen viser sin egen status. */
+  const [sharingId, setSharingId] = useState<string | null>(null);
+
+  async function handleShare(item: StrengthItem) {
+    setSharingId(item.id);
+    try {
+      const working = item.sets.filter((set) => set.setType !== "warmup");
+      const kgLifted = working.reduce((sum, set) => sum + set.weight * set.reps, 0);
+      const blob = await buildWorkoutCardPng({
+        dateLabel: formatLongDate(parseISODate(item.date)),
+        title: item.title,
+        durationMin: item.durationMin,
+        setCount: working.length,
+        exerciseCount: item.exerciseIds.length,
+        kgLiftedLabel: formatKg(kgLifted),
+        lines: item.exerciseIds.map((exerciseId) => {
+          const sets = item.sets.filter((set) => set.exerciseId === exerciseId);
+          const heaviest = sets.reduce(
+            (best, set) => (set.weight > best.weight ? set : best),
+            sets[0],
+          );
+          return {
+            name: exerciseById.get(exerciseId)?.name ?? "Ukendt øvelse",
+            detail: heaviest
+              ? `${sets.length} sæt · ${heaviest.weight} kg × ${heaviest.reps}`
+              : "Ingen sæt",
+          };
+        }),
+      });
+      const name = `vigorra-${item.date}.png`;
+      await shareOrDownload(new File([blob], name, { type: "image/png" }), item.title);
+    } catch (error) {
+      /* Lukker man delings-arket, er det ikke en fejl at råbe op om. */
+      if (!(error instanceof Error && error.name === "AbortError")) {
+        window.alert("Kunne ikke lave billedet. Prøv igen.");
+      }
+    } finally {
+      setSharingId(null);
+    }
+  }
 
   function toggleMonth(key: string) {
     setCollapsedMonths((current) => {
@@ -621,6 +665,15 @@ export function HistoryPage() {
                                         </div>
                                       );
                                     })}
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleShare(item)}
+                                      disabled={sharingId === item.id}
+                                      className="mt-1 flex min-h-11 items-center justify-center gap-2 self-start rounded-xl glass-fill px-4 text-[13.5px] font-medium text-(--color-text) active:opacity-70 disabled:opacity-50"
+                                    >
+                                      <IconShare className="h-4 w-4" />
+                                      {sharingId === item.id ? "Laver billede…" : "Del som billede"}
+                                    </button>
                                   </div>
                                 )}
                               </div>
