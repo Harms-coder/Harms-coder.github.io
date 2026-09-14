@@ -14,8 +14,9 @@ Sig "vis mig planen" for at få status.
       og udfylder vægt og reps med sidste gangs sæt. Både i træningskortene og i den planlagte træning.
 - [x] **12 · Fejring ved PR** — gjort 2026-09-14: guld-glød, konfetti og et "NY REKORD"-banner, når et sæt
       slår øvelsens rekord. Både i træningskortene og i den planlagte træning.
-- [ ] **11 · Milepæle for total løftet** — 100 t, 500 t, 1.000 t … med sammenligningsbillederne
-      ("Du har nu løftet en blåhval"). *~15 min.*
+- [x] **11 · Milepæle for total løftet** — gjort 2026-09-14: kort på Oversigten med alt der nogensinde er
+      løftet, sammenligningsbilledet ("7 blåhvaler"), nået milepæl og vej til den næste (1, 5, 10, 25, 50,
+      100, 250, 500, 1.000 ton …).
 - [ ] **10 · Præstationsvæg** — trofæ-side for de badges appen allerede beregner (PR, 1RM, streak, bedste
       måned, mål), med oplåsnings-animation. *~30 min.*
 - [ ] **2 · Supersæt** — markér to øvelser som par i program og live-træning; hviletimeren kører

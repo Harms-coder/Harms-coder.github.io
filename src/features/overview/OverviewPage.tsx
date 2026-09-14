@@ -8,7 +8,9 @@ import {
   IconDumbbell,
   IconMapPin,
   IconRun,
+  IconTrophy,
 } from "../../components/icons";
+import { GoalProgress } from "../../components/GoalProgress";
 import { ProgressBadge } from "../../components/ProgressBadge";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { Sparkline } from "../../components/Sparkline";
@@ -38,6 +40,7 @@ import { dayNumber } from "../../lib/quotes";
 import { computeBadges } from "../../lib/progressBadges";
 import { buildStrengthGains, groupSetsByExercise } from "../../lib/strengthGains";
 import { listWeightComparisons, type ComparisonKind } from "../../lib/weightComparisons";
+import { getLiftMilestone } from "../../lib/liftMilestones";
 import type {
   BodyweightEntry,
   CardioEntry,
@@ -199,6 +202,23 @@ export function OverviewPage() {
   const weightComparison =
     weightComparisons.length > 0 ? weightComparisons[comparisonStep % weightComparisons.length] : undefined;
 
+  /*
+   * Milepæle: alt hvad der nogensinde er løftet, uafhængigt af den valgte periode ovenfor.
+   * Opvarmning tæller ikke med — samme regel som Kg løftet-feltet.
+   */
+  const lifetimeKgLifted = useMemo(
+    () =>
+      allSets
+        .filter((set) => set.setType !== "warmup")
+        .reduce((sum, set) => sum + set.weight * set.reps, 0),
+    [allSets],
+  );
+  const milestone = getLiftMilestone(lifetimeKgLifted);
+  const lifetimeComparison = useMemo(
+    () => listWeightComparisons(lifetimeKgLifted, PHOTOGRAPHED_KINDS)[0],
+    [lifetimeKgLifted],
+  );
+
   const weightInRange = useMemo(
     () =>
       [...bodyweightEntries]
@@ -356,6 +376,48 @@ export function OverviewPage() {
           className="col-span-2"
         />
       </div>
+
+      {lifetimeKgLifted > 0 && (
+        <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
+          <div className="flex items-center justify-between">
+            <span className="section-title">Milepæle</span>
+            <span className="text-[13px] text-(--color-text-muted)">Alt du har løftet</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {lifetimeComparison && <ComparisonIllustration kinds={lifetimeComparison.kinds} />}
+            <div className="flex min-w-0 flex-col">
+              <span className="text-[26px] font-bold leading-tight text-(--color-text)">
+                {formatKg(lifetimeKgLifted)}
+              </span>
+              {lifetimeComparison && (
+                <span className="text-[13px] text-(--color-text-secondary)">
+                  {lifetimeComparison.text}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {milestone.nextKg !== undefined ? (
+            <GoalProgress
+              label={`Næste milepæl: ${formatKg(milestone.nextKg)}`}
+              statusText={`${formatKg(milestone.nextKg - lifetimeKgLifted)} igen`}
+              percent={milestone.percent}
+            />
+          ) : (
+            <span className="text-[13px] text-(--color-text-secondary)">
+              Alle milepæle er taget. Respekt.
+            </span>
+          )}
+
+          {milestone.reachedKg !== undefined && (
+            <div className="flex items-center gap-2 text-[13px] font-medium text-(--color-cat-record)">
+              <IconTrophy className="h-4 w-4 flex-shrink-0" />
+              Milepæl nået: {formatKg(milestone.reachedKg)}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
         <div className="flex items-center justify-between">
