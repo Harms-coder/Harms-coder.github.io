@@ -5,6 +5,7 @@ import type {
   Exercise,
   Goal,
   PlannedWorkout,
+  ProgressPhoto,
   Quote,
   Routine,
   SetEntry,
@@ -54,10 +55,15 @@ interface TraeningsappDB extends DBSchema {
     key: string;
     value: Quote;
   };
+  progressPhotos: {
+    key: string;
+    value: ProgressPhoto;
+    indexes: { "by-date": string };
+  };
 }
 
 const DB_NAME = "traeningsapp";
-export const DB_VERSION = 4;
+export const DB_VERSION = 5;
 
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 
@@ -96,6 +102,11 @@ export function getDb() {
 
         if (oldVersion < 4) {
           db.createObjectStore("quotes", { keyPath: "id" });
+        }
+
+        if (oldVersion < 5) {
+          const photos = db.createObjectStore("progressPhotos", { keyPath: "id" });
+          photos.createIndex("by-date", "date");
         }
       },
     });

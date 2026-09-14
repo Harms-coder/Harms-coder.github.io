@@ -13,6 +13,7 @@ const STORES = [
   "plannedWorkouts",
   "goals",
   "quotes",
+  "progressPhotos",
 ] as const;
 
 type StoreName = (typeof STORES)[number];
@@ -93,10 +94,15 @@ export async function restoreBackup(backup: BackupFile): Promise<number> {
   let restored = 0;
 
   for (const store of STORES) {
+    const objectStore = tx.objectStore(store as StoreName);
+    /*
+     * Ryddes uanset om filen har noget at lægge i den. Ellers ville en gendannelse fra en
+     * ældre backup lade fx fremgangsfotos blive stående, selv om brugeren fik at vide at
+     * alt bliver erstattet.
+     */
+    await objectStore.clear();
     const rows = backup.data[store];
     if (!rows) continue;
-    const objectStore = tx.objectStore(store as StoreName);
-    await objectStore.clear();
     for (const row of rows) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await objectStore.put(row as any);

@@ -36,8 +36,9 @@ Sig "vis mig planen" for at få status.
 - [x] **8 · Del et træningskort som billede** — gjort 2026-09-14: "Del som billede" på en udfoldet træning
       i Historik laver et PNG i appens design (logo, dato, nøgletal, øvelser) og åbner delingsarket.
       Tegnet direkte på et canvas — ingen ny afhængighed.
-- [ ] **9 · Fremgangsfotos + kropsmål** — talje, arme osv. ved siden af kropsvægten; fotos gemmes i
-      appens database og kommer med i backuppen. *~40 min.*
+- [x] **9 · Fremgangsfotos + kropsmål** — gjort 2026-09-14: talje, bryst, arm, lår og hofte kan logges
+      sammen med vægten og vises på vejningerne. Fremgangsfotos ligger i databasen (skaleret ned til
+      1080 px JPEG) og kommer med i backuppen. DB_VERSION 5.
 - [x] **14 · CSV-eksport** — gjort 2026-09-14: "Gem som CSV" på Backup-siden. Én række pr. sæt med dato,
       øvelse, kategori, kg, gentagelser, type og volumen. Semikolon og komma-decimaler, så et dansk
       Excel/Numbers deler den rigtigt op, og BOM så æ, ø og å vises rigtigt.

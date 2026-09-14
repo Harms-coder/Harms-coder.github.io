@@ -3,7 +3,7 @@ import { Button } from "../../components/Button";
 import { CardActions } from "../../components/CardActions";
 import { TextField } from "../../components/TextField";
 import { formatMediumDate, parseISODate } from "../../lib/date";
-import type { BodyweightEntry } from "../../types";
+import { BODY_MEASUREMENTS, type BodyweightEntry } from "../../types";
 
 interface BodyweightEntryCardProps {
   entry: BodyweightEntry;
@@ -57,6 +57,12 @@ export function BodyweightEntryCard({ entry, onUpdate, onDelete }: BodyweightEnt
     );
   }
 
+  /* Kun de mål der faktisk er taget — rækkefølgen følger BODY_MEASUREMENTS, så kortene ser ens ud. */
+  const measured = BODY_MEASUREMENTS.flatMap((name) => {
+    const value = entry.measurements?.[name];
+    return value === undefined ? [] : [[name, value] as const];
+  });
+
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
       <div className="flex flex-col gap-1">
@@ -64,6 +70,11 @@ export function BodyweightEntryCard({ entry, onUpdate, onDelete }: BodyweightEnt
         <span className="text-[13px] text-(--color-text-muted)">
           {formatMediumDate(parseISODate(entry.date))}
         </span>
+        {measured.length > 0 && (
+          <span className="text-[12.5px] text-(--color-text-secondary)">
+            {measured.map(([name, value]) => `${name} ${value} cm`).join(" · ")}
+          </span>
+        )}
       </div>
       <CardActions onEdit={() => setIsEditing(true)} onDelete={handleDelete} />
     </div>

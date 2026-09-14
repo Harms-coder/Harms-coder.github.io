@@ -13,6 +13,8 @@ import { Button } from "../../components/Button";
 import { PageBackdrop } from "../../components/PageBackdrop";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { TextField } from "../../components/TextField";
+import { ProgressPhotos } from "./ProgressPhotos";
+import { BODY_MEASUREMENTS, type BodyMeasurement } from "../../types";
 import {
   createBodyweightEntry,
   deleteBodyweightEntry,
@@ -58,6 +60,9 @@ export function BodyweightPage() {
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(todayISODate());
   const [weight, setWeight] = useState("");
+  /* Kropsmål er valgfrie — de gemmes som tekst her og først som tal, når der står noget. */
+  const [measurements, setMeasurements] = useState<Partial<Record<BodyMeasurement, string>>>({});
+  const [showMeasurements, setShowMeasurements] = useState(false);
   const [range, setRange] = useState<RangeKey>(DEFAULT_RANGE);
 
   async function refresh() {
@@ -74,8 +79,15 @@ export function BodyweightPage() {
     event.preventDefault();
     const weightValue = Number(weight);
     if (!weightValue) return;
-    await createBodyweightEntry({ date, weight: weightValue });
+    const parsed: Partial<Record<BodyMeasurement, number>> = {};
+    for (const name of BODY_MEASUREMENTS) {
+      const value = Number(measurements[name]);
+      if (value > 0) parsed[name] = value;
+    }
+    await createBodyweightEntry({ date, weight: weightValue, measurements: parsed });
     setWeight("");
+    setMeasurements({});
+    setShowMeasurements(false);
     setDate(todayISODate());
     await refresh();
   }
@@ -142,8 +154,39 @@ export function BodyweightPage() {
             onChange={(e) => setWeight(e.target.value)}
           />
         </div>
+        {showMeasurements ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-[13px] font-medium text-(--color-text-muted)">
+              Kropsmål (cm) — udfyld kun dem du har målt
+            </span>
+            <div className="grid grid-cols-2 gap-3">
+              {BODY_MEASUREMENTS.map((name) => (
+                <TextField
+                  key={name}
+                  label={name}
+                  type="number"
+                  inputMode="decimal"
+                  value={measurements[name] ?? ""}
+                  onChange={(e) =>
+                    setMeasurements((current) => ({ ...current, [name]: e.target.value }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowMeasurements(true)}
+            className="self-start text-[13px] font-medium text-(--color-cat-body) active:opacity-70"
+          >
+            + Tilføj kropsmål
+          </button>
+        )}
         <Button type="submit" tone="body">Gem</Button>
       </form>
+
+      <ProgressPhotos />
 
       {entries.length > 1 && (
         <div className="flex flex-col gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">

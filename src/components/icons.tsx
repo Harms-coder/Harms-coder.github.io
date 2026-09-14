@@ -151,6 +151,16 @@ export function IconShare(props: IconProps) {
   );
 }
 
+/* Kamera: hus, søger og linse. */
+export function IconCamera(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 8.5h3.2l1.6-2.4h6.4l1.6 2.4H20a1.5 1.5 0 0 1 1.5 1.5v7.5A1.5 1.5 0 0 1 20 19H4a1.5 1.5 0 0 1-1.5-1.5V10A1.5 1.5 0 0 1 4 8.5Z" />
+      <circle cx="12" cy="13.5" r="3.4" />
+    </svg>
+  );
+}
+
 export function IconClock(props: IconProps) {
   return (
     <svg {...base(props)}>

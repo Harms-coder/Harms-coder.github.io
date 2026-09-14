@@ -47,10 +47,27 @@ export interface CardioEntry {
   notes?: string;
 }
 
+/** De kropsmål appen kender. Lukket liste frem for fritekst, som øvelseskategorier og cardio-typer. */
+export const BODY_MEASUREMENTS = ["Talje", "Bryst", "Arm", "Lår", "Hofte"] as const;
+export type BodyMeasurement = (typeof BODY_MEASUREMENTS)[number];
+
 export interface BodyweightEntry {
   id: string;
   date: string;
   weight: number;
+  /** Omkredse i cm, kun dem der er målt. Manglende felt = ingen mål — ingen migration nødvendig. */
+  measurements?: Partial<Record<BodyMeasurement, number>>;
+}
+
+export interface ProgressPhoto {
+  id: string;
+  date: string;
+  /**
+   * Billedet som data-URL frem for Blob: backuppen er JSON, og JSON.stringify smider en Blob
+   * væk uden at sige noget. Billedet skaleres ned før det gemmes, så filen ikke eksploderer.
+   */
+  dataUrl: string;
+  note?: string;
 }
 
 export interface Routine {
