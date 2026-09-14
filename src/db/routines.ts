@@ -24,6 +24,7 @@ export async function createRoutine(input: {
   name: string;
   exerciseIds: string[];
   color?: string;
+  supersets?: string[][];
 }): Promise<Routine> {
   const db = await getDb();
   const routine: Routine = {
@@ -31,6 +32,7 @@ export async function createRoutine(input: {
     name: input.name.trim(),
     exerciseIds: input.exerciseIds,
     color: input.color,
+    supersets: input.supersets,
     createdAt: new Date().toISOString(),
   };
   await db.add("routines", routine);
@@ -39,7 +41,7 @@ export async function createRoutine(input: {
 
 export async function updateRoutine(
   id: string,
-  changes: Partial<Pick<Routine, "name" | "exerciseIds" | "color" | "favorite">>,
+  changes: Partial<Pick<Routine, "name" | "exerciseIds" | "color" | "favorite" | "supersets">>,
 ): Promise<Routine> {
   const db = await getDb();
   const existing = await db.get("routines", id);

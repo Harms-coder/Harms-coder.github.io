@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
 import { CardActions } from "../../components/CardActions";
 import { ExerciseMultiSelect } from "../../components/ExerciseMultiSelect";
+import { SupersetEditor } from "./SupersetEditor";
+import { prunePairs } from "./supersets";
 import { RoutineColorPicker } from "../../components/RoutineColorPicker";
 import { TextField } from "../../components/TextField";
 import {
@@ -31,6 +33,7 @@ interface RoutineCardProps {
     name: string;
     exerciseIds: string[];
     color?: string;
+    supersets?: string[][];
   }) => Promise<void> | void;
   onToggleFavorite: () => Promise<void> | void;
   onDelete: () => Promise<void> | void;
@@ -48,22 +51,26 @@ export function RoutineCard({
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(routine.name);
   const [exerciseIds, setExerciseIds] = useState(routine.exerciseIds);
+  const [supersets, setSupersets] = useState(routine.supersets ?? []);
   const [color, setColor] = useState(routine.color ?? ROUTINE_COLORS[0]);
 
   const exerciseById = new Map(exercises.map((e) => [e.id, e]));
 
   function toggleExercise(exerciseId: string) {
-    setExerciseIds((current) =>
-      current.includes(exerciseId)
+    setExerciseIds((current) => {
+      const next = current.includes(exerciseId)
         ? current.filter((id) => id !== exerciseId)
-        : [...current, exerciseId],
-    );
+        : [...current, exerciseId];
+      /* En fjernet øvelse må ikke efterlade et supersæt, der peger på ingenting. */
+      setSupersets((pairs) => prunePairs(pairs, next));
+      return next;
+    });
   }
 
   async function handleSave() {
     const trimmedName = name.trim();
     if (!trimmedName || exerciseIds.length === 0) return;
-    await onUpdate({ name: trimmedName, exerciseIds, color });
+    await onUpdate({ name: trimmedName, exerciseIds, color, supersets });
     setIsEditing(false);
   }
 
@@ -82,6 +89,12 @@ export function RoutineCard({
           exercises={exercises}
           selectedIds={exerciseIds}
           onToggle={toggleExercise}
+        />
+        <SupersetEditor
+          exercises={exercises}
+          selectedIds={exerciseIds}
+          supersets={supersets}
+          onChange={setSupersets}
         />
         <span className="text-[13px] font-medium text-(--color-text-muted)">
           Farve (vises i kalenderen)

@@ -20,8 +20,9 @@ Sig "vis mig planen" for at få status.
 - [x] **10 · Præstationsvæg** — gjort 2026-09-14: siden /praestationer (via Mere) viser de seks badges som
       trofæer, låst op eller ej, med tekst om hvad der skal til. Et netop oplåst trofæ popper frem og
       glimter én gang; hvad der er set, huskes i localStorage.
-- [ ] **2 · Supersæt** — markér to øvelser som par i program og live-træning; hviletimeren kører
-      imellem dem. *~30 min.*
+- [x] **2 · Supersæt** — gjort 2026-09-14: to øvelser i træk kan parres i programmet ("+ Supersæt"), og i
+      den planlagte træning skiftes der automatisk til makkeren, når sættet er gemt. Hviletimeren kører
+      imellem dem som før. Gælder den planlagte træning, ikke de løse træningskort.
 - [ ] **5 · Besked når hvilen er slut, selv med låst skærm** — Web Notifications i den installerede app.
       *~15 min, kræver 13.*
 - [ ] **6 · Muskel-heatmap** — kropssilhuet (for/bag) farvet efter volumen de sidste 7 dage, og

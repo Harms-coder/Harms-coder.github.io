@@ -8,10 +8,12 @@ import {
   IconChevronRight,
   IconPause,
   IconPlay,
+  IconRepeat,
   IconTrophy,
   IconX,
 } from "../../components/icons";
 import { getPlannedWorkoutForDate } from "../../db/plannedWorkouts";
+import { listRoutines } from "../../db/routines";
 import { listExercises } from "../../db/exercises";
 import {
   deleteSession,
@@ -26,6 +28,7 @@ import { ExercisePicker } from "./ExercisePicker";
 import { RestTimer } from "./RestTimer";
 import { SetInputForm } from "./SetInputForm";
 import { orderFromSets } from "./exerciseOrder";
+import { pairFor } from "../plan/supersets";
 import { logSet } from "./logSet";
 
 const SUGGESTED_WEIGHT_STEP = 2.5;
@@ -49,6 +52,8 @@ export function LiveTrainingPage() {
   const [exerciseOrder, setExerciseOrder] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [priorSets, setPriorSets] = useState<Record<string, SetEntry | undefined>>({});
+  /* Supersæt-parrene kommer fra det program, dagens plan peger på — en løs dag har ingen. */
+  const [supersets, setSupersets] = useState<string[][]>([]);
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [notes, setNotes] = useState("");
   const [restAutoSignal, setRestAutoSignal] = useState(0);
@@ -78,6 +83,11 @@ export function LiveTrainingPage() {
         listSetsForSession(activeSession.id),
       ]);
       setSets(sessionSets);
+
+      if (plan?.routineId) {
+        const routine = (await listRoutines()).find((r) => r.id === plan.routineId);
+        setSupersets(routine?.supersets ?? []);
+      }
 
       const planOrder = plan?.exerciseIds ?? [];
       const extraOrder = orderFromSets(sessionSets).filter((id) => !planOrder.includes(id));
@@ -117,6 +127,11 @@ export function LiveTrainingPage() {
   const priorSet = currentExerciseId ? priorSets[currentExerciseId] : undefined;
   const lastInSession = setsForCurrent[setsForCurrent.length - 1];
   const suggestedWeight = priorSet ? priorSet.weight + SUGGESTED_WEIGHT_STEP : undefined;
+  /* Den anden halvdel af supersættet — den man skifter til, når sættet er gemt. */
+  const supersetPartnerId = currentExerciseId
+    ? pairFor(supersets, currentExerciseId)?.find((id) => id !== currentExerciseId)
+    : undefined;
+  const supersetPartner = supersetPartnerId ? exerciseById.get(supersetPartnerId) : undefined;
 
   function togglePause() {
     if (isPaused) {
@@ -156,6 +171,11 @@ export function LiveTrainingPage() {
       setPrSignal((n) => n + 1);
     }
     setRestAutoSignal((t) => t + 1);
+    /* Supersæt: skift til makkeren, så næste sæt er den anden øvelse. Hviletimeren kører imellem. */
+    if (supersetPartnerId) {
+      const partnerIndex = exerciseOrder.indexOf(supersetPartnerId);
+      if (partnerIndex >= 0) setCurrentIndex(partnerIndex);
+    }
   }
 
   function handleSelectExercise(exercise: Exercise) {
@@ -276,6 +296,12 @@ export function LiveTrainingPage() {
                   ? "Ingen sæt endnu i denne træning"
                   : `${setsForCurrent.length} sæt logget`}
               </span>
+              {supersetPartner && (
+                <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-(--color-cat-plan)">
+                  <IconRepeat className="h-3.5 w-3.5 flex-shrink-0" />
+                  Supersæt med {supersetPartner.name}
+                </span>
+              )}
             </div>
           </div>
 

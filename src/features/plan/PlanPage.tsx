@@ -33,6 +33,8 @@ import {
 } from "../../lib/date";
 import type { Exercise, PlannedWorkout, Routine } from "../../types";
 import { RoutineCard, type RoutineStatus } from "./RoutineCard";
+import { SupersetEditor } from "./SupersetEditor";
+import { prunePairs } from "./supersets";
 
 type PlanFilter = "all" | "favorites" | "planned";
 
@@ -84,6 +86,7 @@ export function PlanPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState("");
   const [newExerciseIds, setNewExerciseIds] = useState<string[]>([]);
+  const [newSupersets, setNewSupersets] = useState<string[][]>([]);
   const [newColor, setNewColor] = useState<string>(ROUTINE_COLORS[0]);
 
   async function refresh() {
@@ -104,18 +107,27 @@ export function PlanPage() {
   }, []);
 
   function toggleNewExercise(exerciseId: string) {
-    setNewExerciseIds((current) =>
-      current.includes(exerciseId)
+    setNewExerciseIds((current) => {
+      const next = current.includes(exerciseId)
         ? current.filter((id) => id !== exerciseId)
-        : [...current, exerciseId],
-    );
+        : [...current, exerciseId];
+      /* En fjernet øvelse må ikke efterlade et supersæt, der peger på ingenting. */
+      setNewSupersets((pairs) => prunePairs(pairs, next));
+      return next;
+    });
   }
 
   async function handleAdd() {
     if (!newName.trim() || newExerciseIds.length === 0) return;
-    await createRoutine({ name: newName, exerciseIds: newExerciseIds, color: newColor });
+    await createRoutine({
+      name: newName,
+      exerciseIds: newExerciseIds,
+      color: newColor,
+      supersets: newSupersets,
+    });
     setNewName("");
     setNewExerciseIds([]);
+    setNewSupersets([]);
     setNewColor(ROUTINE_COLORS[0]);
     setIsAdding(false);
     await refresh();
@@ -123,7 +135,7 @@ export function PlanPage() {
 
   async function handleUpdate(
     id: string,
-    changes: { name: string; exerciseIds: string[]; color?: string },
+    changes: { name: string; exerciseIds: string[]; color?: string; supersets?: string[][] },
   ) {
     await updateRoutine(id, changes);
     await refresh();
@@ -209,6 +221,12 @@ export function PlanPage() {
             exercises={exercises}
             selectedIds={newExerciseIds}
             onToggle={toggleNewExercise}
+          />
+          <SupersetEditor
+            exercises={exercises}
+            selectedIds={newExerciseIds}
+            supersets={newSupersets}
+            onChange={setNewSupersets}
           />
           <span className="text-[13px] font-medium text-(--color-text-muted)">
             Farve (vises i kalenderen)

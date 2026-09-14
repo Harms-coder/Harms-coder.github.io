@@ -60,6 +60,11 @@ export interface Routine {
   color?: string;
   /** Markeret som favorit af brugeren. IndexedDB er skemaløst, så feltet kræver ingen migration. */
   favorite?: boolean;
+  /**
+   * Øvelser der køres som supersæt, som par af id'er. En øvelse kan kun stå i ét par.
+   * Manglende felt betyder "ingen supersæt" — gamle programmer kræver derfor ingen migration.
+   */
+  supersets?: string[][];
   createdAt: string;
 }
 
