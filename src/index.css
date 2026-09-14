@@ -87,10 +87,10 @@
   --tracking-eyebrow: 0.2em;
   --tracking-wordmark: 0.3em;
 
+  /* Ordmærkets skrift (bred geometrisk) — Montserrat er den nærmeste webfont; bruges til al tekst. */
   --font-sans:
-    "Jost", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-  /* Ordmærkets skrift (bred geometrisk, spatierede versaler) — Montserrat er den nærmeste webfont. */
-  --font-display: "Montserrat", var(--font-sans);
+    "Montserrat", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-sans);
 }
 
 html,
