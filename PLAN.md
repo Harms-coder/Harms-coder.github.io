@@ -27,9 +27,9 @@ Sig "vis mig planen" for at få status.
       hvilen er slut kommer en systembesked via service workeren. Forbehold: appen har ingen push-server,
       så en telefon der har ligget låst længe, får først beskeden i det øjeblik appen åbnes igen.
       Ægte besked på låst skærm kræver en push-backend (VAPID) — ikke lavet.
-- [x] **6 · Muskel-heatmap** — gjort 2026-09-14: "Muskelkort" på Progression viser krop forfra og bagfra,
-      farvet efter volumen de sidste 7 dage (mint → guld), plus hårdest trænet og mest udhvilet
-      ud fra dage siden sidst.
+- [~] **6 · Muskel-heatmap** — lavet og fjernet igen 2026-09-14: brugeren så det og ville ikke have det.
+      "Fordeling pr. muskelgruppe" (cirkeldiagrammet) dækker behovet. Koden er væk; se commit 2bc2145,
+      hvis den skal graves op igen.
 - [x] **7 · Månedens opsummering** — gjort 2026-09-14: "Din september"-kortet øverst på Historik med
       træninger, kg løftet, rekorder, længste stime og mest trænede øvelse. Er den indeværende måned
       stadig tom, vises den seneste måned med træning.
