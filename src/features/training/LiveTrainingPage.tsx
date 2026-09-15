@@ -305,6 +305,27 @@ export function LiveTrainingPage() {
             </div>
           </div>
 
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => setCurrentIndex((i) => i - 1)}
+              disabled={currentIndex === 0}
+              className="flex flex-1 items-center justify-center gap-1"
+            >
+              <IconChevronLeft className="h-4 w-4" />
+              Forrige
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setCurrentIndex((i) => i + 1)}
+              disabled={currentIndex >= exerciseOrder.length - 1}
+              className="flex flex-1 items-center justify-center gap-1"
+            >
+              Næste
+              <IconChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+
           <div className="flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 card-shadow">
             <span className="text-[13px] font-medium text-(--color-text-muted)">
               Seneste præstation
@@ -377,26 +398,6 @@ export function LiveTrainingPage() {
             />
           </label>
 
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setCurrentIndex((i) => i - 1)}
-              disabled={currentIndex === 0}
-              className="flex flex-1 items-center justify-center gap-1"
-            >
-              <IconChevronLeft className="h-4 w-4" />
-              Forrige
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setCurrentIndex((i) => i + 1)}
-              disabled={currentIndex >= exerciseOrder.length - 1}
-              className="flex flex-1 items-center justify-center gap-1"
-            >
-              Næste
-              <IconChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
         </>
       ) : (
         <p className="text-sm text-(--color-text-muted)">
