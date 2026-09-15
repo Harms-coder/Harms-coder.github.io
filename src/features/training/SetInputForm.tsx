@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { IconRepeat } from "../../components/icons";
 import { BAR_KG, formatPlates, isBarbellExercise, platesPerSide } from "../../lib/plates";
 import type { SetType } from "../../types";
@@ -75,22 +76,15 @@ export function SetInputForm({
         </button>
       )}
 
-      <div className="flex flex-wrap gap-2">
-        {(Object.keys(SET_TYPE_LABELS) as SetType[]).map((type) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => setSetType(type)}
-            className={`min-h-9 rounded-full px-3 text-[13px] font-medium ${
-              setType === type
-                ? "accent-fill text-(--color-text)"
-                : "glass-fill text-(--color-text-muted)"
-            }`}
-          >
-            {SET_TYPE_LABELS[type]}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        options={(Object.keys(SET_TYPE_LABELS) as SetType[]).map((type) => ({
+          value: type,
+          label: SET_TYPE_LABELS[type],
+        }))}
+        value={setType}
+        onChange={setSetType}
+        layout="scroll"
+      />
 
       <div className="flex flex-col gap-1.5">
         <span className="text-[13px] font-medium text-(--color-text-muted)">Vægt (kg)</span>
@@ -149,21 +143,13 @@ export function SetInputForm({
             onChange={(e) => setReps(e.target.value)}
             className="min-h-11 w-16 rounded-xl border border-transparent bg-(--color-surface-2) px-2 text-center text-[17px] font-semibold text-(--color-text) outline-none focus:border-(--color-accent)"
           />
-          <div className="flex flex-1 flex-wrap gap-2">
-            {REP_PRESETS.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => setReps(preset.toString())}
-                className={`min-h-9 min-w-9 rounded-full px-2 text-[13px] font-medium ${
-                  reps === preset.toString()
-                    ? "accent-fill text-(--color-text)"
-                    : "glass-fill text-(--color-text-muted)"
-                }`}
-              >
-                {preset}
-              </button>
-            ))}
+          <div className="min-w-0 flex-1">
+            <SegmentedControl
+              options={REP_PRESETS.map((preset) => ({ value: preset.toString(), label: preset.toString() }))}
+              value={reps}
+              onChange={setReps}
+              layout="scroll"
+            />
           </div>
         </div>
       </div>

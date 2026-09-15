@@ -8,7 +8,8 @@ interface SegmentedControlOption<T extends string> {
 
 interface SegmentedControlProps<T extends string> {
   options: SegmentedControlOption<T>[];
-  value: T;
+  /** Intet valg = ingen pille (fx reps-forslag, når feltet står på et tal uden for listen). */
+  value?: T;
   onChange: (value: T) => void;
   /** "wrap" (fælles bredde, fx range-faner) eller "scroll" (venstrestillet, horisontalt scrollbar, fx filtre). */
   layout?: "wrap" | "scroll";
@@ -39,14 +40,16 @@ export function SegmentedControl<T extends string>({
     if (!container) return;
     const measure = () => {
       const active = container.querySelector<HTMLElement>('[data-active="true"]');
-      if (active) {
-        setPill({
-          left: active.offsetLeft,
-          top: active.offsetTop,
-          width: active.offsetWidth,
-          height: active.offsetHeight,
-        });
-      }
+      setPill(
+        active
+          ? {
+              left: active.offsetLeft,
+              top: active.offsetTop,
+              width: active.offsetWidth,
+              height: active.offsetHeight,
+            }
+          : null,
+      );
     };
     measure();
     const observer = new ResizeObserver(measure);

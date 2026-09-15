@@ -240,22 +240,12 @@ export function ProgressionPage() {
         )}
       </div>
 
-      <div className="no-scrollbar glow-scroller glow-scroller-x flex gap-2 overflow-x-auto">
-        {sortedExercises.map((exercise) => (
-          <button
-            key={exercise.id}
-            type="button"
-            onClick={() => setSelectedId(exercise.id)}
-            className={`min-h-9 flex-shrink-0 rounded-full px-3.5 text-[13px] font-medium ${
-              selectedId === exercise.id
-                ? "accent-fill text-(--color-text)"
-                : "glass-fill text-(--color-text-muted)"
-            }`}
-          >
-            {exercise.name}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        options={sortedExercises.map((exercise) => ({ value: exercise.id, label: exercise.name }))}
+        value={selectedId ?? undefined}
+        onChange={setSelectedId}
+        layout="scroll"
+      />
 
       {selectedExercise &&
         (selectedExercise.prWeight !== undefined || selectedExercise.pr1RM !== undefined) && (
