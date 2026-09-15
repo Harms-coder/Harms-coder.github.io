@@ -210,13 +210,32 @@ export function useSwipeTabs(pageRef: RefObject<HTMLElement | null>) {
       }
       const width = window.innerWidth;
       const direction = dx < 0 ? -1 : 1;
-      setX(direction * width, true);
-      window.setTimeout(() => {
-        navigate(next.to);
-        // Den nye side står klar uden for den modsatte kant og glider ind.
-        setX(-direction * width, false);
-        requestAnimationFrame(() => requestAnimationFrame(() => setX(0, true)));
-      }, SLIDE_MS);
+      /*
+       * Den gamle side glider ud som en frosset kopi, mens den rigtige beholder skifter til den
+       * nye side og glider ind samtidig — ellers stod skærmen tom, mens den nye side blev hentet.
+       */
+      const page = pageRef.current;
+      const root = document.getElementById("root");
+      if (page && root) {
+        const ghost = document.createElement("div");
+        ghost.setAttribute("aria-hidden", "true");
+        ghost.style.cssText = `position:fixed;inset:0;z-index:15;overflow:hidden;pointer-events:none;background:var(--color-bg);transform:translateX(${dx}px)`;
+        const copy = page.cloneNode(true) as HTMLElement;
+        copy.style.transform = `translateY(${-root.scrollTop}px)`;
+        copy.style.transition = "none";
+        ghost.appendChild(copy);
+        document.body.appendChild(ghost);
+        void ghost.offsetWidth; // tving layout, så overgangen har et startpunkt
+        ghost.style.transition = SLIDE_EASE;
+        ghost.style.transform = `translateX(${direction * width}px)`;
+        // Kun kopiens egen overgang — transitionend fra børn (piller, rulletekst) bobler også hertil.
+        ghost.addEventListener("transitionend", (e) => e.target === ghost && ghost.remove());
+        window.setTimeout(() => ghost.remove(), SLIDE_MS * 4); // fallback hvis overgangen aldrig melder færdig
+      }
+      // Den nye side starter klods op ad den gamle, så de to glider som ét sammenhængende bånd.
+      setX(dx - direction * width, false);
+      navigate(next.to);
+      requestAnimationFrame(() => requestAnimationFrame(() => setX(0, true)));
     };
 
     document.addEventListener("touchstart", onStart, { passive: true });
