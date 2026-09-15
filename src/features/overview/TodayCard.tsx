@@ -118,15 +118,21 @@ export function TodayCard() {
 
   if (state.kind === "plan") {
     const estimatedMin = state.exerciseNames.length * MIN_PER_EXERCISE;
-    const preview = state.exerciseNames.slice(0, 4).join(", ");
-    const extra = state.exerciseNames.length - 4;
     return (
       <div className="hero-glow flex flex-col gap-3 rounded-2xl border border-(--color-border-accent) p-4 card-shadow">
         <span className="text-[13px] font-medium text-(--color-accent-bright)">Dagens træning</span>
-        <span className="text-[15px] font-medium text-(--color-text)">
-          {preview}
-          {extra > 0 ? ` +${extra} mere` : ""}
-        </span>
+        {/* Samme to-kolonne-liste som programkortet i Programmer. */}
+        <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+          {state.exerciseNames.map((name) => (
+            <li
+              key={name}
+              className="flex min-w-0 items-start gap-2 text-[13px] leading-snug text-(--color-text-secondary)"
+            >
+              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-(--color-accent-bright) opacity-80" />
+              <span>{name}</span>
+            </li>
+          ))}
+        </ul>
         <span className="flex items-center gap-1.5 text-[13px] text-(--color-text-muted)">
           <IconClock className="h-4 w-4" />
           Ca. {estimatedMin} min

@@ -199,11 +199,6 @@ add("garbage",
     rr(33, 8.6, 5.6, 4, 0.5, hole=True),
     rect(7, 8, 20.5, 0.9, hole=True), rect(7, 11.4, 20.5, 0.9, hole=True))
 
-add("lorry",
-    rr(3, 3.6, 28, 12.4, 1.2), rr(32, 7, 11.5, 9, 1.6),
-    wheel(10, 18), wheel(22, 18), wheel(38, 18),
-    rr(34, 8.6, 5.4, 4, 0.5, hole=True))
-
 add("semi",
     rr(1, 2.2, 30.5, 13.8, 1.2), rr(33.5, 6, 10, 10, 1.6),
     wheel(7, 18), wheel(13.5, 18), wheel(38.5, 18),

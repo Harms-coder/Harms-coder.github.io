@@ -3,7 +3,7 @@ export type ComparisonKind =
   | "person" | "fridge" | "piano"
   | "lion" | "tiger" | "gorilla" | "bear" | "horse" | "cow" | "giraffe"
   | "rhino" | "hippo" | "elephant" | "orca" | "whale"
-  | "smallcar" | "car" | "suv" | "pickup" | "bus" | "garbage" | "lorry" | "semi" | "locomotive" | "submarine" | "plane";
+  | "smallcar" | "car" | "suv" | "pickup" | "bus" | "garbage" | "semi" | "locomotive" | "submarine" | "plane";
 
 interface WeightComparisonItem {
   singular: string;
@@ -41,7 +41,6 @@ const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
   { singular: "en skolebus", plural: "skolebusser", kg: 9000, kind: "bus" },
   { singular: "en bybus", plural: "bybusser", kg: 12000, kind: "bus" },
   { singular: "en skraldebil", plural: "skraldebiler", kg: 15000, kind: "garbage" },
-  { singular: "en mindre lastbil", plural: "mindre lastbiler", kg: 20000, kind: "lorry" },
   { singular: "en pukkelhval", plural: "pukkelhvaler", kg: 30000, kind: "whale" },
   { singular: "en lastbil", plural: "lastbiler", kg: 40000, kind: "semi" },
   { singular: "et jernbanelokomotiv", plural: "jernbanelokomotiver", kg: 60000, kind: "locomotive" },
