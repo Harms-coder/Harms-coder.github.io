@@ -14,11 +14,12 @@ import { navItems, tabIndexOf } from "./BottomNav";
 const SWIPE_MIN_PX = 60;
 /** Et hurtigt flick må gerne være kortere end SWIPE_MIN_PX. */
 const FLICK_PX_PER_MS = 0.45;
-const SLIDE_MAX_MS = 520;
-const SLIDE_MIN_MS = 320;
+const SLIDE_MAX_MS = 700;
+const SLIDE_MIN_MS = 450;
 /** Fingerens fart tæller kun delvist, ellers bliver et svirp til et hop. */
-const VELOCITY_WEIGHT = 0.5;
-const SLIDE_EASE = "cubic-bezier(0.25, 1, 0.4, 1)";
+const VELOCITY_WEIGHT = 0.35;
+/* Blød start og lang, jævn udrunding — ingen "kant" hverken i starten eller til sidst. */
+const SLIDE_EASE = "cubic-bezier(0.3, 0.85, 0.3, 1)";
 /** Ro på siden, før nabosiderne bygges i baggrunden. Længere end et slip-glid, så det ikke hakker. */
 const PREMOUNT_DELAY_MS = 450;
 
