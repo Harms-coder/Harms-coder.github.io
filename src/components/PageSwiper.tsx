@@ -14,9 +14,11 @@ import { navItems, tabIndexOf } from "./BottomNav";
 const SWIPE_MIN_PX = 60;
 /** Et hurtigt flick må gerne være kortere end SWIPE_MIN_PX. */
 const FLICK_PX_PER_MS = 0.45;
-const SLIDE_MAX_MS = 340;
-const SLIDE_MIN_MS = 160;
-const SLIDE_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const SLIDE_MAX_MS = 520;
+const SLIDE_MIN_MS = 320;
+/** Fingerens fart tæller kun delvist, ellers bliver et svirp til et hop. */
+const VELOCITY_WEIGHT = 0.5;
+const SLIDE_EASE = "cubic-bezier(0.25, 1, 0.4, 1)";
 /** Ro på siden, før nabosiderne bygges i baggrunden. Længere end et slip-glid, så det ikke hakker. */
 const PREMOUNT_DELAY_MS = 450;
 
@@ -196,7 +198,7 @@ export function PageSwiper({ children }: { children: ReactNode }) {
     layout(pathname, offset);
     void el?.offsetWidth; // tving layout, så overgangen har et startpunkt
     const remaining = Math.abs(offset);
-    const speed = Math.max(Math.abs(s.velocity), width / SLIDE_MAX_MS);
+    const speed = Math.max(Math.abs(s.velocity) * VELOCITY_WEIGHT, width / SLIDE_MAX_MS);
     const ms = clamp(remaining / speed, SLIDE_MIN_MS, SLIDE_MAX_MS);
     layout(pathname, 0, ms);
     const id = window.setTimeout(() => {
