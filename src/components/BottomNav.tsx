@@ -1,4 +1,5 @@
 import {
+  type RefObject,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -130,24 +131,36 @@ function tabIndexOf(pathname: string): number {
 }
 
 const SWIPE_MIN_PX = 60;
+const SLIDE_MS = 220;
+const SLIDE_EASE = `transform ${SLIDE_MS}ms cubic-bezier(0.2, 0.9, 0.25, 1)`;
 
 /**
- * Swipe vandret på en fane skifter til nabofanen, så man ikke behøver ramme bundmenuen.
+ * Swipe vandret på en fane bladrer til nabofanen, så man ikke behøver ramme bundmenuen.
+ * Siden følger fingeren, glider ud over kanten, og den nye glider ind fra den modsatte side.
  * Ignorerer strøg, der starter i noget, der selv ruller vandret (filter-rækker, grafer, menuen),
  * og strøg der er mere lodrette end vandrette (almindelig scroll).
  */
-export function useSwipeTabs() {
+export function useSwipeTabs(pageRef: RefObject<HTMLElement | null>) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   useEffect(() => {
     let start: { x: number; y: number; ignore: boolean } | null = null;
+    let dragging = false; // afgjort som vandret strøg
+    let dx = 0;
+
+    const setX = (x: number, animate: boolean) => {
+      const el = pageRef.current;
+      if (!el) return;
+      el.style.transition = animate ? SLIDE_EASE : "none";
+      el.style.transform = x === 0 ? "" : `translateX(${x}px)`;
+    };
 
     const onStart = (e: TouchEvent) => {
       const t = e.touches[0];
       let el = e.target as HTMLElement | null;
-      let ignore = false;
-      while (el && el !== document.body) {
+      let ignore = tabIndexOf(pathname) === -1;
+      while (!ignore && el && el !== document.body) {
         const { overflowX } = getComputedStyle(el);
         if ((overflowX === "auto" || overflowX === "scroll") && el.scrollWidth > el.clientWidth + 1) {
           ignore = true;
@@ -160,28 +173,63 @@ export function useSwipeTabs() {
         el = el.parentElement;
       }
       start = { x: t.clientX, y: t.clientY, ignore };
+      dragging = false;
+      dx = 0;
     };
 
-    const onEnd = (e: TouchEvent) => {
+    const onMove = (e: TouchEvent) => {
       if (!start || start.ignore) return;
-      const t = e.changedTouches[0];
-      const dx = t.clientX - start.x;
+      const t = e.touches[0];
+      dx = t.clientX - start.x;
       const dy = t.clientY - start.y;
-      start = null;
-      if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dy) > Math.abs(dx) / 2) return;
+      if (!dragging) {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          start.ignore = true; // lodret scroll — bland dig ikke
+          return;
+        }
+        dragging = true;
+      }
       const index = tabIndexOf(pathname);
-      if (index === -1) return;
+      const hasNeighbor = navItems[index + (dx < 0 ? 1 : -1)] !== undefined;
+      // Ingen nabo i den retning: gør modstand som iOS' egen kant.
+      setX(hasNeighbor ? dx : dx / 4, false);
+    };
+
+    const onEnd = () => {
+      if (!start || start.ignore || !dragging) {
+        start = null;
+        return;
+      }
+      start = null;
+      const index = tabIndexOf(pathname);
       const next = navItems[index + (dx < 0 ? 1 : -1)];
-      if (next) navigate(next.to);
+      if (!next || Math.abs(dx) < SWIPE_MIN_PX) {
+        setX(0, true);
+        return;
+      }
+      const width = window.innerWidth;
+      const direction = dx < 0 ? -1 : 1;
+      setX(direction * width, true);
+      window.setTimeout(() => {
+        navigate(next.to);
+        // Den nye side står klar uden for den modsatte kant og glider ind.
+        setX(-direction * width, false);
+        requestAnimationFrame(() => requestAnimationFrame(() => setX(0, true)));
+      }, SLIDE_MS);
     };
 
     document.addEventListener("touchstart", onStart, { passive: true });
+    document.addEventListener("touchmove", onMove, { passive: true });
     document.addEventListener("touchend", onEnd, { passive: true });
+    document.addEventListener("touchcancel", onEnd, { passive: true });
     return () => {
       document.removeEventListener("touchstart", onStart);
+      document.removeEventListener("touchmove", onMove);
       document.removeEventListener("touchend", onEnd);
+      document.removeEventListener("touchcancel", onEnd);
     };
-  }, [pathname, navigate]);
+  }, [pathname, navigate, pageRef]);
 }
 
 /** Bredde og placering af rulle-markøren, i procent af sporet. */
