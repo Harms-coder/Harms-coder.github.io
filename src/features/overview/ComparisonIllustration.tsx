@@ -20,7 +20,7 @@ function Picture({ kind }: { kind: ComparisonKind }) {
 
 function Row({ kinds }: { kinds: ComparisonKind[] }) {
   return (
-    <div className="flex items-center justify-center gap-1">
+    <div className="flex h-16 items-center justify-center gap-1">
       {kinds.map((kind, i) => (
         <Picture key={`${kind}-${i}`} kind={kind} />
       ))}

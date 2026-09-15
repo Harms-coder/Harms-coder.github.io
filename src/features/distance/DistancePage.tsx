@@ -12,7 +12,7 @@ import {
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { listCardioEntries } from "../../db/cardio";
 import { monthKey, sumByKey, weekKey } from "../../lib/aggregate";
-import { chartAxisTick, chartBarCursor, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartBarCursor, chartTooltipStyle, chartTooltipValue } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatMonthLabel, formatShortDate } from "../../lib/date";
 import type { CardioEntry } from "../../types";
@@ -81,6 +81,7 @@ export function DistancePage() {
                   cursor={chartBarCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
+                  formatter={chartTooltipValue("km", "Distance")}
                 />
                 <Bar dataKey="km" fill="var(--color-cat-cardio)" radius={[4, 4, 0, 0]} />
               </BarChart>

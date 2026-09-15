@@ -180,6 +180,23 @@ export function DayDetails({
             />
           </div>
 
+          {planExercises.length > 0 && (
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+              {planExercises.map((exercise) => (
+                <li
+                  key={exercise!.id}
+                  className="flex min-w-0 items-start gap-2 text-[13px] leading-snug text-(--color-text-secondary)"
+                >
+                  <span
+                    className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full opacity-80"
+                    style={{ backgroundColor: planColor }}
+                  />
+                  <span>{exercise!.name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
           {goalRemaining !== undefined && goalRemaining > 0 && status !== "done" && (
             <span className="text-[13px] text-(--color-cat-goal)">
               +1 træning mod ugemålet — {goalRemaining}{" "}

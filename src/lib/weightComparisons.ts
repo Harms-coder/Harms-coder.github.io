@@ -55,6 +55,8 @@ const MAX_MULTIPLE = 300;
 /** Sammensætninger: den lette del må højst optræde dette antal gange, ellers bliver sætningen lang. */
 const MAX_SECONDARY = 9;
 const MAX_COMBOS = 30;
+/** Længste sammenligningstekst der kan være på tre linjer i Oversigt-flisen. */
+const MAX_TEXT_LENGTH = 46;
 
 function count(item: WeightComparisonItem, n: number): string {
   return n <= 1 ? item.singular : `${n} ${item.plural}`;
@@ -94,10 +96,10 @@ export function listWeightComparisons(
       if (light.kg >= heavy.kg) continue;
       const m = Math.round(rest / light.kg);
       if (m < 1 || m > MAX_SECONDARY || Math.abs(rest - m * light.kg) > light.kg * 0.35) continue;
-      combos.push({
-        text: `Det svarer til ca. ${count(heavy, n)} og ${count(light, m)}`,
-        kinds: [heavy.kind, light.kind],
-      });
+      const text = `Det svarer til ca. ${count(heavy, n)} og ${count(light, m)}`;
+      /* Flisen har fast højde til tre linjer — længere sammensætninger springer vi over. */
+      if (text.length > MAX_TEXT_LENGTH) continue;
+      combos.push({ text, kinds: [heavy.kind, light.kind] });
     }
   }
 

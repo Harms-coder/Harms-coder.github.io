@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { listSessions } from "../../db/sessions";
 import { sumByKey, weekKey } from "../../lib/aggregate";
-import { chartAxisTick, chartBarCursor, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartBarCursor, chartTooltipStyle, chartTooltipValue } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatShortDate } from "../../lib/date";
 import type { WorkoutSession } from "../../types";
@@ -71,6 +71,7 @@ export function MinutesPage() {
                   cursor={chartBarCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
+                  formatter={chartTooltipValue("min", "Minutter")}
                 />
                 <Bar dataKey="minutes" fill="var(--color-cat-goal)" radius={[4, 4, 0, 0]} />
               </BarChart>

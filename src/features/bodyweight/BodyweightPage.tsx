@@ -21,7 +21,7 @@ import {
   listBodyweightEntries,
   updateBodyweightEntry,
 } from "../../db/bodyweight";
-import { chartAxisTick, chartLineCursor, chartTooltipStyle } from "../../lib/chart";
+import { chartAxisTick, chartLineCursor, chartTooltipStyle, chartTooltipValue } from "../../lib/chart";
 import { groupByMonthAndWeek } from "../../lib/grouping";
 import { IconChevronDown } from "../../components/icons";
 import { useChartTouch } from "../../lib/chartTouch";
@@ -243,6 +243,7 @@ export function BodyweightPage() {
                   cursor={chartLineCursor}
                   contentStyle={chartTooltipStyle}
                   labelStyle={{ color: "var(--color-text)" }}
+                  formatter={chartTooltipValue("kg", "Vægt")}
                 />
                 <ReferenceLine
                   y={stats.avg}

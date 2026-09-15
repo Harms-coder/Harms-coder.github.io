@@ -68,7 +68,7 @@ export function StatTile({
           <div className="h-10 w-px flex-shrink-0 bg-(--color-border)" />
           <div className="flex min-w-0 flex-1 flex-col items-center gap-1">
             {noteIllustration}
-            <span className="text-center text-[13px] font-medium text-(--color-accent-glow)">
+            <span className="flex h-[54px] w-full items-center justify-center text-center text-[13px] leading-snug font-medium text-(--color-accent-glow)">
               {note}
             </span>
           </div>

@@ -24,3 +24,12 @@ export const chartLineCursor = {
   stroke: "rgba(255, 255, 255, 0.28)",
   strokeWidth: 1,
 };
+
+/**
+ * Tooltip-tekst i graferne: enhed bag tallet og et dansk navn i stedet for datafeltets
+ * navn ("maxWeight"). Gives til <Tooltip formatter={...}>.
+ */
+export const chartTooltipValue =
+  (unit: string, name: string) =>
+  (value: unknown): [string, string] =>
+    [`${value} ${unit}`, name];

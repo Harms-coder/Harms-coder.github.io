@@ -24,6 +24,7 @@ import {
   chartBarCursor,
   chartLineCursor,
   chartTooltipStyle,
+  chartTooltipValue,
 } from "../../lib/chart";
 import { useChartTouch } from "../../lib/chartTouch";
 import { formatMediumDate, formatShortDate, parseISODate } from "../../lib/date";
@@ -333,6 +334,7 @@ export function ProgressionPage() {
                         cursor={chartLineCursor}
                         contentStyle={chartTooltipStyle}
                         labelStyle={{ color: "var(--color-text)" }}
+                        formatter={chartTooltipValue("kg", "Tungeste vægt")}
                       />
                       {selectedExercise?.pr1RM !== undefined && (
                         <ReferenceLine
@@ -369,6 +371,7 @@ export function ProgressionPage() {
                         cursor={chartBarCursor}
                         contentStyle={chartTooltipStyle}
                         labelStyle={{ color: "var(--color-text)" }}
+                        formatter={chartTooltipValue("kg", "Volume")}
                       />
                       <Bar dataKey="volume" fill="var(--color-cat-progress)" radius={[4, 4, 0, 0]} />
                     </BarChart>
