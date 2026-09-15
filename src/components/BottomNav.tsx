@@ -122,6 +122,68 @@ function NavItemLink({
 
 const [homeItem, ...scrollableItems] = navItems;
 
+/** Hvilken fane en sti hører til — -1 for sider uden fane (fx live-træning eller en øvelses detaljer). */
+function tabIndexOf(pathname: string): number {
+  return navItems.findIndex(
+    (item) => item.to === pathname || item.also?.some((p) => pathname.startsWith(p)),
+  );
+}
+
+const SWIPE_MIN_PX = 60;
+
+/**
+ * Swipe vandret på en fane skifter til nabofanen, så man ikke behøver ramme bundmenuen.
+ * Ignorerer strøg, der starter i noget, der selv ruller vandret (filter-rækker, grafer, menuen),
+ * og strøg der er mere lodrette end vandrette (almindelig scroll).
+ */
+export function useSwipeTabs() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    let start: { x: number; y: number; ignore: boolean } | null = null;
+
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      let el = e.target as HTMLElement | null;
+      let ignore = false;
+      while (el && el !== document.body) {
+        const { overflowX } = getComputedStyle(el);
+        if ((overflowX === "auto" || overflowX === "scroll") && el.scrollWidth > el.clientWidth + 1) {
+          ignore = true;
+          break;
+        }
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.closest("nav, .recharts-wrapper")) {
+          ignore = true;
+          break;
+        }
+        el = el.parentElement;
+      }
+      start = { x: t.clientX, y: t.clientY, ignore };
+    };
+
+    const onEnd = (e: TouchEvent) => {
+      if (!start || start.ignore) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - start.x;
+      const dy = t.clientY - start.y;
+      start = null;
+      if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dy) > Math.abs(dx) / 2) return;
+      const index = tabIndexOf(pathname);
+      if (index === -1) return;
+      const next = navItems[index + (dx < 0 ? 1 : -1)];
+      if (next) navigate(next.to);
+    };
+
+    document.addEventListener("touchstart", onStart, { passive: true });
+    document.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      document.removeEventListener("touchstart", onStart);
+      document.removeEventListener("touchend", onEnd);
+    };
+  }, [pathname, navigate]);
+}
+
 /** Bredde og placering af rulle-markøren, i procent af sporet. */
 interface Thumb {
   width: number;
@@ -180,6 +242,15 @@ export function BottomNav() {
   };
 
   useLayoutEffect(() => {
+    // Efter et swipe kan den nye fane ligge uden for den rullende del — rul den frem først.
+    const link = rowRef.current?.querySelector<HTMLElement>("[data-nav-active]")?.closest("a");
+    const scroller = scrollerRef.current;
+    if (link && scroller?.contains(link)) {
+      const s = scroller.getBoundingClientRect();
+      const r = link.getBoundingClientRect();
+      if (r.left < s.left) scroller.scrollBy({ left: r.left - s.left - 8, behavior: "smooth" });
+      else if (r.right > s.right) scroller.scrollBy({ left: r.right - s.right + 8, behavior: "smooth" });
+    }
     measurePill(pill !== null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);

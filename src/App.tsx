@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { BottomNav } from "./components/BottomNav";
+import { BottomNav, useSwipeTabs } from "./components/BottomNav";
 import { AchievementsPage } from "./features/achievements/AchievementsPage";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
@@ -49,6 +49,7 @@ function LazyPage({ children }: { children: ReactNode }) {
 function App() {
   const location = useLocation();
   const hideBottomNav = location.pathname === "/traening/live";
+  useSwipeTabs();
 
   // #root er selv rullefladen, så browseren nulstiller ikke rul ved sideskift — en ny side
   // startede ellers dér, hvor den forrige var rullet til (fx live-træning uden Afslut synlig).
