@@ -214,10 +214,15 @@ export function OverviewPage() {
     [allSets],
   );
   const milestone = getLiftMilestone(lifetimeKgLifted);
-  const lifetimeComparison = useMemo(
-    () => listWeightComparisons(lifetimeKgLifted, PHOTOGRAPHED_KINDS)[0],
+  // Kun enkelte ting her (ingen "2 elefanter og 3 køer") — bladrer i takt med flisen ovenfor.
+  const lifetimeComparisons = useMemo(
+    () => listWeightComparisons(lifetimeKgLifted, PHOTOGRAPHED_KINDS, false),
     [lifetimeKgLifted],
   );
+  const lifetimeComparison =
+    lifetimeComparisons.length > 0
+      ? lifetimeComparisons[comparisonStep % lifetimeComparisons.length]
+      : undefined;
 
   const weightInRange = useMemo(
     () =>
@@ -249,7 +254,14 @@ export function OverviewPage() {
   return (
     <div className="flex flex-col gap-4 px-4 pt-6">
       <HeroHeader
-        title={`${greeting(new Date().getHours())}, ${USER_NAME}`}
+        title={
+          // Hilsen øverst, navn på egen linje under — hilsenen må ikke selv knække.
+          <>
+            <span className="whitespace-nowrap">{greeting(new Date().getHours())}</span>
+            <br />
+            {USER_NAME}
+          </>
+        }
         subtitle="Disciplin i dag — et stærkere dig i morgen."
         image="/images/dashboard-peaks.jpg"
         imagePosition="center 40%"
@@ -391,9 +403,10 @@ export function OverviewPage() {
                 {formatKg(lifetimeKgLifted)}
               </span>
               {lifetimeComparison && (
-                <span className="text-[13px] text-(--color-text-secondary)">
-                  {lifetimeComparison.text}
-                </span>
+                <RollingText
+                  text={lifetimeComparison.text}
+                  className="min-h-[36px] text-[13px] leading-snug text-(--color-text-secondary)"
+                />
               )}
             </div>
           </div>

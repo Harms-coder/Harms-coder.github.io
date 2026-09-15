@@ -41,9 +41,9 @@ const WEIGHT_COMPARISONS: WeightComparisonItem[] = [
   { singular: "en skolebus", plural: "skolebusser", kg: 9000, kind: "bus" },
   { singular: "en bybus", plural: "bybusser", kg: 12000, kind: "bus" },
   { singular: "en skraldebil", plural: "skraldebiler", kg: 15000, kind: "garbage" },
-  { singular: "en lastbil", plural: "lastbiler", kg: 20000, kind: "lorry" },
+  { singular: "en mindre lastbil", plural: "mindre lastbiler", kg: 20000, kind: "lorry" },
   { singular: "en pukkelhval", plural: "pukkelhvaler", kg: 30000, kind: "whale" },
-  { singular: "en sættevogn", plural: "sættevogne", kg: 40000, kind: "semi" },
+  { singular: "en lastbil", plural: "lastbiler", kg: 40000, kind: "semi" },
   { singular: "et jernbanelokomotiv", plural: "jernbanelokomotiver", kg: 60000, kind: "locomotive" },
   { singular: "en blåhval", plural: "blåhvaler", kg: 90000, kind: "whale" },
   { singular: "en ubåd", plural: "ubåde", kg: 120000, kind: "submarine" },
@@ -67,10 +67,12 @@ function count(item: WeightComparisonItem, n: number): string {
  * overskueligt antal (0,6-300x), plus sammensætninger af to ting, der tilsammen rammer vægten
  * ("ca. 2 elefanter og 3 køer"). Rækkefølgen er tilfældig, så Oversigt kan bladre igennem dem.
  * Ting med et rigtigt billede (preferred) foretrækkes, så billederne faktisk bliver set.
+ * withCombos=false giver kun enkelte ting (Milepæle-kortet, hvor to billeder så underligt ud).
  */
 export function listWeightComparisons(
   totalKg: number,
   preferred: ReadonlySet<ComparisonKind> = new Set(),
+  withCombos = true,
 ): WeightComparison[] {
   if (!Number.isFinite(totalKg) || totalKg < 40) return [];
 
@@ -109,7 +111,7 @@ export function listWeightComparisons(
     );
     return [{ text: `Det svarer til ca. ${count(nearest, Math.round(totalKg / nearest.kg))}`, kinds: [nearest.kind] }];
   }
-  return shuffle([...singles, ...shuffle(combos).slice(0, MAX_COMBOS)]);
+  return shuffle(withCombos ? [...singles, ...shuffle(combos).slice(0, MAX_COMBOS)] : singles);
 }
 
 function shuffle<T>(items: T[]): T[] {

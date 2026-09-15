@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { VigorraLogo } from "./VigorraLogo";
 
 interface HeroHeaderProps {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   image: string;
   /** CSS object-position, til at style motivet rigtigt i den beskårede hero-bane. */
