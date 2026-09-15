@@ -15,6 +15,7 @@ export function PageBackdrop({ image, imagePosition = "center" }: PageBackdropPr
       <img
         src={image}
         alt=""
+        decoding="async"
         className="image-fade-bottom absolute inset-0 h-full w-full object-cover opacity-55"
         style={{ objectPosition: imagePosition }}
       />

@@ -30,6 +30,7 @@ export function HeroHeader({
       <img
         src={image}
         alt=""
+        decoding="async"
         className="image-fade-bottom absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: imagePosition }}
       />

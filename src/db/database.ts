@@ -65,6 +65,22 @@ interface TraeningsappDB extends DBSchema {
 const DB_NAME = "traeningsapp";
 export const DB_VERSION = 5;
 
+/**
+ * Fyres på window ("db-changed") når en skrivende transaktion er færdig. PageSwiper bruger det til
+ * at smide sine forudindlæste nabosider væk, så de aldrig viser gamle tal.
+ * ponytail: patcher IDBDatabase.prototype globalt i stedet for at kalde notify() i ~40 skrivefunktioner —
+ * flyt til et eksplicit kald pr. modul, hvis appen nogensinde får en anden IndexedDB-bruger.
+ */
+export const DB_CHANGED_EVENT = "db-changed";
+const originalTransaction = IDBDatabase.prototype.transaction;
+IDBDatabase.prototype.transaction = function (this: IDBDatabase, ...args: Parameters<typeof originalTransaction>) {
+  const tx = originalTransaction.apply(this, args);
+  if (tx.mode === "readwrite") {
+    tx.addEventListener("complete", () => window.dispatchEvent(new Event(DB_CHANGED_EVENT)));
+  }
+  return tx;
+};
+
 let dbPromise: Promise<IDBPDatabase<TraeningsappDB>> | undefined;
 
 export function getDb() {
