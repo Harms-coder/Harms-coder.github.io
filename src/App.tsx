@@ -1,6 +1,7 @@
-import { lazy, Suspense, useEffect, useRef, type ReactNode } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
-import { BottomNav, useSwipeTabs } from "./components/BottomNav";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
+import { Route, useLocation } from "react-router-dom";
+import { BottomNav } from "./components/BottomNav";
+import { PageSwiper } from "./components/PageSwiper";
 import { AchievementsPage } from "./features/achievements/AchievementsPage";
 import { CalendarPage } from "./features/calendar/CalendarPage";
 import { CardioPage } from "./features/cardio/CardioPage";
@@ -49,8 +50,6 @@ function LazyPage({ children }: { children: ReactNode }) {
 function App() {
   const location = useLocation();
   const hideBottomNav = location.pathname === "/traening/live";
-  const pageRef = useRef<HTMLDivElement>(null);
-  useSwipeTabs(pageRef);
 
   // #root er selv rullefladen, så browseren nulstiller ikke rul ved sideskift — en ny side
   // startede ellers dér, hvor den forrige var rullet til (fx live-træning uden Afslut synlig).
@@ -61,9 +60,7 @@ function App() {
   return (
     <div className={`relative min-h-full ${hideBottomNav ? "" : "pb-[calc(6rem+env(safe-area-inset-bottom,0px))]"}`}>
       <div className="app-ambience" />
-      {/* touch-action: pan-y — lodret scroll er browserens, vandrette strøg er vores (swipe mellem faner). */}
-      <div ref={pageRef} className="safe-top relative z-10 touch-pan-y">
-      <Routes>
+      <PageSwiper>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/motivation" element={<MotivationPage />} />
         <Route path="/traening" element={<TrainingPage />} />
@@ -111,8 +108,7 @@ function App() {
         <Route path="/mere" element={<MorePage />} />
         <Route path="/backup" element={<BackupPage />} />
         <Route path="/demo" element={<DemoSeedPage />} />
-      </Routes>
-      </div>
+      </PageSwiper>
       {!hideBottomNav && <BottomNav />}
     </div>
   );
